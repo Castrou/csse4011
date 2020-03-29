@@ -1,0 +1,64 @@
+# Compiler Generated Files
+build
+
+*.a
+*.d
+*.o
+*.elf
+*.hex
+*.bin
+*.s37
+*.gbl
+*.su
+*.dfinish
+*.msu
+
+*.map
+*.pyc
+
+#Don't want this bad boy in my git
+ei-freertos/
+
+# Jlink config Files
+*.jlink
+jlink.out
+
+
+#############################################
+# Gecko_SDK Ignores
+#############################################
+
+core_external/gecko_sdk/*
+
+#############################################
+# Visual Studio Code Files
+#############################################
+
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/settings.json
+.vscode/ipch
+*cortex-debug*
+*.db*
+*.DS_Store
+*.ipch
+
+*.chm
+
+*.png
+*.mp4
+
+_nrf52_build/
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.uvprojx
+
+#Doxygen
+documentation/doxygen
+
+unit_tests/cpputest
