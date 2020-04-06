@@ -2,31 +2,33 @@
 # Application Settings
 ##############################################################################
 
-PROJ_NAME     		:= prac1
-SUPPORTED_TARGETS 	:= thunderboard2 nrf52840dk nrf52832dk bleatag argon xenon
+PROJ_NAME     		:= cli_framework
+SUPPORTED_TARGETS 	:= nrf52840dk bleatag argon xenon
 
-MYOSLIB_PATH = 	./../../myoslib
-EIFREERTOS_PATH = ./../../ei-freertos
+EIFREERTOS_PATH = $(realpath ./../../../ei-freertos)
+FREERTOSPLUS_PATH = $(realpath ./../../ei-changes/FreeRTOS-Plus)
+MYOSLIB_PATH = $(realpath ./../../myoslib/)
+
 
 ##############################################################################
 # Application Specific Flags
 ##############################################################################
 
-# CLI_PATH = $(MYOSLIB_PATH)/cli
-# UTIL_PATH = $(MYOSLIB_PATH)/util
-
-APP_CFLAGS			:=
+APP_CFLAGS			:= 
 
 ##############################################################################
 # Application Specific Library Source Files
 ##############################################################################
 
-CORE_CSIRO          := $(realpath $(EIFREERTOS_PATH)/core_csiro)
-APPLICATION_SRCS 	:=
-override REPO_ROOT 	:= $(EIFREERTOS_PATH)
+CORE_CSIRO          := $(EIFREERTOS_PATH)/core_csiro
+APPLICATION_SRCS 	:= 
+override REPO_ROOT	:= $(EIFREERTOS_PATH)
 
 ##############################################################################
 # Main Build Rules
 ##############################################################################
 
+# include filelist.mk
+include $(FREERTOSPLUS_PATH)/filelist.mk
+include filelist.mk
 include $(CORE_CSIRO)/m_common.mk

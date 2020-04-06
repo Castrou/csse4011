@@ -1,12 +1,20 @@
-# MYOSLIB_PATH = ./../../myoslib 
+###################################################
+# APPLICATION SOURCES
+###################################################
 
-CLI_PATH = $(MYOSLIB_PATH)/cli 
+CLITASK_PATH = $(MYOSLIB_PATH)/cli
 UTIL_PATH = $(MYOSLIB_PATH)/util
+LOG_PATH = $(MYOSLIB_PATH)/log
 
-# Include Headers
-CFLAGS += -I$(CLI_PATH)
-CFLAGS += -I$(UTIL_PATH)
+# Set folder path with header files to include.
+APP_CFLAGS += -I$(CLITASK_PATH)
+APP_CFLAGS += -I$(UTIL_PATH)
+APP_CFLAGS += -I$(LOG_PATH)
 
-# Include source files
-LIBSRCS += $(wildcard $(CLI_PATH)/*.c)
-LIBSRCS += $(wildcard $(UTIL_PATH)/*.c)
+# List all c files that must be included (use space as seperate e.g. LIBSRCS += file1.c file2.c)
+APPLICATION_SRCS += $(CLITASK_PATH)/cli_task.c
+APPLICATION_SRCS += $(UTIL_PATH)/lib_util.c
+APPLICATION_SRCS += $(UTIL_PATH)/cli_util.c
+APPLICATION_SRCS += $(LOG_PATH)/lib_log.c
+APPLICATION_SRCS += $(LOG_PATH)/cli_log.c
+APPLICATION_SRCS += $(LOG_PATH)/os_log.c

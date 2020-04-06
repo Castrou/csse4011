@@ -16,8 +16,10 @@ build
 *.map
 *.pyc
 
-#Don't want this bad boy in my git
+# Don't want this bad boy in my git
 ei-freertos/
+# This is just clutter
+ei-changes/FreeRTOS-Plus/Demo
 
 # Jlink config Files
 *.jlink
