@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/log/os_log.h
+ * @file myoslib/util/os_util.h
  * @author Cameron Stroud - 44344968
- * @date 04042020
- * @brief Log OS header file
+ * @date 06042020
+ * @brief Utility OS header file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -11,20 +11,16 @@
  *************************************************************** 
  */
 
-#ifndef S4434496_OS_LOG_H
-#define S4434496_OS_LOG_H
+#ifndef S4434496_OS_UTIL_H
+#define S4434496_OS_UTIL_H
 
 #include "semphr.h"
 
 /* Global Variables ----------------------------------------------------------*/
-SemaphoreHandle_t SemaphoreErrorLog;
-SemaphoreHandle_t SemaphoreInfoLog;
-SemaphoreHandle_t SemaphoreDebugLog;
+SemaphoreHandle_t SemaphoreLED;
 
 /* Function prototypes -------------------------------------------------------*/
-extern void os_log_queue_print( LogLevel_t type, const char *payload );
-extern void os_log_init( void );
-extern void os_log_deinit( void );
+extern void os_util_init( void );
+extern void os_util_deinit( void );
 
-
-#endif // S4434496_OS_LOG_H
+#endif // S4434496_OS_UTIL_H

@@ -31,6 +31,9 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 
+
+/*----------------------------------------------------------------------------*/
+
 /**
 * @brief  Passes string and variable to print task
 * @param  type: Type of log message to be printed (ERR, LOG, DBG)
@@ -53,3 +56,4 @@ extern void log_print(LogLevel_t type, const char *string, ... ) {
 
 }
 
+/*----------------------------------------------------------------------------*/

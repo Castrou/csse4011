@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/util/lib_util.c
+ * @file myoslib/util/os_util.c
  * @author Cameron Stroud - 44344968
- * @date 05042020
- * @brief Utility Functions
+ * @date 06042020
+ * @brief Utility OS source file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -13,7 +13,12 @@
 
 
 /* Includes ***************************************************/
-#include "leds.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
+#include "os_util.h"
+
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -21,34 +26,27 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 
-/*----------------------------------------------------------------------------*/
-
 /**
-* @brief  Sets a variable to the colour specified in input
-* @param  ledVar: LED Colour
-* @param  argInput: Argument provided
-* @retval eLEDs_t: 
+* @brief  Initalises all Log drivers
+* @param  None
+* @retval None
 */
-extern int set_led_colour( eLEDs_t *ledVar, const char **ledName, const char *argInput ) {
+extern void os_util_init( void ) {
 
-	switch(argInput[0]) {
-		case 'r':
-			*ledVar = LEDS_RED;
-			*ledName = "RED";
-			break;
-		case 'g':
-			*ledVar = LEDS_GREEN;
-			*ledName = "GREEN";
-			break;
-		case 'b':
-			*ledVar = LEDS_BLUE;
-			*ledName = "BLUE";
-			break;
-		default: 
-			return 1; // Invalid arguments
-    }
+    /* Create Semaphores */
+    SemaphoreLED = xSemaphoreCreateBinary();
 
-	return 0;
+    xSemaphoreGive(SemaphoreLED);
 }
 
-/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Initalises all Log drivers
+* @param  None
+* @retval None
+*/
+extern void os_util_deinit( void ) {
+
+    /* Remove Semaphores */
+    vSemaphoreDelete(SemaphoreLED);
+}

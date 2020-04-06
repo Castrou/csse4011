@@ -21,6 +21,7 @@
 #include "FreeRTOSConfig.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 #include "FreeRTOS_CLI.h"
 
 #include "leds.h"
@@ -28,16 +29,18 @@
 
 #include "cli_util.h"
 #include "lib_util.h"
+#include "os_util.h"
 #include "lib_log.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define FORMAT		"f"
-#define NOFORMAT	"\0"
+#define FORMAT			"f"
+#define NOFORMAT		"\0"
 
-#define LED_ON		'o'
-#define LED_OFF		'f'
-#define LED_TOGGLE	't'
+#define LED_ON			'o'
+#define LED_OFF			'f'
+#define LED_TOGGLE		't'
+#define LED_CYCLE		'c'
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 CLI_Command_Definition_t Time = {
@@ -49,13 +52,14 @@ CLI_Command_Definition_t Time = {
 
 CLI_Command_Definition_t LEDUtil = {
 	"led",
-	"led <o/f/t> <r/g/b>: Controls onboard LEDs.\r\n",
+	"led <o/f/t> <r/g/b/c>: Controls onboard LEDs.\r\n",
 	ledUtilCommand,
 	2
 };
 
 /* Private function prototypes -----------------------------------------------*/
 
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Initalise function for CLI Utility Commands
@@ -69,6 +73,19 @@ extern void cli_util_init( void ) {
 
 }
 
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Does nothing
+* @param  None
+* @retval None
+*/
+extern void cli_util_deinit( void ) {
+
+
+}
+
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Command for printing System Uptime
@@ -87,7 +104,6 @@ BaseType_t timeCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char 
 	UNUSED(pcWriteBuffer);
 	UNUSED(xWriteBufferLen);
 
-    /* START CODE */
 	if (!strcmp(cCmd_string, FORMAT)) {
 		int hrs  = time/3600;
         int min = (time - (hrs*3600))/60;
@@ -104,6 +120,7 @@ BaseType_t timeCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char 
 	return pdFALSE;
 }
 
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Command for controlling onboard LEDs
@@ -126,15 +143,43 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 	UNUSED(pcWriteBuffer);
 	UNUSED(xWriteBufferLen);
 
-	if (cCmdParam_len > 1 || colourParam_len > 1 || \
-			set_led_colour(&ledVar, &ledColour, arg_colour)) 
+	/* Check parameter length */
+	if (cCmdParam_len > 1 || colourParam_len > 1) 
 	{
 		/* Invalid Arguments */
-		vLedsOn(LEDS_RED);
-		log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b>\r\n");
+		log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
 		return pdFALSE;
 	}
 	
+	/* Check valid arguments */
+	if (set_led_colour(&ledVar, &ledColour, arg_colour)) {
+		/* Not a colour - is it cycle command? */
+		if (arg_colour[0] == LED_CYCLE) {
+			switch(cCmd_string[0]) {
+				case LED_ON:
+					xSemaphoreGive(SemaphoreLED);
+					return pdFALSE;
+				case LED_OFF:
+					xSemaphoreTake(SemaphoreLED, (TickType_t) 10);
+					return pdFALSE;
+				case LED_TOGGLE:
+					if(xSemaphoreTake(SemaphoreLED, (TickType_t) 10) == pdTRUE) { // If it takes semaphore, leave it that way
+					} else {
+						xSemaphoreGive(SemaphoreLED); // If not, give it back!
+					}
+					return pdFALSE;
+				default:
+					log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
+					return pdFALSE;
+			}
+		} else {
+			/* Invalid Arguments */
+			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
+			return pdFALSE;
+		}
+	}
+
+	/* Check control command */
 	switch(cCmd_string[0]) {
 		case LED_ON:
 			log_print(LOG_DEBUG, "Switching on: %s\r\n", ledColour);
@@ -149,7 +194,7 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 			vLedsToggle(ledVar);
 			break;
 		default:
-			// log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b>\r\n");
+			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
 			return pdFALSE;
 	}
 
@@ -157,3 +202,5 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 	/* Only return pdTRUE, if more strings need to be printed */
 	return pdFALSE;	
 }
+
+/*----------------------------------------------------------------------------*/

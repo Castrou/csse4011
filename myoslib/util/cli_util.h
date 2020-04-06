@@ -16,8 +16,9 @@
 
 /* Function prototypes -------------------------------------------------------*/
 extern void cli_util_init(void);
+extern void cli_util_deinit(void);
 
-/* Commands */
+/* Commands ------------------------------------------------------------------*/
 BaseType_t timeCommand(char * pcWriteBuffer, size_t xWriteBufferLen, \
                         const char * pcCommandString);
 BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, \

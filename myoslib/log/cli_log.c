@@ -21,7 +21,11 @@
 #include "FreeRTOSConfig.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 #include "FreeRTOS_CLI.h"
+
+#include "leds.h"
+#include "log.h"
 
 #include "lib_log.h"
 #include "cli_log.h"
@@ -29,17 +33,22 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define MAX_LOG_ARG     2
+#define ARG_ERROR		'e'
+#define ARG_INFO		'l'
+#define ARG_DEBUG		'd'
+#define ARG_ALL			'a'
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-CLI_Command_Definition_t Log = {
+CLI_Command_Definition_t LogCmd = {
 	"log",
-	"log <e/l/d/a> [<e/l/d>]: Changes what log types are displayed.\r\n",
+	"log <e/l/d/a>: Changes what log types are displayed.\r\n",
 	logCommand,
-	-1
+	1
 };
 
 /* Private function prototypes -----------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Initialise log commands
@@ -48,10 +57,23 @@ CLI_Command_Definition_t Log = {
 */
 extern void cli_log_init( void ) {
 
-    FreeRTOS_CLIRegisterCommand(&Log);
+    FreeRTOS_CLIRegisterCommand(&LogCmd);
 
 }
 
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Does nothing
+* @param  None
+* @retval None
+*/
+extern void cli_log_deinit( void ) {
+
+
+}
+
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Command for printing System Uptime
@@ -65,21 +87,42 @@ BaseType_t logCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 	long lParam_len;
 	const char *cCmd_string;
 
+	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
     /* Check length of arguments */
-    for(int i = 0; i < MAX_LOG_ARG; i++) {
-	    cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, i, &lParam_len);
-        if (lParam_len > 1) {
-            log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: time [f]\r\n");
-        }
-    }
-	UNUSED(cCmd_string);
+	if (lParam_len > 1) {
+		log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: log <e/l/d/a>\r\n");
+		return pdFALSE;
+	}
+
+	/* Take Semaphores */
+	xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 10);
+	xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 10);
+	xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 10);
+
+	/* Process Argument */
+	switch(cCmd_string[0]) {
+		case ARG_ERROR:
+			xSemaphoreGive(SemaphoreErrorLog);
+			break;
+		case ARG_INFO:
+			xSemaphoreGive(SemaphoreInfoLog);
+			break;
+		case ARG_DEBUG:
+			xSemaphoreGive(SemaphoreDebugLog);
+			break;
+		case ARG_ALL:
+			xSemaphoreGive(SemaphoreErrorLog);
+			xSemaphoreGive(SemaphoreInfoLog);
+			xSemaphoreGive(SemaphoreDebugLog);
+			break;
+	}
 
 	UNUSED(pcWriteBuffer);
-	UNUSED(xWriteBufferLen);
-
-    
+	UNUSED(xWriteBufferLen);    
 
 	/* Return pdFALSE, as there are no more strings to return */
 	/* Only return pdTRUE, if more strings need to be printed */
 	return pdFALSE;
 }
+
+/*----------------------------------------------------------------------------*/

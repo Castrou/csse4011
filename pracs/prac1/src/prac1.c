@@ -24,35 +24,19 @@
 
 #include "cli_task.h"
 #include "cli_util.h"
+#include "os_util.h"
 #include "os_log.h"
 #include "lib_log.h"
 
 /* Private Defines ------------------------------------------*/
-#define MAX_ARG_CNT     8
 /* Type Definitions -----------------------------------------*/
-typedef enum CycleState {
-    CYCLE_ON,
-    CYCLE_OFF
-} CycleState;
-
-typedef struct CommandLineArg {
-    char *command;  // Self explanatory
-    char arguments[MAX_ARG_CNT]; // Array of single character arguments
-} CommandLineArg;
-
-struct LedState {
-    CycleState cycle;
-    eLEDs_t led;
-};
 /* Function Declarations ------------------------------------*/
-struct LedState get_led_state();
-void set_led_state(eLEDs_t colour, CycleState cycleFlag);
 void vCustomSerialHandler(xCommsInterface_t *pxComms,
 						  xUnifiedCommsIncomingRoute_t *pxCurrentRoute,
 						  xUnifiedCommsMessage_t *pxMessage);
 
 /* Private Variables ----------------------------------------*/
-struct LedState led_state;
+eLEDs_t led_colour;
 
 /*-----------------------------------------------------------*/
 
@@ -60,24 +44,6 @@ void vApplicationSetLogLevels(void)
 {
 	eLogSetLogLevel(LOG_RESULT, LOG_DEBUG);
 	eLogSetLogLevel(LOG_APPLICATION, LOG_DEBUG);
-}
-
-/*-----------------------------------------------------------*/
-
-struct LedState get_led_state( void ) {
-
-    return led_state;
-
-}
-
-/*-----------------------------------------------------------*/
-
-void set_led_state( eLEDs_t LED, CycleState cycleFlag ) {
-
-    vLedsSet(LED);
-    led_state.led = LED;
-    led_state.cycle = cycleFlag;
-
 }
 
 /*-----------------------------------------------------------*/
@@ -102,21 +68,18 @@ void vApplicationStartupCallback( void ) {
 
     /* Init functions */
     os_log_init();
+    os_util_init();
     cli_util_init();
     cli_task_init();
 
     /* Clear for takeoff */
-    set_led_state(LEDS_NONE, CYCLE_ON);
-
+    vLedsSet(LEDS_RED);
+    led_colour = LEDS_RED;
 }
 
 /*-----------------------------------------------------------*/
 
 void vApplicationTickCallback( uint32_t ulUptime ) {
-
-    eLEDs_t led = get_led_state().led;
-    CycleState led_cycle = get_led_state().cycle;
-    const char *new_led_colour;
 
     UNUSED(ulUptime);
     /* Flush comms? */
@@ -125,27 +88,24 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 	eTdfFlushMulti(BLE_LOG);
 
     /* Change LED colour */
-    switch(led) {
-        case LEDS_RED:      // if RED go to GREEN
-            new_led_colour = "GREEN";
-            set_led_state(LEDS_GREEN, CYCLE_ON);
-            break;
-        case LEDS_GREEN:    // if GREEN go to BLUE
-            new_led_colour = "BLUE";
-            set_led_state(LEDS_BLUE, CYCLE_ON);
-            break;
-        case LEDS_BLUE:     // if BLUE go to RED
-            new_led_colour = "RED";
-            set_led_state(LEDS_RED, CYCLE_ON);
-            break;
-        default:
-            new_led_colour = "RED";
-            set_led_state(LEDS_RED, CYCLE_ON);
-            break;
+    if (xSemaphoreTake(SemaphoreLED, (TickType_t) 10) == pdTRUE) {
+        switch(led_colour) {
+            case LEDS_RED:      // if RED go to GREEN
+                led_colour = LEDS_GREEN;
+                break;
+            case LEDS_GREEN:    // if GREEN go to BLUE
+                led_colour = LEDS_BLUE;
+                break;
+            case LEDS_BLUE:     // if BLUE go to RED
+                led_colour = LEDS_RED;
+                break;
+            default:
+                led_colour = LEDS_RED;
+                break;
+        }
+        vLedsSet(led_colour);
+        xSemaphoreGive(SemaphoreLED);
     }
-
-    UNUSED(new_led_colour);
-    UNUSED(led_cycle);
 }
 
 /*-----------------------------------------------------------*/

@@ -18,6 +18,7 @@
 
 /* Function prototypes -------------------------------------------------------*/
 extern void cli_task_init(void);
+extern void cli_task_deinit(void);
 extern void cli_task_queue_serial(const char *input);
 
 #endif // S4434496_CLI_TASK_H

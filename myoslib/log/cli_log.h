@@ -16,8 +16,9 @@
 
 /* Function prototypes -------------------------------------------------------*/
 extern void cli_log_init( void );
+extern void cli_log_deinit( void );
 
-/* Commands */
+/* Commands ------------------------------------------------------------------*/
 BaseType_t logCommand(char * pcWriteBuffer, size_t xWriteBufferLen, \
                         const char * pcCommandString);
 

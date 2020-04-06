@@ -43,6 +43,8 @@ TaskHandle_t CLIHandler = NULL;
 void CLI_Task(void);
 
 
+/*----------------------------------------------------------------------------*/
+
 /**
 * @brief  Queues Serial input
 * @param  input: string of Serial input
@@ -54,12 +56,11 @@ extern void cli_task_queue_serial( const char *input ) {
     if(xQueueSendToBack(QueueCLI, (void *) &CLI, 
         (portTickType) 10) != pdPASS) 
     {
-        // portENTER_CRITICAL();
-        // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
-        // portEXIT_CRITICAL();
+        /* Failed to send */
     }
 }
 
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Initalises CLI task
@@ -70,9 +71,21 @@ extern void cli_task_init( void ) {
 
     xTaskCreate((void *) &CLI_Task, "CLI Task", \
                     CLI_STACK_SIZE, NULL, CLI_PRIORITY, &CLIHandler);
-
 }
 
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Deinitalises CLI task
+* @param  None
+* @retval None
+*/
+extern void cli_task_deinit( void ) {
+
+    vTaskDelete(CLIHandler);
+}
+
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Main CLI Task
@@ -108,3 +121,5 @@ void CLI_Task( void ) {
         }
     }
 }
+
+/*----------------------------------------------------------------------------*/

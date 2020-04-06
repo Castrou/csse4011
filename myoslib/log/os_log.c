@@ -36,14 +36,14 @@
 
 #include "unified_comms_serial.h"
 
-#include "os_log.h"
 #include "cli_log.h"
+#include "os_log.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct LogMessage {
     const char *message;
-    int logType;
+    LogLevel_t logType;
 } LogMessage;
 
 /* Private define ------------------------------------------------------------*/
@@ -52,7 +52,6 @@ typedef struct LogMessage {
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-// LogMessage Log;
 QueueHandle_t QueueLog;
 TaskHandle_t LogHandler;
 LogMessage Log;
@@ -60,6 +59,7 @@ LogMessage Log;
 /* Private function prototypes -----------------------------------------------*/
 void Log_Task( void );
 
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Queues Log to be printed
@@ -80,6 +80,7 @@ extern void os_log_queue_print( LogLevel_t type, const char *payload ) {
     }
 }
 
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Initalises all Log drivers
@@ -91,10 +92,42 @@ extern void os_log_init( void ) {
     /* Driver initialisation functions */
     cli_log_init();
 
+    /* Create Semaphores */
+    SemaphoreErrorLog = xSemaphoreCreateBinary();
+    SemaphoreInfoLog = xSemaphoreCreateBinary();
+    SemaphoreDebugLog = xSemaphoreCreateBinary();
+
+    xSemaphoreGive(SemaphoreErrorLog);
+    xSemaphoreGive(SemaphoreInfoLog);
+    xSemaphoreGive(SemaphoreDebugLog);
+
     /* Create task */
     xTaskCreate((void *) &Log_Task, "Log Task", \
                     Log_STACK_SIZE, NULL, Log_PRIORITY, &LogHandler);
 }
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Initalises all Log drivers
+* @param  None
+* @retval None
+*/
+extern void os_log_deinit( void ) {
+
+    /* Driver deinitialisation functions */
+    cli_log_deinit();
+
+    /* Remove Semaphores */
+    vSemaphoreDelete(SemaphoreErrorLog);
+    vSemaphoreDelete(SemaphoreInfoLog);
+    vSemaphoreDelete(SemaphoreDebugLog);
+
+    /* Remove task */
+    vTaskDelete(LogHandler);
+}
+
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Log printing task
@@ -110,10 +143,33 @@ void Log_Task( void ) {
 
     for ( ;; ) {
         if (xQueueReceive(QueueLog, &IncomingLog, 10) == pdTRUE) {   
-            portENTER_CRITICAL();
-            eLog(LOG_APPLICATION, IncomingLog.logType, "%s", IncomingLog.message);
-            portEXIT_CRITICAL();
-            // vTaskDelay(5);
+            switch(IncomingLog.logType) {
+                case LOG_ERROR:
+                    if(xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 10) == pdTRUE) {
+                        eLog(LOG_APPLICATION, IncomingLog.logType, \
+                                "\e[1;31m%s\e[0m", IncomingLog.message);
+                        xSemaphoreGive(SemaphoreErrorLog);
+                    }
+                    break;
+                case LOG_INFO:
+                    if(xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 10) == pdTRUE) {
+                        eLog(LOG_APPLICATION, IncomingLog.logType, \
+                                "\e[1;32m%s\e[0m", IncomingLog.message);
+                        xSemaphoreGive(SemaphoreInfoLog);
+                    }
+                    break;
+                case LOG_DEBUG:
+                    if(xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 10) == pdTRUE) {
+                        eLog(LOG_APPLICATION, IncomingLog.logType, \
+                                "\e[1;34m%s\e[0m", IncomingLog.message);
+                        xSemaphoreGive(SemaphoreDebugLog);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
+
+/*----------------------------------------------------------------------------*/
