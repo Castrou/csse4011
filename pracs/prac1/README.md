@@ -15,9 +15,9 @@ EI-FreeRTOS successfully installed and integrated into development environment
 
 Example program has been made. LEDs cycle through RED > GREEN > BLUE in a repeating pattern.  
 Change whether LEDS cycle using: `led <o/f/t> c`  
-`'o'`: Enable LED Cycle
-`'f'`: Disable LED Cycle
-`'t'`: Toggle LED Cycle
+`'o'`: Enable LED Cycle  
+`'f'`: Disable LED Cycle  
+`'t'`: Toggle LED Cycle  
 
 ### PART B - Command Line Interface
 
