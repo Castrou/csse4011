@@ -33,7 +33,7 @@ System Timer Control Implemented. Arguments are as follows:
 'f': Format as HH:MM:SS
 No arguments: Time in seconds
 
-example usage: ```time f
+example usage: `time f`
 
 
 #### Design Task 2B: LED Control Example
@@ -48,7 +48,7 @@ LED Control Implemented. Arguments are as follows:
 'b': Blue LED
 'c': LED Cycle from Task 2A
 
-example usage: ```led o r
+example usage: `led o r`
 
 
 #### Design Task 3B: Log Message
@@ -71,6 +71,8 @@ Example usage: `log a`
 
 Recommended commands for testing functionality:
 
+`led f c` (disable LED cycle)
+
 LOG_ERROR:  `led f o`
 
 LOG_INFO:   `time`
@@ -88,7 +90,9 @@ Base schematic has been created for the AHU in the Grove Shield Feather Wing for
 
 ## Folder Structure
 
-├── ei-freertos
+.
+
++-- ei-freertos
 
 ├── csse4011-s4434496
 
