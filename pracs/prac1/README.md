@@ -75,8 +75,7 @@ Base schematic has been created for the AHU in the Grove Shield Feather Wing for
 ## Folder Structure
 
 ```bash
-csse4011-s4434496
-├── ei-freertos
+┌── ei-freertos
 ├── csse4011-s4434496
 |   ├── ei-changes
 |   ├── myoslib
