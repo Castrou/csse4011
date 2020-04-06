@@ -13,8 +13,8 @@ EI-FreeRTOS successfully installed and integrated into development environment
 
 #### Design Task 2A: Basic Example
 
-Example program has been made. LEDs cycle through RED > GREEN > BLUE in a repeating pattern.
-Change whether LEDS cycle using: `led <o/f/t> c`
+Example program has been made. LEDs cycle through RED > GREEN > BLUE in a repeating pattern.  
+Change whether LEDS cycle using: `led <o/f/t> c`  
 `'o'`: Enable LED Cycle
 `'f'`: Disable LED Cycle
 `'t'`: Toggle LED Cycle
@@ -24,7 +24,6 @@ Change whether LEDS cycle using: `led <o/f/t> c`
 To use the Command Line Interface, run baselisten on a terminal and submit commands using
 send_string "%s", where %s is the desired command input.
 
-
 #### Design Task 1B: System Timer Control Example
 
 System Timer Control Implemented. Arguments are as follows:  
@@ -33,18 +32,17 @@ System Timer Control Implemented. Arguments are as follows:
 
 Example usage: `time f`
 
-
 #### Design Task 2B: LED Control Example
 
 LED Control Implemented. Arguments are as follows:  
-'o': Turn on  
-'f': Turn off  
-'t': Toggle  
+`'o'`: Turn on  
+`'f'`: Turn off  
+`'t'`: Toggle  
 
-'r': Red LED  
-'g': Green LED  
-'b': Blue LED  
-'c': LED Cycle from Task 2A  
+`'r'`: Red LED  
+`'g'`: Green LED  
+`'b'`: Blue LED  
+`'c'`: LED Cycle from Task 2A  
 
 Example usage: `led o r`
 
@@ -61,7 +59,7 @@ Can be independently viewed or view all using:
 Example usage: `log a`
 
 **Recommended commands for testing functionality:**  
-`led f c` (disable LED cycle)  
+Disable LED Cycle: `led f c`  
 LOG\_ERROR:  `led f o`  
 LOG\_INFO:   `time`  
 LOG\_DEBUG:  `led o r`  
@@ -70,12 +68,13 @@ LOG\_DEBUG:  `led o r`
 
 #### Design Task: Create a base schematic for the AHU
 
-Base schematic has been created for the AHU in the Grove Shield Feather Wing format (complete with Argon platform symbol).
+Base schematic has been created for the AHU in the Grove Shield Feather Wing format (complete with Argon platform symbol).  
 
 ---
 
 ## Folder Structure
-```
+
+```bash
 csse4011-s4434496
 ├── ei-freertos
 ├── csse4011-s4434496
