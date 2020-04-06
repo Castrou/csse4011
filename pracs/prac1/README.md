@@ -53,7 +53,7 @@ example usage: `led o r`
 
 #### Design Task 3B: Log Message
 
-All messages are coloured depending on their type (ie. LOG_ERROR, LOG_INFO, LOG_DEBUG)
+All messages are coloured depending on their type (ie. LOG\_ERROR, LOG\_INFO, LOG\_DEBUG)
 
 
 Can be independently viewed or view all using:
@@ -73,11 +73,11 @@ Recommended commands for testing functionality:
 
 `led f c` (disable LED cycle)
 
-LOG_ERROR:  `led f o`
+LOG\_ERROR:  `led f o`
 
-LOG_INFO:   `time`
+LOG\_INFO:   `time`
 
-LOG_DEBUG:  `led o r`
+LOG\_DEBUG:  `led o r`
 
 
 ### Part C - AHU Base Hardware
@@ -94,71 +94,71 @@ Base schematic has been created for the AHU in the Grove Shield Feather Wing for
 
 +-- ei-freertos
 
-├── csse4011-s4434496
++-- csse4011-s4434496
 
-|    ├── ei-changes
+|    +-- ei-changes
 
-|    ├── myoslib
+|    +-- myoslib
 
-|   |   ├── cli
+|   |   +-- cli
 
-|   |   |   ├── cli_task.c  (+)
+|   |   |   +-- cli_task.c  (+)
 
-|   |   |   └── cli_task.h  (+)
+|   |   |   +-- cli_task.h  (+)
 
-|   |   ├── log
+|   |   +-- log
 
-|   |   |   ├── cli_log.c   (+)
+|   |   |   +-- cli_log.c   (+)
 
-|   |   |   ├── cli_log.h   (+)
+|   |   |   +-- cli_log.h   (+)
 
-|   |   |   ├── lib_log.c   (+)
+|   |   |   +-- lib_log.c   (+)
 
-|   |   |   ├── lib_log.h   (+)
+|   |   |   +-- lib_log.h   (+)
 
-|   |   |   ├── os_log.c    (+)
+|   |   |   +-- os_log.c    (+)
 
-|   |   |   └── os_log.h    (+)
+|   |   |   +-- os_log.h    (+)
 
-|   |   ├── util
+|   |   +-- util
 
-|   |   |   ├── cli_util.c  (+)
+|   |   |   +-- cli_util.c  (+)
 
-|   |   |   ├── cli_util.h  (+)
+|   |   |   +-- cli_util.h  (+)
 
-|   |   |   ├── lib_util.c  (+)
+|   |   |   +-- lib_util.c  (+)
 
-|   |   |   ├── lib_util.h  (+)
+|   |   |   +-- lib_util.h  (+)
 
-|   |   |   ├── os_util.c   (+)
+|   |   |   +-- os_util.c   (+)
 
-|   |   └── └── os_util.h   (+)
+|   |   |   +-- os_util.h   (+)
 
-**|   ├── pracs**
+**|   +-- pracs**
 
-**|   │   ├── prac1**     
+**|   │   +-- prac1**     
 
-|   │   |   ├── inc
+|   │   |   +-- inc
 
-|   |   |   |   ├── application.h
+|   |   |   |   +-- application.h
 
-|   |   |   |   └── gatt_nrf52.h
+|   |   |   |   +-- gatt_nrf52.h
 
-|   │   |   ├── src
+|   │   |   +-- src
 
-|   |   |   |   ├── gatt_nrf52.c
+|   |   |   |   +-- gatt_nrf52.c
 
-|   |   |   |   ├── gatt.xml
+|   |   |   |   +-- gatt.xml
 
-|   |   |   |   └── prac1.c
+|   |   |   |   +-- prac1.c
 
-|   |   |   ├── Makefile
+|   |   |   +-- Makefile
 
-|   |   |   ├── filelist.mk
+|   |   |   +-- filelist.mk
 
-|   |   └── └── README.md**
+**|   |   +-- +-- README.md**
 
-└── └── project
+|   +-- project
 
 ---
 
