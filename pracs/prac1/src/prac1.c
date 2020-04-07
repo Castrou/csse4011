@@ -36,7 +36,6 @@ void vCustomSerialHandler(xCommsInterface_t *pxComms,
 						  xUnifiedCommsMessage_t *pxMessage);
 
 /* Private Variables ----------------------------------------*/
-eLEDs_t led_colour;
 
 /*-----------------------------------------------------------*/
 
@@ -74,7 +73,6 @@ void vApplicationStartupCallback( void ) {
 
     /* Clear for takeoff */
     vLedsSet(LEDS_RED);
-    led_colour = LEDS_RED;
 }
 
 /*-----------------------------------------------------------*/
@@ -87,22 +85,6 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 	eTdfAddMulti(BLE_LOG, TDF_UPTIME, TDF_TIMESTAMP_NONE, NULL, &xUptime);
 	eTdfFlushMulti(BLE_LOG);
 
-    /* Change LED colour */
-    switch(led_colour) {
-        case LEDS_RED:      // if RED go to GREEN
-            led_colour = LEDS_GREEN;
-            break;
-        case LEDS_GREEN:    // if GREEN go to BLUE
-            led_colour = LEDS_BLUE;
-            break;
-        case LEDS_BLUE:     // if BLUE go to RED
-            led_colour = LEDS_RED;
-            break;
-        default:
-            led_colour = LEDS_RED;
-            break;
-    }
-    vLedsSet(led_colour);
 }
 
 /*-----------------------------------------------------------*/
