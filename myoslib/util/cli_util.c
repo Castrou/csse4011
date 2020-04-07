@@ -108,11 +108,11 @@ BaseType_t timeCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char 
 		int hrs  = time/3600;
         int min = (time - (hrs*3600))/60;
         int sec = (time - (hrs*3600) - (min*60));
-		log_print(LOG_INFO, "Time (hh:mm:ss): %02d:%02d:%02d\r\n", hrs, min, sec);
+		log_print(LOG_INFO, "Time (hh:mm:ss): %02d:%02d:%02d", hrs, min, sec);
 	} else if (!strcmp(cCmd_string, NOFORMAT)) {
-		log_print(LOG_INFO, "Time (seconds): %d\r\n", time);
+		log_print(LOG_INFO, "Time (seconds): %d", time);
 	} else {
-		log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: time [f]\r\n");
+		log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: time [f]");
 	}
 
 	/* Return pdFALSE, as there are no more strings to return */
@@ -147,13 +147,13 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 	if (cCmdParam_len > 1 || colourParam_len > 1) 
 	{
 		/* Invalid Arguments */
-		log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
+		log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
 		return pdFALSE;
 	}
 	
 	/* Check valid arguments */
 	if (set_led_colour(&ledVar, &ledColour, arg_colour)) {
-		/* Not a colour - is it cycle command? */
+		/* Not a colour - is it semaphore command? */
 		if (arg_colour[0] == LED_CYCLE) {
 			switch(cCmd_string[0]) {
 				case LED_ON:
@@ -169,12 +169,12 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 					}
 					return pdFALSE;
 				default:
-					log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
+					log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
 					return pdFALSE;
 			}
 		} else {
 			/* Invalid Arguments */
-			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
+			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
 			return pdFALSE;
 		}
 	}
@@ -182,19 +182,19 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 	/* Check control command */
 	switch(cCmd_string[0]) {
 		case LED_ON:
-			log_print(LOG_DEBUG, "Switching on: %s\r\n", ledColour);
+			log_print(LOG_DEBUG, "Switching on: %s", ledColour);
 			vLedsOn(ledVar);
 			break;
 		case LED_OFF:
-			log_print(LOG_DEBUG, "Switching off: %s\r\n", ledColour);
+			log_print(LOG_DEBUG, "Switching off: %s", ledColour);
 			vLedsOff(ledVar);
 			break;
 		case LED_TOGGLE:
-			log_print(LOG_DEBUG, "Toggling: %s\r\n", ledColour);
+			log_print(LOG_DEBUG, "Toggling: %s", ledColour);
 			vLedsToggle(ledVar);
 			break;
 		default:
-			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>\r\n");
+			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
 			return pdFALSE;
 	}
 

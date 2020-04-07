@@ -88,24 +88,21 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 	eTdfFlushMulti(BLE_LOG);
 
     /* Change LED colour */
-    if (xSemaphoreTake(SemaphoreLED, (TickType_t) 10) == pdTRUE) {
-        switch(led_colour) {
-            case LEDS_RED:      // if RED go to GREEN
-                led_colour = LEDS_GREEN;
-                break;
-            case LEDS_GREEN:    // if GREEN go to BLUE
-                led_colour = LEDS_BLUE;
-                break;
-            case LEDS_BLUE:     // if BLUE go to RED
-                led_colour = LEDS_RED;
-                break;
-            default:
-                led_colour = LEDS_RED;
-                break;
-        }
-        vLedsSet(led_colour);
-        xSemaphoreGive(SemaphoreLED);
+    switch(led_colour) {
+        case LEDS_RED:      // if RED go to GREEN
+            led_colour = LEDS_GREEN;
+            break;
+        case LEDS_GREEN:    // if GREEN go to BLUE
+            led_colour = LEDS_BLUE;
+            break;
+        case LEDS_BLUE:     // if BLUE go to RED
+            led_colour = LEDS_RED;
+            break;
+        default:
+            led_colour = LEDS_RED;
+            break;
     }
+    vLedsSet(led_colour);
 }
 
 /*-----------------------------------------------------------*/

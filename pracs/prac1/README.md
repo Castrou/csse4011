@@ -10,14 +10,11 @@
 
 EI-FreeRTOS successfully installed and integrated into development environment
 
-
 #### Design Task 2A: Basic Example
 
 Example program has been made. LEDs cycle through RED > GREEN > BLUE in a repeating pattern.  
-Change whether LEDS cycle using: `led <o/f/t> c`  
-`'o'`: Enable LED Cycle  
-`'f'`: Disable LED Cycle  
-`'t'`: Toggle LED Cycle  
+Commands from Task 2B will override the current LED state (ie. turning on green during red phase
+will show orange, turning off blue during blue phase will show nothing, etc.)
 
 ### PART B - Command Line Interface
 
@@ -42,7 +39,6 @@ LED Control Implemented. Arguments are as follows:
 `'r'`: Red LED  
 `'g'`: Green LED  
 `'b'`: Blue LED  
-`'c'`: LED Cycle from Task 2A  
 
 Example usage: `led o r`
 
@@ -59,7 +55,6 @@ Can be independently viewed or view all using:
 Example usage: `log a`
 
 **Recommended commands for testing functionality:**  
-Disable LED Cycle: `led f c`  
 LOG\_ERROR:  `led f o`  
 LOG\_INFO:   `time`  
 LOG\_DEBUG:  `led o r`  
@@ -115,6 +110,5 @@ Base schematic has been created for the AHU in the Grove Shield Feather Wing for
 
 ## References
 
-[SnapEDA 2821 Symbol & Footprint](https://www.snapeda.com/parts/2821/Adafruit%20Industries%20LLC/view-part/)
-
+[SnapEDA 2821 Symbol & Footprint](https://www.snapeda.com/parts/2821/Adafruit%20Industries%20LLC/view-part/)  
 [FreeRTOS+CLI](https://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_CLI/Download_FreeRTOS_Plus_CLI.html)

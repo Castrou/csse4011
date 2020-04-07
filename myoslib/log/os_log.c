@@ -147,21 +147,21 @@ void Log_Task( void ) {
                 case LOG_ERROR:
                     if(xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 10) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
-                                "\e[1;31m%s\e[0m", IncomingLog.message);
+                                "\e[1;31m%s\e[0m\r\n", IncomingLog.message);
                         xSemaphoreGive(SemaphoreErrorLog);
                     }
                     break;
                 case LOG_INFO:
                     if(xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 10) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
-                                "\e[1;32m%s\e[0m", IncomingLog.message);
+                                "\e[1;32m%s\e[0m\r\n", IncomingLog.message);
                         xSemaphoreGive(SemaphoreInfoLog);
                     }
                     break;
                 case LOG_DEBUG:
                     if(xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 10) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
-                                "\e[1;34m%s\e[0m", IncomingLog.message);
+                                "\e[1;34m%s\e[0m\r\n", IncomingLog.message);
                         xSemaphoreGive(SemaphoreDebugLog);
                     }
                     break;
