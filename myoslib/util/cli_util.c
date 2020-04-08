@@ -37,10 +37,6 @@
 #define FORMAT			"f"
 #define NOFORMAT		"\0"
 
-#define LED_ON			'o'
-#define LED_OFF			'f'
-#define LED_TOGGLE		't'
-#define LED_CYCLE		'c'
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 CLI_Command_Definition_t Time = {
@@ -144,7 +140,8 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 	UNUSED(xWriteBufferLen);
 
 	/* Check parameter length */
-	if (cCmdParam_len > 1 || colourParam_len > 1) 
+	if (cCmdParam_len > 1 || colourParam_len > 1 ||
+			set_led_colour(&ledVar, &ledColour, arg_colour)) 
 	{
 		/* Invalid Arguments */
 		log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
@@ -152,51 +149,17 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 	}
 	
 	/* Check valid arguments */
-	if (set_led_colour(&ledVar, &ledColour, arg_colour)) {
-		/* Not a colour - is it semaphore command? */
-		if (arg_colour[0] == LED_CYCLE) {
-			switch(cCmd_string[0]) {
-				case LED_ON:
-					xSemaphoreGive(SemaphoreLED);
-					return pdFALSE;
-				case LED_OFF:
-					xSemaphoreTake(SemaphoreLED, (TickType_t) 10);
-					return pdFALSE;
-				case LED_TOGGLE:
-					if(xSemaphoreTake(SemaphoreLED, (TickType_t) 10) == pdTRUE) { // If it takes semaphore, leave it that way
-					} else {
-						xSemaphoreGive(SemaphoreLED); // If not, give it back!
-					}
-					return pdFALSE;
-				default:
-					log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
-					return pdFALSE;
-			}
-		} else {
-			/* Invalid Arguments */
-			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
-			return pdFALSE;
-		}
-	}
-
-	/* Check control command */
 	switch(cCmd_string[0]) {
-		case LED_ON:
-			log_print(LOG_DEBUG, "Switching on: %s", ledColour);
-			vLedsOn(ledVar);
-			break;
-		case LED_OFF:
-			log_print(LOG_DEBUG, "Switching off: %s", ledColour);
-			vLedsOff(ledVar);
-			break;
-		case LED_TOGGLE:
-			log_print(LOG_DEBUG, "Toggling: %s", ledColour);
-			vLedsToggle(ledVar);
+		case LEDS_ON:
+		case LEDS_OFF:
+		case LEDS_TOGGLE:
 			break;
 		default:
 			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
 			return pdFALSE;
 	}
+
+	os_util_queue_led(ledVar, cCmd_string[0]); // Send to queue
 
 	/* Return pdFALSE, as there are no more strings to return */
 	/* Only return pdTRUE, if more strings need to be printed */

@@ -15,24 +15,32 @@
 /* Includes ***************************************************/
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 #include "semphr.h"
 
 #include "leds.h"
 
 #include "os_util.h"
+#include "lib_util.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
+typedef struct LEDControl {
+    eLEDs_t colour;
+    char function;
+} LEDControl;
+
 /* Private define ------------------------------------------------------------*/
-#define LEDCycle_PRIORITY (tskIDLE_PRIORITY + 2)
-#define LEDCycle_STACK_SIZE (configMINIMAL_STACK_SIZE * 5)
+#define LEDControl_PRIORITY (tskIDLE_PRIORITY + 2)
+#define LEDControl_STACK_SIZE (configMINIMAL_STACK_SIZE * 1)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-TaskHandle_t LEDCycleHandler;
-
+TaskHandle_t LEDControlHandler;
+QueueHandle_t QueueLED;
+LEDControl TxLED;
 /* Private function prototypes -----------------------------------------------*/
-void LEDCycle_Task( void );
+void LEDControl_Task( void );
 
 /**
 * @brief  Initalises all Log drivers
@@ -47,8 +55,9 @@ extern void os_util_init( void ) {
     xSemaphoreGive(SemaphoreLED);
 
     /* Create task */
-    xTaskCreate((void *) &LEDCycle_Task, "LED Cycle Task", \
-                    LEDCycle_STACK_SIZE, NULL, LEDCycle_PRIORITY, &LEDCycleHandler);
+    xTaskCreate((void *) &LEDControl_Task, "LED Control Task",
+                    LEDControl_STACK_SIZE, NULL, LEDControl_PRIORITY, &LEDControlHandler);
+
 }
 
 /*----------------------------------------------------------------------------*/
@@ -62,38 +71,63 @@ extern void os_util_deinit( void ) {
 
     /* Remove Semaphores */
     vSemaphoreDelete(SemaphoreLED);
+
+    /* Delete Task */
+    vTaskDelete(LEDControlHandler);
 }
 
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Log printing task
+* @brief  Add to LED Queue
+* @param  ledColour: Colour of LED
+* @param  function: LED Control function
+* @retval None
+*/
+void os_util_queue_led(eLEDs_t ledColour, char function) {
+
+    TxLED.colour = ledColour;
+    TxLED.function = function;
+
+    if(xQueueSendToBack(QueueLED, (void *) &TxLED, (portTickType) 1) != pdPASS) {
+        // Failed
+    }
+
+    vTaskDelay(5);
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  LED Control task
 * @param  None
 * @retval None
 */
-void LEDCycle_Task( void ) {
+void LEDControl_Task( void ) {
 
-    eLEDs_t led_colour;
+    LEDControl RxLED;
+    QueueLED = xQueueCreate(5, sizeof(RxLED));
 
     for ( ;; ) {
-        
-        /* Change LED colour */
-        switch(led_colour) {
-            case LEDS_RED:      // if RED go to GREEN
-                led_colour = LEDS_GREEN;
-                break;
-            case LEDS_GREEN:    // if GREEN go to BLUE
-                led_colour = LEDS_BLUE;
-                break;
-            case LEDS_BLUE:     // if BLUE go to RED
-                led_colour = LEDS_RED;
-                break;
-            default:
-                led_colour = LEDS_RED;
-                break;
+        if (xQueueReceive(QueueLED, &RxLED, 10) == pdTRUE) {
+            switch(RxLED.function) {
+                case LEDS_SET:
+                    vLedsSet(RxLED.colour);
+                    break;
+                case LEDS_ON:
+                    vLedsOn(RxLED.colour);
+                    break;
+                case LEDS_OFF:
+                    vLedsOff(RxLED.colour);
+                    break;
+                case LEDS_TOGGLE:
+                    vLedsToggle(RxLED.colour);
+                    break;
+                default:
+                    vLedsSet(LEDS_RED);
+                    break;
+            }
         }
-        vLedsSet(led_colour);
-        vTaskDelay(1000/portTICK_PERIOD_MS);
     }
 }
 

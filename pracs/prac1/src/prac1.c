@@ -29,6 +29,8 @@
 #include "lib_log.h"
 
 /* Private Defines ------------------------------------------*/
+/* Private Macros -------------------------------------------*/
+#define SET_LED(ledcolour)		os_util_queue_led(ledcolour, LEDS_SET)
 /* Type Definitions -----------------------------------------*/
 /* Function Declarations ------------------------------------*/
 void vCustomSerialHandler(xCommsInterface_t *pxComms,
@@ -36,6 +38,7 @@ void vCustomSerialHandler(xCommsInterface_t *pxComms,
 						  xUnifiedCommsMessage_t *pxMessage);
 
 /* Private Variables ----------------------------------------*/
+eLEDs_t led_colour;
 
 /*-----------------------------------------------------------*/
 
@@ -72,7 +75,8 @@ void vApplicationStartupCallback( void ) {
     cli_task_init();
 
     /* Clear for takeoff */
-    vLedsSet(LEDS_RED);
+    led_colour = LEDS_RED;
+    // SET_LED(led_colour);
 }
 
 /*-----------------------------------------------------------*/
@@ -85,6 +89,24 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 	eTdfAddMulti(BLE_LOG, TDF_UPTIME, TDF_TIMESTAMP_NONE, NULL, &xUptime);
 	eTdfFlushMulti(BLE_LOG);
 
+	vLedsToggle(LEDS_BLUE);
+
+	switch(led_colour) {
+		case LEDS_RED:
+			led_colour = LEDS_GREEN;
+			break;
+		case LEDS_GREEN:
+			led_colour = LEDS_BLUE;
+			break;
+		case LEDS_BLUE:
+			led_colour = LEDS_RED;
+			break;
+		default:
+			led_colour = LEDS_RED;
+			break;
+	}
+
+	SET_LED(led_colour);
 }
 
 /*-----------------------------------------------------------*/
