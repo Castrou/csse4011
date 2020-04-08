@@ -19,7 +19,9 @@
 #include "semphr.h"
 
 #include "leds.h"
+#include "log.h"
 
+#include "os_log.h"
 #include "os_util.h"
 #include "lib_util.h"
 
@@ -27,6 +29,7 @@
 /* Private typedef -----------------------------------------------------------*/
 typedef struct LEDControl {
     eLEDs_t colour;
+    char *colourName;
     char function;
 } LEDControl;
 
@@ -113,15 +116,19 @@ void LEDControl_Task( void ) {
             switch(RxLED.function) {
                 case LEDS_SET:
                     vLedsSet(RxLED.colour);
+                    os_log_queue_print(LOG_DEBUG, "Setting LED");
                     break;
                 case LEDS_ON:
                     vLedsOn(RxLED.colour);
+                    os_log_queue_print(LOG_DEBUG, "Turning on LED");
                     break;
                 case LEDS_OFF:
                     vLedsOff(RxLED.colour);
+                    os_log_queue_print(LOG_DEBUG, "Turning off LED");
                     break;
                 case LEDS_TOGGLE:
                     vLedsToggle(RxLED.colour);
+                    os_log_queue_print(LOG_DEBUG, "Toggling LED");
                     break;
                 default:
                     vLedsSet(LEDS_RED);
