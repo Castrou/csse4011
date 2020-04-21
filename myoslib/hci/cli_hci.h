@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/log/cli_log.h
+ * @file myoslib/hci/cli_hci.h
  * @author Cameron Stroud - 44344968
- * @date 06042020
- * @brief Log CLI header file
+ * @date 21042020
+ * @brief HCI Commands header file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -11,16 +11,19 @@
  *************************************************************** 
  */
 
-#ifndef S4434496_CLI_LOG_H
-#define S4434496_CLI_LOG_H
+#ifndef S4434496_CLI_HCI_H
+#define S4434496_CLI_HCI_H
+
 
 /* Function prototypes -------------------------------------------------------*/
-extern void cli_log_init( void );
-extern void cli_log_deinit( void );
+extern void cli_hci_init( void );
+extern void cli_hci_deinit( void );
 
 /* Commands ------------------------------------------------------------------*/
-BaseType_t logCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
+BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
+                        const char * pcCommandString);
+BaseType_t imuCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
                         const char * pcCommandString);
 
 
-#endif // S4434496_CLI_LOG_H
+#endif // S4434496_CLI_HCI_H

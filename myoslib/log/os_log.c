@@ -66,9 +66,18 @@ void Log_Task( void );
 * @param  input: string of Serial input
 * @retval None
 */
-extern void os_log_queue_print( LogLevel_t type, const char *payload ) {
+extern void os_log_print( LogLevel_t type, const char *payload, ... ) {
 
-    Log.message = payload;
+    char buffer[100];
+    va_list argList;
+
+    va_start(argList, payload);
+
+    tiny_vsnprintf(buffer, 100, payload, argList);
+
+	va_end(argList);
+
+    Log.message = buffer;
     Log.logType = type;
 
     if(xQueueSendToBack(QueueLog, (void *) &Log, 
@@ -78,6 +87,8 @@ extern void os_log_queue_print( LogLevel_t type, const char *payload ) {
         // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
         // portEXIT_CRITICAL();
     }
+
+    vTaskDelay(5);
 }
 
 /*----------------------------------------------------------------------------*/

@@ -30,7 +30,7 @@
 #include "cli_util.h"
 #include "lib_util.h"
 #include "os_util.h"
-#include "lib_log.h"
+#include "os_log.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -104,11 +104,11 @@ BaseType_t timeCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char 
 		int hrs  = time/3600;
         int min = (time - (hrs*3600))/60;
         int sec = (time - (hrs*3600) - (min*60));
-		log_print(LOG_INFO, "Time (hh:mm:ss): %02d:%02d:%02d", hrs, min, sec);
+		os_log_print(LOG_INFO, "Time (hh:mm:ss): %02d:%02d:%02d", hrs, min, sec);
 	} else if (!strcmp(cCmd_string, NOFORMAT)) {
-		log_print(LOG_INFO, "Time (seconds): %d", time);
+		os_log_print(LOG_INFO, "Time (seconds): %d", time);
 	} else {
-		log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: time [f]");
+		os_log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: time [f]");
 	}
 
 	/* Return pdFALSE, as there are no more strings to return */
@@ -144,7 +144,7 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 			set_led_colour(&ledVar, &ledColour, arg_colour)) 
 	{
 		/* Invalid Arguments */
-		log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
+		os_log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
 		return pdFALSE;
 	}
 	
@@ -155,7 +155,7 @@ BaseType_t ledUtilCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const ch
 		case LEDS_TOGGLE:
 			break;
 		default:
-			log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
+			os_log_print(LOG_ERROR, "ERROR: Invalid Arguments - usage: led <o/f/t> <r/g/b/c>");
 			return pdFALSE;
 	}
 

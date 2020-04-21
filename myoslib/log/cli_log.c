@@ -27,7 +27,6 @@
 #include "leds.h"
 #include "log.h"
 
-#include "lib_log.h"
 #include "cli_log.h"
 #include "os_log.h"
 
@@ -90,7 +89,7 @@ BaseType_t logCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
     /* Check length of arguments */
 	if (lParam_len > 1) {
-		log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: log <e/l/d/a>\r\n");
+		os_log_print(LOG_ERROR, "ERROR: Invalid arguments - usage: log <e/l/d/a>\r\n");
 		return pdFALSE;
 	}
 
