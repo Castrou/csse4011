@@ -19,7 +19,8 @@
 
 /* Function prototypes -------------------------------------------------------*/
 extern void hal_hci_init( void );
-extern void hal_hci_addDatafield( Datafield newField );
+extern void hal_hci_send_packet( Packet packet );
+extern void hal_hci_addDatafield( Packet destPacket, Datafield newField );
 extern Datafield hal_hci_build_datafield( char *command, char *sid, char *regaddr, char *regval);
 
 #endif // S4434496_HAL_HCI_H

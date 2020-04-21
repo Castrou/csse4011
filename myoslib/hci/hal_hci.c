@@ -40,8 +40,14 @@ typedef enum {
 } SID_t;
 
 /* Private define ------------------------------------------------------------*/
-#define		READ		'r'
-#define 	WRITE		'w'
+#define		PREAMBLE		0xAA
+#define		REQUEST			0x01
+#define		RESPONSE		0x02
+
+#define		READ			'r'
+#define 	WRITE			'w'
+
+#define		BYTESIZE_DF		4
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 UART_MODULE_CREATE( SERIAL_OUTPUT1, NRF_UARTE1, UARTE1_IRQHandler, UNUSED_IRQ, 4, 128, 64 );
@@ -77,7 +83,6 @@ void uart_print( char c ) {
     } else {
         printBuff[buffPos] = c;
         buffPos++;
-        // os_log_print(LOG_DEBUG, "%c", c);
     }
 
 }
@@ -112,23 +117,6 @@ extern void hal_hci_init() {
 
     vUartOn(uartOutput);
 }
-
-/*-----------------------------------------------------------*/
-
-// extern void hal_hci_writetest() {
-
-//     pcBuffer = (char *) xUartBackend.fnClaimBuffer(uartOutput, &bufflen);
-//     pvMemcpy(pcBuffer, "This is a string", 17);
-//     xUartBackend.fnSendBuffer(uartOutput, pcBuffer, bufflen);
-
-// }
-
-/*-----------------------------------------------------------*/
-
-// void build_packet(Packet packet) {
-
-
-// }
 
 /*-----------------------------------------------------------*/
 
@@ -169,12 +157,13 @@ extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *
     }
 
 	/* Get Register Address */
-	regaddr = strtol(regaddrString, NULL, 10);
+	regaddr = strtol(regaddrString, NULL, 16);
 
 	/* Adjust according to read or write command */
     switch(cmd) {
         case READ:
 			i2caddr++;	// Read address is 1 more than write address
+			retDatafield.regval = 0;	// Not writing anything to it
             break;
         case WRITE:
             regval = strtol(regvalString, NULL, 10);
@@ -191,21 +180,40 @@ extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *
 
 /*-----------------------------------------------------------*/
 
-extern void hal_hci_addDatafield( Datafield newField ) {
+extern void hal_hci_addDatafield( Packet destPacket, Datafield newField ) {
 
-    HCIPacket.data[numDatafield] = newField;
+    destPacket.data[destPacket.dataCnt] = newField;
+	destPacket.dataCnt++;
 }
 
 /*-----------------------------------------------------------*/
 
 extern void hal_hci_send_packet( Packet packet ) {
+	
+	int length = packet.dataCnt * BYTESIZE_DF;
+	char TxPacket[70], *df[BYTESIZE_DF];
+	char typeXlength = (packet.type << 4) & length;
 
-	int totalLen = 0;
+	/* Prep the datafields */
+	for (int i = 0; i < packet.dataCnt; i++) {
+		df[i][0] = packet.data[i].sid;
+		df[i][1] = packet.data[i].i2caddr;
+		df[i][2] = packet.data[i].regaddr;
+		df[i][3] = packet.data[i].regval;
+	}
 
-    for (int i = 0; i < numDatafield; i++) {
-        totalLen += packet.data[i].length;
-    }
+	/* Assemble the Packet */
+	TxPacket[0] = PREAMBLE;
+	TxPacket[1] = typeXlength;
+	for (int i = 0; i < length; i++) {
+		for(int j = 0; j < BYTESIZE_DF; j++) {
+			TxPacket[i+j] = df[i][j];
+		}
+	}
 
+	pcBuffer = (char *) xUartBackend.fnClaimBuffer(uartOutput, &bufflen);
+    pvMemcpy(pcBuffer, TxPacket, length + 2);
+    xUartBackend.fnSendBuffer(uartOutput, pcBuffer, bufflen);
 }
 
 /*-----------------------------------------------------------*/

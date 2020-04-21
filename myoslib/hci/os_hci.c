@@ -31,7 +31,7 @@
 #include "hal_hci.h"
 #include "cli_hci.h"
 #include "os_hci.h"
-
+#include "hci_packet.h"
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -43,10 +43,11 @@
 /* Private variables ---------------------------------------------------------*/
 TaskHandle_t HCIHandler;
 QueueHandle_t QueueHCI;
-char *HCI;
 
 /* Private function prototypes -----------------------------------------------*/
 void HCI_Task( void );
+
+/*----------------------------------------------------------------------------*/
 
 /**
 * @brief  Initalises all HCI drivers
@@ -81,19 +82,13 @@ extern void os_hci_deinit( void ) {
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Add to LED Queue
-* @param  ledColour: Colour of LED
-* @param  function: LED Control function
+* @brief  Add to HCI Queue
+* @param  TxPacket: Packet struct to transmit
 * @retval None
 */
-void os_hci_queue_write(const char *payload) {
+extern void os_hci_queue_write( Packet TxPacket ) {
 
-    uint32_t payloadLen = strlen(payload);
-    pvMemcpy(HCI, payload, payloadLen);
-
-    if(xQueueSendToBack(QueueHCI, HCI, 
-        (portTickType) 10) != pdPASS) 
-    {
+    if(xQueueSendToBack(QueueHCI, (void *) &TxPacket, (portTickType) 10) != pdPASS) {
         // portENTER_CRITICAL();
         // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
         // portEXIT_CRITICAL();
@@ -109,20 +104,18 @@ void os_hci_queue_write(const char *payload) {
 */
 void HCI_Task( void ) {
     
-    char hciPayload[80];
+    Packet TxPacket;
     vLedsToggle(LEDS_ALL);
 
-    QueueHCI = xQueueCreate(10, sizeof(hciPayload));
+    QueueHCI = xQueueCreate(5, sizeof(TxPacket));
 
     vLedsSet(LEDS_NONE);
 
     for ( ;; ) {
-        // if (xQueueReceive(QueueHCI, &hciPayload, 10) == pdTRUE) {   
-        //         // hal_hci_writetest();
-        // }
-        // hal_hci_writetest();
-        vLedsToggle(LEDS_RED);
-        vTaskDelay(1000);
+        if (xQueueReceive(QueueHCI, &TxPacket, 10) == pdTRUE) {   
+                hal_hci_send_packet(TxPacket);
+        }
+        vTaskDelay(5);
     }
 }
 

@@ -111,7 +111,10 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
     char regaddrString[10] = "";
     char regvalString[10] = "";
     char *token;
+	Packet commandPacket;
 	Datafield commandDatafield;
+
+	commandPacket.dataCnt = 0;
 
 	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
 
@@ -139,7 +142,8 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
     }
 
 	commandDatafield = hal_hci_build_datafield(commandString, sidString, regaddrString, regvalString);
-	hal_hci_addDatafield(commandDatafield);
+	hal_hci_addDatafield(commandPacket, commandDatafield);
+	
 
 
 	UNUSED(pcWriteBuffer);

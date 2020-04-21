@@ -14,10 +14,12 @@
 #ifndef S4434496_CLI_HCI_H
 #define S4434496_CLI_HCI_H
 
+#include "hci_packet.h"
 
 /* Function prototypes -------------------------------------------------------*/
 extern void cli_hci_init( void );
 extern void cli_hci_deinit( void );
+extern void os_hci_queue_write( Packet TxPacket );
 
 /* Commands ------------------------------------------------------------------*/
 BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen,

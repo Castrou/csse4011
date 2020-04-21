@@ -21,14 +21,13 @@ typedef struct Datafield {
     uint8_t i2caddr;
     uint8_t regaddr;
     uint8_t regval;
-    uint8_t length;
 
 } Datafield;
 
 typedef struct Packet {
 
-    uint8_t preamble;
     uint8_t type;
+    uint8_t dataCnt;
     Datafield data[16];
 
 } Packet;

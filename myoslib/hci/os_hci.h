@@ -14,10 +14,12 @@
 #ifndef S4434496_OS_HCI_H
 #define S4434496_OS_HCI_H
 
+#include "hci_packet.h"
+
 /* Global Variables ----------------------------------------------------------*/
 
 /* Function prototypes -------------------------------------------------------*/
-extern void os_hci_queue_write( const char *payload );
+extern void os_hci_queue_write( Packet TxPacket );
 extern void os_hci_init( void );
 extern void os_hci_deinit( void );
 

@@ -2,7 +2,7 @@
 # Application Settings
 ##############################################################################
 
-PROJ_NAME     		:= cli_framework
+PROJ_NAME     		:= prac2
 SUPPORTED_TARGETS 	:= nrf52840dk bleatag argon xenon
 
 EIFREERTOS_PATH = $(realpath ./../../../ei-freertos)
