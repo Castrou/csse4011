@@ -11,12 +11,12 @@
  *************************************************************** 
  */
 
-
 /* Includes ***************************************************/
 #include "string.h"
 #include "stdlib.h"
 
 #include "board.h"
+#include "tiny_printf.h"
 
 #include "uart.h"
 #include "unified_comms_serial.h"
@@ -32,22 +32,29 @@
 
 /* Private typedef -----------------------------------------------------------*/
 typedef enum {
-    LSM6DSL = 1,    // IMU
-    LIS3MDL = 2,    // 3-axis magnetometer
-    LPS22HB = 3,    // MEMS nano pressure sensor
-    VL53L0X = 4,    // ToF and Gesture Detection sensor
-    HTS221 = 5      // Temp & Humidity Sensor
+	LSM6DSL = 1,    // IMU
+	LIS3MDL = 2,    // 3-axis magnetometer
+	LPS22HB = 3,    // MEMS nano pressure sensor
+	VL53L0X = 4,    // ToF and Gesture Detection sensor
+	HTS221 = 5      // Temp & Humidity Sensor
 } SID_t;
 
 /* Private define ------------------------------------------------------------*/
+#define		MAX_PKT_SIZE	70
 #define		PREAMBLE		0xAA
 #define		REQUEST			0x01
 #define		RESPONSE		0x02
 
+#define		DF_SIZE				4
+#define     DF_PKT_START    	2
+#define		SID_DF_POS			0
+#define		I2C_DF_POS			1
+#define		REGADDR_DF_POS		2
+#define		REGVAL_DF_POS		3
+
 #define		READ			'r'
 #define 	WRITE			'w'
 
-#define		BYTESIZE_DF		4
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 UART_MODULE_CREATE( SERIAL_OUTPUT1, NRF_UARTE1, UARTE1_IRQHandler, UNUSED_IRQ, 4, 128, 64 );
@@ -90,7 +97,27 @@ void uart_print( char c ) {
 /*-----------------------------------------------------------*/
 
 void uart_serial_handler( char RxChar ) {
+
     uart_print(RxChar);
+}
+
+/*-----------------------------------------------------------*/
+
+extern void uart_write( const char *payload, ... ) {
+
+    char buffer[100];
+    va_list argList;
+
+    va_start(argList, payload);
+
+    tiny_vsnprintf(buffer, 100, payload, argList);
+
+	va_end(argList);
+
+    pcBuffer = (char *) xUartBackend.fnClaimBuffer(uartOutput, &bufflen);
+    pvMemcpy(pcBuffer, buffer, 100);
+    xUartBackend.fnSendBuffer(uartOutput, pcBuffer, bufflen);
+
 }
 
 /*-----------------------------------------------------------*/
@@ -139,9 +166,11 @@ extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *
     switch(sid) {		// Default the values to write address for now
         case LSM6DSL:	// IMU
 			i2caddr = 0xD4;
+            vLedsToggle(LEDS_RED);
             break;
         case LIS3MDL:	// 3-axis magno
 			i2caddr = 0x3C;
+            vLedsToggle(LEDS_GREEN);
             break;
         case LPS22HB:	// Pressure sensor
 			i2caddr = 0xBA;
@@ -153,6 +182,7 @@ extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *
 			i2caddr = 0xBE;
             break;
         default:
+            vLedsToggle(LEDS_ALL);
             break;
     }
 
@@ -180,40 +210,41 @@ extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *
 
 /*-----------------------------------------------------------*/
 
-extern void hal_hci_addDatafield( Packet destPacket, Datafield newField ) {
+extern void hal_hci_addDatafield( Packet *destPacket, Datafield newField ) {
 
-    destPacket.data[destPacket.dataCnt] = newField;
-	destPacket.dataCnt++;
+    destPacket->data[destPacket->dataCnt] = newField;
+	destPacket->dataCnt += 1;
 }
 
 /*-----------------------------------------------------------*/
 
 extern void hal_hci_send_packet( Packet packet ) {
 	
-	int length = packet.dataCnt * BYTESIZE_DF;
-	char TxPacket[70], *df[BYTESIZE_DF];
-	char typeXlength = (packet.type << 4) & length;
-
-	/* Prep the datafields */
-	for (int i = 0; i < packet.dataCnt; i++) {
-		df[i][0] = packet.data[i].sid;
-		df[i][1] = packet.data[i].i2caddr;
-		df[i][2] = packet.data[i].regaddr;
-		df[i][3] = packet.data[i].regval;
-	}
+	int dfLength = packet.dataCnt * DF_SIZE;
+	int pktPos;
+	char TxPacket[MAX_PKT_SIZE];
+	char typeXlength = (packet.type << 4) | dfLength;
 
 	/* Assemble the Packet */
 	TxPacket[0] = PREAMBLE;
 	TxPacket[1] = typeXlength;
-	for (int i = 0; i < length; i++) {
-		for(int j = 0; j < BYTESIZE_DF; j++) {
-			TxPacket[i+j] = df[i][j];
-		}
-	}
 
+	/* Assemble datafields */
+	for (pktPos = 0; pktPos < packet.dataCnt; pktPos++) {
+		TxPacket[DF_PKT_START+SID_DF_POS+DF_SIZE*pktPos] = packet.data[pktPos].sid;
+		TxPacket[DF_PKT_START+I2C_DF_POS+DF_SIZE*pktPos] = packet.data[pktPos].i2caddr;
+		TxPacket[DF_PKT_START+REGADDR_DF_POS+DF_SIZE*pktPos] = packet.data[pktPos].regaddr;
+		TxPacket[DF_PKT_START+REGVAL_DF_POS+DF_SIZE*pktPos] = packet.data[pktPos].regval;
+	}
+	
+	/* End Packet Assembly */
+	// TxPacket[DF_PKT_START+DF_SIZE*pktPos] = '\0';
+
+    /* Write packet to UART */
 	pcBuffer = (char *) xUartBackend.fnClaimBuffer(uartOutput, &bufflen);
-    pvMemcpy(pcBuffer, TxPacket, length + 2);
+    pvMemcpy(pcBuffer, TxPacket, dfLength + DF_PKT_START);
     xUartBackend.fnSendBuffer(uartOutput, pcBuffer, bufflen);
+
 }
 
 /*-----------------------------------------------------------*/

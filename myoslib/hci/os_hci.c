@@ -113,6 +113,7 @@ void HCI_Task( void ) {
 
     for ( ;; ) {
         if (xQueueReceive(QueueHCI, &TxPacket, 10) == pdTRUE) {   
+                // uart_write("Sending packet\r\n");
                 hal_hci_send_packet(TxPacket);
         }
         vTaskDelay(5);

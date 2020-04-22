@@ -115,6 +115,7 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 	Datafield commandDatafield;
 
 	commandPacket.dataCnt = 0;
+	commandPacket.type = 0x01;
 
 	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
 
@@ -141,9 +142,14 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
         token = strtok(NULL, " ");
     }
 
+	if(commandString[0] != 'r' && commandString[0] != 'w') {
+		os_log_print(LOG_ERROR, "Invalid usage: requires 'r' or 'w' command");
+	}
+
 	commandDatafield = hal_hci_build_datafield(commandString, sidString, regaddrString, regvalString);
-	hal_hci_addDatafield(commandPacket, commandDatafield);
-	
+	hal_hci_addDatafield(&commandPacket, commandDatafield);
+
+	os_hci_queue_write(commandPacket);
 
 
 	UNUSED(pcWriteBuffer);
