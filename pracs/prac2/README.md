@@ -1,6 +1,6 @@
-# CSSE4011 Practical 2
+# Cameron Stroud - 44344968
 
-## Cameron Stroud - 44344968
+## CSSE4011 Practical 2
 
 ## Design Tasks
 
@@ -13,16 +13,16 @@ Micropython installed and integrated into development environment
 #### Design Task 2A: Basic Example
 
 Example program has been made in led.py which toggles between two LEDs.  
-Assuming the CSSE4011 Setup Guide has been completed, the program can be flashed using `pyboard --device /dev/ttyACMx -f cp /../../myoslib/scu/led.py :main.py` relative to the prac2 folder, where ttyACMx is the B_L475E_IOT01A (typically ttyACM0 or ttyACM1).  
+Assuming the CSSE4011 Setup Guide has been completed, the program can be flashed using:   `pyboard --device /dev/ttyACMx -f cp /../../myoslib/scu/led.py :main.py` relative to the prac2 folder, where ttyACMx is the B\_L475E\_IOT01A (typically ttyACM0 or ttyACM1).  
 
 ### PART B - SCU and HCI
 
 #### Design Task 1B: Host Controller Interface (HCI)
 
-Host controller interface successfully implemented. Both Argon and B_L4753_IOT01A communicate using the following packet format, where each item is 1 byte:  
+Host Controller Interface successfully implemented. Both Argon and B\_L4753\_IOT01A communicate using the following packet format, where each item is 1 byte:  
 `<PREAMBLE><TYPExLENGTH><DATAFIELD1>[<DATAFIELD2>]`  
 PREAMBLE: 0xAA - ensures signal is a packet.  
-TYPExLENGTH: 4 type bits masked combined with 4 length bits.  
+TYPExLENGTH: 4 type bits combined with 4 length bits.  
 TYPE: 0x01 for REQUEST; 0x02 for RESPONSE.  
 LENGTH: Total number of bytes from datafields.  
 DATAFIELD1: First datafield.  
@@ -57,34 +57,36 @@ CLI Commands implemented for interfacing with SCU:
 
 ##### Example commands
 
-`i2creg r 1 0x0F`:  
-B_L475E_IOT01A Display: `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0xf 0x0 }`  
-Argon Display: `RECV(SID1): REGADDR=0x0f REGVAL=0x6a`  
-
-`i2creg w 1 0x10 0x01`:  
-B_L475E_IOT01A Display:  
+i2creg r 1 0x0F:  
+B\_L475E\_IOT01A Display:  
+`RECV PACKET: { 0xaa 0x14 0x1 0xd5 0xf 0x0 }`  
+Argon Display:  
+`RECV(SID1): REGADDR=0x0f REGVAL=0x6a`  
+  
+i2creg w 1 0x10 0x01:  
+B\_L475E\_IOT01A Display:  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x10 0x1 }`  
 Argon Display:  
 `RECV(SID1): REGADDR=0x10 REGVAL=0x01`
 
-`lsm6dsl r x`:  
-B_L475E_IOT01A Display:  
+lsm6dsl r x:  
+B\_L475E\_IOT01A Display:  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x29 0x0 0x1 0xd5 0x28 0x0 }`  
 Argon Display:  
 `X Acceleration: -0.05g(s)`  
 
-`lsm6dsl r y`:  
-B_L475E_IOT01A Display:  
+lsm6dsl r y:  
+B\_L475E\_IOT01A Display:  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2b 0x0 0x1 0xd5 0x2a 0x0 }`  
 Argon Display: `Y Acceleration: -0.03g(s)`  
 
-`lsm6dsl r z`:  
-B_L475E_IOT01A Display:  
+lsm6dsl r z:  
+B\_L475E\_IOT01A Display:  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2d 0x0 0x1 0xd5 0x2c 0x0 }`  
 Argon Display: `Z Acceleration: 0.99g(s)`  
 
-`lsmdsl r a`:  
-B_L475E_IOT01A Display:  
+lsmdsl r a:  
+B\_L475E\_IOT01A Display:  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x29 0x0 0x1 0xd5 0x28 0x0 }`  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2b 0x0 0x1 0xd5 0x2a 0x0 }`  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2d 0x0 0x1 0xd5 0x2c 0x0 }`  

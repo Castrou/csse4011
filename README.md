@@ -1,4 +1,4 @@
-# 44344968, Cameron Stroud's CSSE4011 Git Repository
+# Cameron Stroud's CSSE4011 Git Repository
 
 ## Overview
 
@@ -11,3 +11,4 @@ Development was done on the following boards:
 Development was done using the following libraries/frameworks:  
     [CSIRO's EI-FreeRTOS](https://github.com/csiro-wsn/ei-freertos)  
     [FreeRTOS+CLI](https://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_CLI/FreeRTOS_Plus_Command_Line_Interface.html)  
+    [MicroPython](http://micropython.org/)

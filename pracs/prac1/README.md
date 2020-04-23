@@ -1,6 +1,6 @@
-# CSSE4011 Practical 1
+# Cameron Stroud - 44344968
 
-## Cameron Stroud - 44344968
+## CSSE4011 Practical 1
 
 ## Design Tasks
 
