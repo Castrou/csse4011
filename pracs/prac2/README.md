@@ -26,7 +26,7 @@ Not yet implemented
 
 #### Design Task 3B: AHU HCI MyOSLib Implementation
 
-Not yet implemented
+
 
 ### Part C - AHU and SCU Hardware
 

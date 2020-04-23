@@ -173,7 +173,7 @@ void HCI_Task( void ) {
     Packet RxPacket;
 
 	double incomingData;
-	uint16_t incomingRaw;
+	int16_t incomingRaw;
 
     QueueHCIWrite = xQueueCreate(8, 2*sizeof(TxPacket));
     QueueHCIRead = xQueueCreate(8, 2*sizeof(RxPacket));
@@ -188,22 +188,30 @@ void HCI_Task( void ) {
         if (xQueueReceive(QueueHCIRead, &RxPacket, 10) == pdTRUE) {   
             /* Read packet */
             if (RxPacket.type == 2) {
-                axisBits = xEventGroupGetBits(EventAccel);
-				incomingRaw = (RxPacket.data[0].regval<<4) | RxPacket.data[1].regval;
-				incomingData = (float) (incomingRaw/G_CONVERT);
+				axisBits = xEventGroupGetBits(EventAccel);
+				incomingRaw = (RxPacket.data[0].regval<<8) | RxPacket.data[1].regval;
 
                 if ((axisBits & X_BIT) == X_BIT) {
+                    incomingData = (float) (incomingRaw/G_CONVERT);
                     xEventGroupClearBits(EventAccel, X_BIT);
 					os_log_print(LOG_INFO, "X Acceleration: %.2fg(s)", incomingData);
 
                 } else if ((axisBits & Y_BIT) == Y_BIT) {
+                    incomingData = ((float)incomingRaw/(float)G_CONVERT);
                     xEventGroupClearBits(EventAccel, Y_BIT);
 					os_log_print(LOG_INFO, "Y Acceleration: %.2fg(s)", incomingData);
 
                 } else if ((axisBits & Z_BIT) == Z_BIT) {
+                    incomingData = (float) (incomingRaw/G_CONVERT);
                     xEventGroupClearBits(EventAccel, Z_BIT);
 					os_log_print(LOG_INFO, "Z Acceleration: %.2fg(s)", incomingData);
 
+                } else {
+                    for(int i = 0; i < RxPacket.dataCnt; i++) {
+                        os_log_print(LOG_INFO, "RECV(SID%d): REGADDR=0x%02x REGVAL=0x%02x",
+                                        RxPacket.data[i].sid, RxPacket.data[i].regaddr,
+                                        RxPacket.data[i].regval);
+                    }
                 }
             }
 			xSemaphoreGive(SemaphoreUart);

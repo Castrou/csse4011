@@ -76,7 +76,9 @@ def read_packet(packet: bytearray):
 				val = i2c2.readfrom_mem((i2caddr[i]>>1), regaddr[i], 1)
 				newRegval.append(int.from_bytes(val, 'big'))
 			else:
+				# Write command
 				i2c2.writeto_mem((i2caddr[i]>>1), regaddr[i], regval[i].to_bytes(1, 'big'))
+				newRegval.append(regval[i])
 
 		TxPacket = build_packet(2, sid, i2caddr, regaddr, newRegval)
 		serial.write(TxPacket)

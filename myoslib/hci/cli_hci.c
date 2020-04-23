@@ -164,8 +164,9 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
 	hal_hci_addDatafield(&commandPacket, commandDatafield);
 
 	/* Write Packet */
-	os_hci_write(commandPacket);
-
+	if (xSemaphoreTake(SemaphoreUart, (TickType_t) 10) == pdTRUE) {
+		os_hci_write(commandPacket);
+	}
 	UNUSED(pcWriteBuffer);
 	UNUSED(xWriteBufferLen);    
 

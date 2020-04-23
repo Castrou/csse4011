@@ -137,19 +137,19 @@ void packet_process( uint8_t c ) {
 
     switch(packetState) {
         case PKT_SID:
-            recvPacket.data[2-recvDFPos].sid = c;
+            recvPacket.data[recvPacket.dataCnt-recvDFPos].sid = c;
             packetState = PKT_I2CADDR;
             break;
         case PKT_I2CADDR:
-            recvPacket.data[2-recvDFPos].i2caddr = c;
+            recvPacket.data[recvPacket.dataCnt-recvDFPos].i2caddr = c;
             packetState = PKT_REGADDR;
             break;
         case PKT_REGADDR:
-            recvPacket.data[2-recvDFPos].regaddr = c;
+            recvPacket.data[recvPacket.dataCnt-recvDFPos].regaddr = c;
             packetState = PKT_REGVAL;
             break;
         case PKT_REGVAL:
-            recvPacket.data[2-recvDFPos].regval = c;
+            recvPacket.data[recvPacket.dataCnt-recvDFPos].regval = c;
             recvDFPos--;
             packetState = PKT_SID;
             break;
@@ -200,7 +200,7 @@ void uart_fsmprocessing( char c ) {
             } else {
 				/* Last receive, send off for printing */
                 packet_process(c);
-                os_hci_read(recvPacket);
+				os_hci_read(recvPacket);
                 packetState = PKT_SID;
                 uartState = UART_IDLE;
             }
