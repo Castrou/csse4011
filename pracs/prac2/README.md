@@ -13,7 +13,7 @@ Micropython installed and integrated into development environment
 #### Design Task 2A: Basic Example
 
 Example program has been made in led.py which toggles between two LEDs.  
-Assuming the CSSE4011 Setup Guide has been completed, the program can be flashed using `pyboard --device /dev/ttyACMx -f cp /../../myoslib/scu/led.py :main.py` relative to the prac2 folder, where ttyACMx is the B_L475E_IOT01A (typically ttyACM0 or ttyACM1)  
+Assuming the CSSE4011 Setup Guide has been completed, the program can be flashed using `pyboard --device /dev/ttyACMx -f cp /../../myoslib/scu/led.py :main.py` relative to the prac2 folder, where ttyACMx is the B_L475E_IOT01A (typically ttyACM0 or ttyACM1).  
 
 ### PART B - SCU and HCI
 
@@ -21,7 +21,7 @@ Assuming the CSSE4011 Setup Guide has been completed, the program can be flashed
 
 Host controller interface successfully implemented. Both Argon and B_L4753_IOT01A communicate using the following packet format, where each item is 1 byte:  
 `<PREAMBLE><TYPExLENGTH><DATAFIELD1>[<DATAFIELD2>]`  
-PREAMBLE: 0xAA - ensures signal is a packet  
+PREAMBLE: 0xAA - ensures signal is a packet.  
 TYPExLENGTH: 4 type bits masked combined with 4 length bits.  
 TYPE: 0x01 for REQUEST; 0x02 for RESPONSE.  
 LENGTH: Total number of bytes from datafields.  
@@ -39,6 +39,15 @@ REGVAL: In a REQUEST packet this is the value to write, in a RESPONSE this is th
 
 Can successfully read from and write to sensor registers using HCI and I2C Address.  
 The following table shows the SID and respective I2C Addresses:  
+| Sensor Model  | SID | Description     | I2C Address | I2C Write Address | I2C Read Address |
+| ------------- | --- | --------------- | :---------: | :---------------: | :--------------: |
+| LSM6DSL       | 1   | IMU             | 0x6A        | 0xD4              | 0xD5             |
+| LIS3MDL       | 2   | Magnetometer    | 0x1E        | 0x3C              | 0x3D             |
+| LPS22HB       | 3   | Pressure Sensor | 0x5D        | 0xBA              | 0xBB             |
+| VL53L0X       | 4   | Time of Flight  | 0x29        | 0x52              | 0x53             |
+| HTS221        | 5   | Temperature     | 0x5F        | 0xBE              | 0xBF             |
+
+To load hci to the B_L475E_IOT01A relative to the prac2 folder, the following command can be used: `pyboard --device /dev/ttyACMx -f cp /../../myoslib/scu/hci.py :main.py`  
 
 #### Design Task 3B: AHU HCI MyOSLib Implementation
 
@@ -68,7 +77,6 @@ Argon Display:
 B_L475E_IOT01A Display:  
 `RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2b 0x0 0x1 0xd5 0x2a 0x0 }`  
 Argon Display: `Y Acceleration: -0.03g(s)`  
-
 
 `lsm6dsl r z`:  
 B_L475E_IOT01A Display:  
