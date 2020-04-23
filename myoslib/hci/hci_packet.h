@@ -28,7 +28,7 @@ typedef struct Packet {
 
     uint8_t type;
     uint8_t dataCnt;
-    Datafield data[16];
+    Datafield data[2];
 
 } Packet;
 

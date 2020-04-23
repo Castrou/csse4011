@@ -98,7 +98,8 @@ void uart_print( char c ) {
 
 void uart_serial_handler( char RxChar ) {
 
-    uart_print(RxChar);
+    // uart_print(RxChar);
+    os_log_print(LOG_DEBUG, "Recv: %c", RxChar);
 }
 
 /*-----------------------------------------------------------*/
@@ -147,47 +148,33 @@ extern void hal_hci_init() {
 
 /*-----------------------------------------------------------*/
 
-extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *regaddrString, char *regvalString) {
+extern Datafield hal_hci_build_datafield( char cmd, uint8_t sid, 
+                                            uint8_t regaddr, uint8_t regval) {
 
     Datafield retDatafield;
-	SID_t sid;
     uint8_t i2caddr;
-	uint8_t regaddr;
-	uint8_t regval;
-	char cmd;
-
-	/* Get command */
-	cmd = command[0];
-
-	/* Get Sensor ID */
-	sid = (SID_t)strtol(sidString, NULL, 10);
 
 	/* Find I2C Address */
-    switch(sid) {		// Default the values to write address for now
-        case LSM6DSL:	// IMU
+    switch((SID_t)sid) {    // Default the values to write address for now
+        case LSM6DSL:	    // IMU
 			i2caddr = 0xD4;
-            vLedsToggle(LEDS_RED);
             break;
-        case LIS3MDL:	// 3-axis magno
+        case LIS3MDL:	    // 3-axis magno
 			i2caddr = 0x3C;
-            vLedsToggle(LEDS_GREEN);
             break;
-        case LPS22HB:	// Pressure sensor
+        case LPS22HB:	    // Pressure sensor
 			i2caddr = 0xBA;
             break;
-        case VL53L0X:   // ToF & Gesture
+        case VL53L0X:       // ToF & Gesture
 			i2caddr = 0x52;
             break;
-        case HTS221:    // Temp/Humidity sensor
+        case HTS221:        // Temp/Humidity sensor
 			i2caddr = 0xBE;
             break;
         default:
             vLedsToggle(LEDS_ALL);
             break;
     }
-
-	/* Get Register Address */
-	regaddr = strtol(regaddrString, NULL, 16);
 
 	/* Adjust according to read or write command */
     switch(cmd) {
@@ -196,7 +183,6 @@ extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *
 			retDatafield.regval = 0;	// Not writing anything to it
             break;
         case WRITE:
-            regval = strtol(regvalString, NULL, 10);
 			retDatafield.regval = regval;
             break;
     }
@@ -211,7 +197,6 @@ extern Datafield hal_hci_build_datafield( char *command, char *sidString, char *
 /*-----------------------------------------------------------*/
 
 extern void hal_hci_addDatafield( Packet *destPacket, Datafield newField ) {
-
     destPacket->data[destPacket->dataCnt] = newField;
 	destPacket->dataCnt += 1;
 }
@@ -220,10 +205,16 @@ extern void hal_hci_addDatafield( Packet *destPacket, Datafield newField ) {
 
 extern void hal_hci_send_packet( Packet packet ) {
 	
-	int dfLength = packet.dataCnt * DF_SIZE;
+	int dfLength = packet.dataCnt*DF_SIZE;
 	int pktPos;
 	char TxPacket[MAX_PKT_SIZE];
-	char typeXlength = (packet.type << 4) | dfLength;
+	char typeXlength;
+    
+    if(packet.type != 1 && packet.type != 2) { // Type not set, default to request
+        packet.type = 1;
+    }
+
+    typeXlength = (packet.type << 4) | dfLength;    
 
 	/* Assemble the Packet */
 	TxPacket[0] = PREAMBLE;
@@ -236,9 +227,6 @@ extern void hal_hci_send_packet( Packet packet ) {
 		TxPacket[DF_PKT_START+REGADDR_DF_POS+DF_SIZE*pktPos] = packet.data[pktPos].regaddr;
 		TxPacket[DF_PKT_START+REGVAL_DF_POS+DF_SIZE*pktPos] = packet.data[pktPos].regval;
 	}
-	
-	/* End Packet Assembly */
-	// TxPacket[DF_PKT_START+DF_SIZE*pktPos] = '\0';
 
     /* Write packet to UART */
 	pcBuffer = (char *) xUartBackend.fnClaimBuffer(uartOutput, &bufflen);

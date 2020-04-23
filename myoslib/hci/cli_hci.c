@@ -41,9 +41,20 @@
 #define     REGADDR			3
 #define     REGVAL			4
 
-// #define		X_REGADDR		
-// #define 	Y_REGADDR
-// #define 	Z_REGADDR
+#define		READ			'r'
+#define		IMU				1
+
+#define		X_AXIS			'x'
+#define		Y_AXIS			'y'
+#define		Z_AXIS			'z'
+#define		ALL_AXES		'a'
+
+#define		X_HREGADDR		0x29
+#define		X_LREGADDR		0x28
+#define 	Y_HREGADDR		0x2B
+#define 	Y_LREGADDR		0x2A
+#define 	Z_HREGADDR		0x2D
+#define 	Z_LREGADDR		0x2C
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -73,6 +84,7 @@ CLI_Command_Definition_t imuCmd = {
 extern void cli_hci_init( void ) {
 
     FreeRTOS_CLIRegisterCommand(&i2cCmd);
+	FreeRTOS_CLIRegisterCommand(&imuCmd);
 
 }
 
@@ -104,6 +116,9 @@ extern void cli_hci_deinit( void ) {
 BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char * pcCommandString) {
     
     int argNum = 0; 
+	uint8_t sid;
+	uint8_t regaddr;
+	uint8_t regval;
 	long lParam_len;
 	const char *cCmd_string;
     char commandString[10] = "";
@@ -146,7 +161,11 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 		os_log_print(LOG_ERROR, "Invalid usage: requires 'r' or 'w' command");
 	}
 
-	commandDatafield = hal_hci_build_datafield(commandString, sidString, regaddrString, regvalString);
+	sid = strtol(sidString, NULL, 10);
+	regaddr = strtol(regaddrString, NULL, 16);
+	regval = strtol(regvalString, NULL, 10);
+
+	commandDatafield = hal_hci_build_datafield(commandString[0], sid, regaddr, regval);
 	hal_hci_addDatafield(&commandPacket, commandDatafield);
 
 	os_hci_queue_write(commandPacket);
@@ -174,12 +193,71 @@ BaseType_t imuCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 	long lParam_len;
 	const char *cCmd_string;
 	const char *axisString;
+	Packet xPacket;
+	Packet yPacket;
+	Packet zPacket;
+	Datafield buffField;
+
+	xPacket.dataCnt = 0;
+	yPacket.dataCnt = 0;
+	zPacket.dataCnt = 0;
 
 	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
 	axisString = FreeRTOS_CLIGetParameter(pcCommandString, 2, &lParam_len);
 
-    UNUSED(cCmd_string);
-	UNUSED(axisString);
+	if(cCmd_string[0] == READ) {
+		switch(axisString[0]) {
+			case X_AXIS:
+				buffField = hal_hci_build_datafield(READ, IMU, X_HREGADDR, 0);
+				hal_hci_addDatafield(&xPacket, buffField);
+				buffField = hal_hci_build_datafield(READ, IMU, X_LREGADDR, 0);
+				hal_hci_addDatafield(&xPacket, buffField);
+				os_hci_queue_write(xPacket);
+				break;
+
+			case Y_AXIS:
+				buffField = hal_hci_build_datafield(READ, IMU, Y_HREGADDR, 0);
+				hal_hci_addDatafield(&yPacket, buffField);
+				buffField = hal_hci_build_datafield(READ, IMU, Y_LREGADDR, 0);
+				hal_hci_addDatafield(&yPacket, buffField);
+				os_hci_queue_write(yPacket);
+				break;
+
+			case Z_AXIS:
+				buffField = hal_hci_build_datafield(READ, IMU, Z_HREGADDR, 0);
+				hal_hci_addDatafield(&zPacket, buffField);
+				buffField = hal_hci_build_datafield(READ, IMU, Z_LREGADDR, 0);
+				hal_hci_addDatafield(&zPacket, buffField);
+				os_hci_queue_write(zPacket);
+				break;
+
+			case ALL_AXES:
+				/* Setup X Packet */
+				buffField = hal_hci_build_datafield(READ, IMU, X_HREGADDR, 0);
+				hal_hci_addDatafield(&xPacket, buffField);
+				buffField = hal_hci_build_datafield(READ, IMU, X_LREGADDR, 0);
+				hal_hci_addDatafield(&xPacket, buffField);
+
+				/* Setup Y Packet */
+				buffField = hal_hci_build_datafield(READ, IMU, Y_HREGADDR, 0);
+				hal_hci_addDatafield(&yPacket, buffField);
+				buffField = hal_hci_build_datafield(READ, IMU, Y_LREGADDR, 0);
+				hal_hci_addDatafield(&yPacket, buffField);
+	
+				/* Setup Z Packet */
+				buffField = hal_hci_build_datafield(READ, IMU, Z_HREGADDR, 0);
+				hal_hci_addDatafield(&zPacket, buffField);
+				buffField = hal_hci_build_datafield(READ, IMU, Z_LREGADDR, 0);
+				hal_hci_addDatafield(&zPacket, buffField);
+
+				/* Send Packets */
+				os_hci_queue_write(xPacket);
+				os_hci_queue_write(yPacket);
+				os_hci_queue_write(zPacket);
+				break;
+		}
+	}
+
 	UNUSED(pcWriteBuffer);
 	UNUSED(xWriteBufferLen);    
 

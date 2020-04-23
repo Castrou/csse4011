@@ -26,6 +26,8 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
                         const char * pcCommandString);
 BaseType_t imuCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
                         const char * pcCommandString);
+BaseType_t hciCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
+                        const char * pcCommandString);
 
 
 #endif // S4434496_CLI_HCI_H
