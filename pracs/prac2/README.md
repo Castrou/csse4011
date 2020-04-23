@@ -78,12 +78,12 @@ X Acceleration: -0.05g(s)
 `lsm6dsl r y`:  
 B\_L475E\_IOT01A Display:  
 RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2b 0x0 0x1 0xd5 0x2a 0x0 }  
-Argon Display: `Y Acceleration: -0.03g(s)`  
+Argon Display: Y Acceleration: -0.03g(s)  
 
 `lsm6dsl r z`:  
 B\_L475E\_IOT01A Display:  
 RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2d 0x0 0x1 0xd5 0x2c 0x0 }  
-Argon Display: `Z Acceleration: 0.99g(s)`  
+Argon Display: Z Acceleration: 0.99g(s)  
 
 `lsmdsl r a`:  
 B\_L475E\_IOT01A Display:  
