@@ -132,15 +132,15 @@ A PCB has been created for the SCU Interface Board and Gerber Files generated to
 |   |       |   ├──  scu_interface_gerber   (+)  
 |   |       |   ├──  scu_interface_sch.pdf  (+)  
 |   |       ├── inc  
-|   |       |   ├── application.h  
-|   |       |   └── gatt_nrf52.h  
+|   |       |   ├── application.h           (+)  
+|   |       |   └── gatt_nrf52.h            (+)  
 |   |       ├── src  
-|   |       |   ├── gatt_nrf52.c  
-|   |       |   ├── gatt.xml  
-|   |       |   └── prac2.c  
-|   |       ├── Makefile  
-|   |       ├── filelist.mk  
-|   |       └── README.md  
+|   |       |   ├── gatt_nrf52.c            (+)  
+|   |       |   ├── gatt.xml                (+)  
+|   |       |   └── prac2.c                 (+)  
+|   |       ├── Makefile            (+)
+|   |       ├── filelist.mk         (+)
+|   |       └── README.md           (+)
 |   └── project  
 └── micropython     (+)  
 ```

@@ -94,15 +94,15 @@ Base schematic has been created for the AHU in the Grove Shield Feather Wing for
 |   └── pracs
 |       ├── prac1
 |       |   ├── inc
-|       |   |   ├── application.h
-|       |   |   └── gatt_nrf52.h
+|       |   |   ├── application.h       (+)
+|       |   |   └── gatt_nrf52.h        (+)
 |       |   ├── src
-|       |   |   ├── gatt_nrf52.c
-|       |   |   ├── gatt.xml
-|       |   |   └── prac1.c
-|       |   ├── Makefile
-|       |   └── filelist.mk
-|       └────── README.md
+|       |   |   ├── gatt_nrf52.c        (+)
+|       |   |   ├── gatt.xml            (+)
+|       |   |   └── prac1.c             (+)
+|       |   ├── Makefile        (+)  
+|       |   └── filelist.mk     (+)  
+|       └────── README.md       (+)  
 └────── project
 ```
 
