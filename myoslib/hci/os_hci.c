@@ -19,7 +19,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "semphr.h"
+#include "event_groups.h"
 
 #include "leds.h"
 #include "log.h"
@@ -34,6 +34,11 @@
 #include "hci_packet.h"
 
 /* Private typedef -----------------------------------------------------------*/
+#define     X_BIT       (1<<0)
+#define     Y_BIT       (1<<1)
+#define     Z_BIT       (1<<2)
+
+#define		G_CONVERT	16384.0
 
 /* Private define ------------------------------------------------------------*/
 #define HCI_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -42,7 +47,9 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 TaskHandle_t HCIHandler;
-QueueHandle_t QueueHCI;
+QueueHandle_t QueueHCIWrite;
+QueueHandle_t QueueHCIRead;
+EventGroupHandle_t EventAccel;
 
 /* Private function prototypes -----------------------------------------------*/
 void HCI_Task( void );
@@ -60,6 +67,11 @@ extern void os_hci_init( void ) {
     hal_hci_init();
     cli_hci_init();
 
+	/* Creat Semaphore */
+	SemaphoreUart = xSemaphoreCreateBinary();
+
+	xSemaphoreGive(SemaphoreUart);
+	
     /* Create task */
     xTaskCreate((void *) &HCI_Task, "HCI Task",
                     HCI_STACK_SIZE, NULL, HCI_PRIORITY, &HCIHandler);
@@ -75,6 +87,9 @@ extern void os_hci_init( void ) {
 */
 extern void os_hci_deinit( void ) {
 
+	/* Delete Semaphore */
+	vSemaphoreDelete(SemaphoreUart);
+
     /* Delete Task */
     vTaskDelete(HCIHandler);
 }
@@ -82,13 +97,13 @@ extern void os_hci_deinit( void ) {
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Add to HCI Queue
+* @brief  Add to packet to write queue
 * @param  TxPacket: Packet struct to transmit
 * @retval None
 */
-extern void os_hci_queue_write( Packet TxPacket ) {
+extern void os_hci_write( Packet TxPacket ) {
 
-    if(xQueueSendToBack(QueueHCI, (void *) &TxPacket, (portTickType) 10) != pdPASS) {
+    if(xQueueSendToBack(QueueHCIWrite, (void *) &TxPacket, (portTickType) 10) != pdPASS) {
         // portENTER_CRITICAL();
         // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
         // portEXIT_CRITICAL();
@@ -98,23 +113,100 @@ extern void os_hci_queue_write( Packet TxPacket ) {
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  HCI task
+* @brief  Add to packet to read queue
+* @param  RxPacket: Packet struct to read
+* @retval None
+*/
+extern void os_hci_read( Packet RxPacket ) {
+
+    if(xQueueSendToBack(QueueHCIRead, (void *) &RxPacket, (portTickType) 10) != pdPASS) {
+        // portENTER_CRITICAL();
+        // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
+        // portEXIT_CRITICAL();
+    }
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Set the event bits for what command is expected in HCI read
+* @param  cmd: Command entered
+* @retval None
+*/
+extern void os_hci_setEvent( char cmd ) {
+    
+    EventBits_t bits = 0;
+
+    switch(cmd) {
+        case X_AXIS:
+            bits |= X_BIT;
+            break;
+
+        case Y_AXIS:
+            bits |= Y_BIT;
+            break;
+
+        case Z_AXIS:
+            bits |= Z_BIT;
+            break;
+
+        default:
+            break;
+    }
+    
+    xEventGroupClearBits(EventAccel, 0xFF);
+    xEventGroupSetBits(EventAccel, bits);
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  HCI task - writing and reading from UART
 * @param  None
 * @retval None
 */
 void HCI_Task( void ) {
     
+    EventBits_t axisBits;
+
     Packet TxPacket;
-    vLedsToggle(LEDS_ALL);
+    Packet RxPacket;
 
-    QueueHCI = xQueueCreate(5, sizeof(TxPacket));
+	double incomingData;
+	uint16_t incomingRaw;
 
-    vLedsSet(LEDS_NONE);
+    QueueHCIWrite = xQueueCreate(8, 2*sizeof(TxPacket));
+    QueueHCIRead = xQueueCreate(8, 2*sizeof(RxPacket));
+    EventAccel = xEventGroupCreate();
 
     for ( ;; ) {
-        if (xQueueReceive(QueueHCI, &TxPacket, 10) == pdTRUE) {   
-                // uart_write("Sending packet\r\n");
-                hal_hci_send_packet(TxPacket);
+        if (xQueueReceive(QueueHCIWrite, &TxPacket, 10) == pdTRUE) {   
+            /* Write Packet */
+            hal_hci_send_packet(TxPacket);
+        }
+
+        if (xQueueReceive(QueueHCIRead, &RxPacket, 10) == pdTRUE) {   
+            /* Read packet */
+            if (RxPacket.type == 2) {
+                axisBits = xEventGroupGetBits(EventAccel);
+				incomingRaw = (RxPacket.data[0].regval<<4) | RxPacket.data[1].regval;
+				incomingData = (float) (incomingRaw/G_CONVERT);
+
+                if ((axisBits & X_BIT) == X_BIT) {
+                    xEventGroupClearBits(EventAccel, X_BIT);
+					os_log_print(LOG_INFO, "X Acceleration: %.2fg(s)", incomingData);
+
+                } else if ((axisBits & Y_BIT) == Y_BIT) {
+                    xEventGroupClearBits(EventAccel, Y_BIT);
+					os_log_print(LOG_INFO, "Y Acceleration: %.2fg(s)", incomingData);
+
+                } else if ((axisBits & Z_BIT) == Z_BIT) {
+                    xEventGroupClearBits(EventAccel, Z_BIT);
+					os_log_print(LOG_INFO, "Z Acceleration: %.2fg(s)", incomingData);
+
+                }
+            }
+			xSemaphoreGive(SemaphoreUart);
         }
         vTaskDelay(5);
     }

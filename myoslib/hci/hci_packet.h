@@ -26,6 +26,7 @@ typedef struct Datafield {
 
 typedef struct Packet {
 
+    uint8_t preamble;
     uint8_t type;
     uint8_t dataCnt;
     Datafield data[2];

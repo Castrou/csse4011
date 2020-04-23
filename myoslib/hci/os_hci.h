@@ -14,12 +14,19 @@
 #ifndef S4434496_OS_HCI_H
 #define S4434496_OS_HCI_H
 
+#include "FreeRTOS.h"
+#include "semphr.h"
+
+
 #include "hci_packet.h"
 
 /* Global Variables ----------------------------------------------------------*/
+SemaphoreHandle_t SemaphoreUart;
 
 /* Function prototypes -------------------------------------------------------*/
-extern void os_hci_queue_write( Packet TxPacket );
+extern void os_hci_write( Packet TxPacket );
+extern void os_hci_read( Packet RxPacket );
+extern void os_hci_setEvent( char cmd );
 extern void os_hci_init( void );
 extern void os_hci_deinit( void );
 

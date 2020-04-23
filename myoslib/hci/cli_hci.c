@@ -44,11 +44,6 @@
 #define		READ			'r'
 #define		IMU				1
 
-#define		X_AXIS			'x'
-#define		Y_AXIS			'y'
-#define		Z_AXIS			'z'
-#define		ALL_AXES		'a'
-
 #define		X_HREGADDR		0x29
 #define		X_LREGADDR		0x28
 #define 	Y_HREGADDR		0x2B
@@ -102,10 +97,6 @@ extern void cli_hci_deinit( void ) {
 
 /*----------------------------------------------------------------------------*/
 
-// void extract_strings(const char *input, char *commandString, char *sidString)
-
-/*----------------------------------------------------------------------------*/
-
 /**
 * @brief  Command for using SCU I2C peripherals
 * @param  pcWriteBuffer: output buffer of command
@@ -113,8 +104,9 @@ extern void cli_hci_deinit( void ) {
 * @param  pcCommandString: pointer to command string
 * @retval pdFalse: indicates command is finished
 */
-BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char * pcCommandString) {
-    
+BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, 
+						const char * pcCommandString) 
+{
     int argNum = 0; 
 	uint8_t sid;
 	uint8_t regaddr;
@@ -157,19 +149,22 @@ BaseType_t i2cCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
         token = strtok(NULL, " ");
     }
 
+	/* Argument check */
 	if(commandString[0] != 'r' && commandString[0] != 'w') {
 		os_log_print(LOG_ERROR, "Invalid usage: requires 'r' or 'w' command");
 	}
 
+	/* Convert to number */
 	sid = strtol(sidString, NULL, 10);
 	regaddr = strtol(regaddrString, NULL, 16);
-	regval = strtol(regvalString, NULL, 10);
+	regval = strtol(regvalString, NULL, 16);
 
+	/* Build and add datafields to packet */
 	commandDatafield = hal_hci_build_datafield(commandString[0], sid, regaddr, regval);
 	hal_hci_addDatafield(&commandPacket, commandDatafield);
 
-	os_hci_queue_write(commandPacket);
-
+	/* Write Packet */
+	os_hci_write(commandPacket);
 
 	UNUSED(pcWriteBuffer);
 	UNUSED(xWriteBufferLen);    
@@ -208,27 +203,36 @@ BaseType_t imuCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 	if(cCmd_string[0] == READ) {
 		switch(axisString[0]) {
 			case X_AXIS:
+				/* Setup X Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, X_HREGADDR, 0);
 				hal_hci_addDatafield(&xPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, X_LREGADDR, 0);
 				hal_hci_addDatafield(&xPacket, buffField);
-				os_hci_queue_write(xPacket);
+				/* Send X Packet */
+				os_hci_setEvent(X_AXIS);
+				os_hci_write(xPacket);
 				break;
 
 			case Y_AXIS:
+				/* Setup Y Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, Y_HREGADDR, 0);
 				hal_hci_addDatafield(&yPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, Y_LREGADDR, 0);
 				hal_hci_addDatafield(&yPacket, buffField);
-				os_hci_queue_write(yPacket);
+				/* Send Y Packet */
+				os_hci_setEvent(Y_AXIS);
+				os_hci_write(yPacket);
 				break;
 
 			case Z_AXIS:
+				/* Setup Z Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, Z_HREGADDR, 0);
 				hal_hci_addDatafield(&zPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, Z_LREGADDR, 0);
 				hal_hci_addDatafield(&zPacket, buffField);
-				os_hci_queue_write(zPacket);
+				/* Send Z Packet */
+				os_hci_setEvent(Z_AXIS);
+				os_hci_write(zPacket);
 				break;
 
 			case ALL_AXES:
@@ -251,9 +255,20 @@ BaseType_t imuCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 				hal_hci_addDatafield(&zPacket, buffField);
 
 				/* Send Packets */
-				os_hci_queue_write(xPacket);
-				os_hci_queue_write(yPacket);
-				os_hci_queue_write(zPacket);
+				if (xSemaphoreTake(SemaphoreUart, (TickType_t) 10) == pdTRUE) {
+					os_hci_setEvent(X_AXIS);
+					os_hci_write(xPacket);
+				}
+
+				if (xSemaphoreTake(SemaphoreUart, (TickType_t) 1000) == pdTRUE) {
+					os_hci_setEvent(Y_AXIS);
+					os_hci_write(yPacket);
+				}
+
+				if (xSemaphoreTake(SemaphoreUart, (TickType_t) 1000) == pdTRUE) {
+					os_hci_setEvent(Z_AXIS);
+					os_hci_write(zPacket);
+				}
 				break;
 		}
 	}

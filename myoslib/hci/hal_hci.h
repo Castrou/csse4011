@@ -17,8 +17,15 @@
 #include "argon.h"
 #include "hci_packet.h"
 
+/* Defines --------------------------------------------------------------------*/
+#define		X_AXIS			'x'
+#define		Y_AXIS			'y'
+#define		Z_AXIS			'z'
+#define		ALL_AXES		'a'
+
 /* Function prototypes -------------------------------------------------------*/
 extern void hal_hci_init( void );
+extern void hal_hci_uart_write( const char* payload, ... );
 extern void hal_hci_send_packet( Packet packet );
 extern void hal_hci_addDatafield( Packet *destPacket, Datafield newField );
 extern Datafield hal_hci_build_datafield( char cmd, uint8_t sid,

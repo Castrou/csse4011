@@ -27,6 +27,7 @@
 #include "log.h"
 
 #include "hal_hci.h"
+#include "os_hci.h"
 #include "hci_packet.h"
 #include "os_log.h"
 
@@ -37,31 +38,49 @@ typedef enum {
 	LPS22HB = 3,    // MEMS nano pressure sensor
 	VL53L0X = 4,    // ToF and Gesture Detection sensor
 	HTS221 = 5      // Temp & Humidity Sensor
-} SID_t;
+} SID_t;		// Sensor IDs
+
+typedef enum {
+    UART_IDLE,		// Idle state
+    UART_TL_CHECK,	// Type/Length checking state
+    UART_RESPONSE,	// Packet-is-a-response state
+    UART_REQUEST	// Packet-is-a-request state
+} uartState_t;	// UART Reading states
+
+typedef enum {
+    PKT_SID,		// Sensor ID state
+    PKT_I2CADDR,	// I2C Address state
+    PKT_REGADDR,	// Register Address state
+    PKT_REGVAL		// Register Value state
+} packetState_t; // Packet reading states
 
 /* Private define ------------------------------------------------------------*/
-#define		MAX_PKT_SIZE	70
-#define		PREAMBLE		0xAA
-#define		REQUEST			0x01
-#define		RESPONSE		0x02
+#define		MAX_PKT_SIZE	70			// Maximum packet size
+#define		PREAMBLE		0xAA		// Preamble
+#define		REQUEST			0x01		// Packet type: Request
+#define		RESPONSE		0x02		// Packet type: Response
 
-#define		DF_SIZE				4
-#define     DF_PKT_START    	2
-#define		SID_DF_POS			0
-#define		I2C_DF_POS			1
-#define		REGADDR_DF_POS		2
-#define		REGVAL_DF_POS		3
+#define		DF_SIZE				4		// Number of bytes in a datafield
+#define     DF_PKT_START    	2		// Packet position of first datafield byte
+#define		SID_DF_POS			0		// Datafield position of SID
+#define		I2C_DF_POS			1		// Datafield position of I2C Address
+#define		REGADDR_DF_POS		2		// Datafield position of Register Address
+#define		REGVAL_DF_POS		3		// Datafield position of Register Value
 
-#define		READ			'r'
-#define 	WRITE			'w'
+#define		READ			'r'			// Read command
+#define 	WRITE			'w'			// Write command
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 UART_MODULE_CREATE( SERIAL_OUTPUT1, NRF_UARTE1, UARTE1_IRQHandler, UNUSED_IRQ, 4, 128, 64 );
 xUartModule_t * uartOutput = &UART_MODULE_GET( SERIAL_OUTPUT1 );
 
-Packet HCIPacket;
-uint8_t numDatafield;
+uartState_t uartState;			// UART state for state machine
+packetState_t packetState;		// Packet state for state machine
+
+Packet recvPacket;				// Received packet
+uint8_t recvLength;				// Length of a received packet
+uint8_t recvDFPos;				// Number of datafields of a received packet
 
 uint32_t bufflen;
 uint32_t buffPos;
@@ -72,6 +91,11 @@ char printBuff[80];
 
 /*-----------------------------------------------------------*/
 
+/**
+* @brief  Initialise print buffer
+* @param  None
+* @retval None
+*/
 void init_printBuff ( void ) {
 
     buffPos = 0;
@@ -82,12 +106,20 @@ void init_printBuff ( void ) {
 
 /*-----------------------------------------------------------*/
 
+/**
+* @brief  Add characters to a buffer to print horiz. instead of vert.
+* @param  c: Character to be added to print buffer
+* @retval None
+*/
 void uart_print( char c ) {
-    if (c == '\r' || c == '\n' || c == '\0') {
+
+    if (c == '\r' || c == '\n' || c == '\0') { 
+        /* Print completed string */
         printBuff[buffPos] = '\0';
         os_log_print(LOG_INFO, printBuff);
         init_printBuff();
-    } else {
+    } else {    
+        /* Build string */
         printBuff[buffPos] = c;
         buffPos++;
     }
@@ -96,15 +128,111 @@ void uart_print( char c ) {
 
 /*-----------------------------------------------------------*/
 
-void uart_serial_handler( char RxChar ) {
+/**
+* @brief  FSM Processing for reading a packet
+* @param  c: Incoming UART byte
+* @retval None
+*/
+void packet_process( uint8_t c ) {
 
-    // uart_print(RxChar);
-    os_log_print(LOG_DEBUG, "Recv: %c", RxChar);
+    switch(packetState) {
+        case PKT_SID:
+            recvPacket.data[2-recvDFPos].sid = c;
+            packetState = PKT_I2CADDR;
+            break;
+        case PKT_I2CADDR:
+            recvPacket.data[2-recvDFPos].i2caddr = c;
+            packetState = PKT_REGADDR;
+            break;
+        case PKT_REGADDR:
+            recvPacket.data[2-recvDFPos].regaddr = c;
+            packetState = PKT_REGVAL;
+            break;
+        case PKT_REGVAL:
+            recvPacket.data[2-recvDFPos].regval = c;
+            recvDFPos--;
+            packetState = PKT_SID;
+            break;
+    }
+
 }
 
 /*-----------------------------------------------------------*/
 
-extern void uart_write( const char *payload, ... ) {
+/**
+* @brief  FSM Processing for reading from UART
+* @param  c: Incoming UART byte
+* @retval None
+*/
+void uart_fsmprocessing( char c ) {
+    
+    int type;
+
+    switch(uartState) {
+        case UART_IDLE:
+            if (c == PREAMBLE) { // Check Preamble
+                uartState = UART_TL_CHECK;
+            }
+            break;
+
+        case UART_TL_CHECK:
+            type = (c >> 4);	// Bit shift to get type
+            recvPacket.type = type;
+            recvLength = (c & 0x0F)-1;	// Mask to get length, -1 for 0 indexing
+            recvDFPos = (recvLength+1)/DF_SIZE; // Number of datafields with 1 indexing
+            recvPacket.dataCnt = recvDFPos;
+
+            if (type == REQUEST) {
+                packetState = PKT_SID;
+                uartState = UART_REQUEST;
+            } else if (type == RESPONSE) {
+                uartState = UART_RESPONSE;
+            } else {
+                uartState = UART_IDLE;
+            }
+            break;
+
+        case UART_RESPONSE:
+            if(recvLength) {
+				/* While receiving from UART */
+                recvLength--;
+                packet_process(c);
+            } else {
+				/* Last receive, send off for printing */
+                packet_process(c);
+                os_hci_read(recvPacket);
+                packetState = PKT_SID;
+                uartState = UART_IDLE;
+            }
+            break;
+
+        case UART_REQUEST:
+			/* Not expecting requests from SCU */
+            uartState = UART_IDLE;
+            break;
+    }
+}
+
+/*-----------------------------------------------------------*/
+
+/**
+* @brief  UART Serial Handler
+* @param  RxChar: Character received over UART
+* @retval None
+*/
+void uart_serial_handler( char RxChar ) {
+
+    uart_fsmprocessing(RxChar);
+}
+
+/*-----------------------------------------------------------*/
+
+/**
+* @brief  Function for writing to UART
+* @param  None
+* @retval None
+*/
+extern void hal_hci_uart_write( const char *payload, ... ) {
 
     char buffer[100];
     va_list argList;
@@ -123,10 +251,14 @@ extern void uart_write( const char *payload, ... ) {
 
 /*-----------------------------------------------------------*/
 
-extern void hal_hci_init() {
+/**
+* @brief  Initialisation function for HCI
+* @param  None
+* @retval None
+*/
+extern void hal_hci_init( void ) {
 
     /* Init variables */
-    numDatafield = 0;
     init_printBuff();
 
     /* Setup UART */
@@ -148,6 +280,14 @@ extern void hal_hci_init() {
 
 /*-----------------------------------------------------------*/
 
+/**
+* @brief  Function for building datafields
+* @param  cmd: Command entered ('r' for read; 'w' for write)
+* @param  sid: Sensor ID
+* @param  regaddr: Register Address to be read from or written to
+* @param  regval: Value to be written to register
+* @retval None
+*/
 extern Datafield hal_hci_build_datafield( char cmd, uint8_t sid, 
                                             uint8_t regaddr, uint8_t regval) {
 
@@ -172,7 +312,6 @@ extern Datafield hal_hci_build_datafield( char cmd, uint8_t sid,
 			i2caddr = 0xBE;
             break;
         default:
-            vLedsToggle(LEDS_ALL);
             break;
     }
 
@@ -196,6 +335,12 @@ extern Datafield hal_hci_build_datafield( char cmd, uint8_t sid,
 
 /*-----------------------------------------------------------*/
 
+/**
+* @brief  Function for adding datafields to a given packet
+* @param  destPacket: Packet for datafield to be added to
+* @param  newField: Datafield being added
+* @retval None
+*/
 extern void hal_hci_addDatafield( Packet *destPacket, Datafield newField ) {
     destPacket->data[destPacket->dataCnt] = newField;
 	destPacket->dataCnt += 1;
@@ -203,6 +348,11 @@ extern void hal_hci_addDatafield( Packet *destPacket, Datafield newField ) {
 
 /*-----------------------------------------------------------*/
 
+/**
+* @brief  Send packet over UART
+* @param  packet: Packet to be sent over UART
+* @retval None
+*/
 extern void hal_hci_send_packet( Packet packet ) {
 	
 	int dfLength = packet.dataCnt*DF_SIZE;

@@ -10,6 +10,12 @@ serial.init(115200, bits=8, parity=None, stop=1)
 # Initialise I2C
 i2c2 = I2C(scl=Pin('PB10'), sda=Pin('PB11'), freq=100000)
 
+val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x10, 1), 'big') # Sample rate accel set to normal mode
+i2c2.writeto_mem(0x6A, 0x10, (val | 0x40).to_bytes(1, 'big'))
+
+val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x15, 1), 'big') # 
+i2c2.writeto_mem(0x6A, 0x15, (val | 0x10).to_bytes(1, 'big'))
+
 # Get PB14 and PA5 and treat them as GPIO Output pins
 led_1 = Pin('PB14', Pin.OUT)
 led_2 = Pin('PA5', Pin.OUT)
@@ -17,6 +23,21 @@ value1 = 1
 value2 = 0
 
 ### Function Definitions
+def build_packet(type, sid, i2caddr, regaddr, regval):
+	preamble = 0xAA
+	packet = bytearray(4*len(sid)+2)
+	tl_byte = (type << 4) | (4*len(sid) & 0x0F)
+	packet[0] = preamble
+	packet[1] = tl_byte
+
+	for i in range(len(regval)):
+		packet[4*i+2] = sid[i]
+		packet[4*i+3] = i2caddr[i]
+		packet[4*i+4] = regaddr[i]
+		packet[4*i+5] = regval[i]
+
+	return packet
+
 def read_packet(packet: bytearray):
 
 	preamble = packet[0]
@@ -24,6 +45,7 @@ def read_packet(packet: bytearray):
 	i2caddr = []
 	regaddr = []
 	regval = []
+	newRegval = []
 
 	if(preamble == 0xaa):
 
@@ -36,42 +58,46 @@ def read_packet(packet: bytearray):
 			print("REQUEST", end=" { ")
 		elif (type == 2):
 			print("RESPONSE", end=" { ")
-		for i in range(length*4+2):
+		for i in range(length+2):
 			print(hex(packet[i]), end=" ")
 		print("}")
 
 		# Get values and do things
-		for i in range(length/4):
+		for i in range((length/4)):
 			sid.append(packet[2 + 4*i + 0]) 
 			i2caddr.append(packet[2 + 4*i + 1])
 			regaddr.append(packet[2 + 4*i + 2]) 
 			regval.append(packet[2 + 4*i + 3])
 
-			if(i2caddr[i] % 2):
+			if(i2caddr[i] == 0):
+				pass
+			elif(i2caddr[i] % 2):
 				# Read command
-				retVal = i2c2.readfrom_mem((i2caddr[i]>>1), regaddr[i], 1)
-				serial.write("ACK READ\nVALUE: ")
-				# serial.write(hex(retVal))
-				serial.write("\n")
-				time.sleep(1)
+				val = i2c2.readfrom_mem((i2caddr[i]>>1), regaddr[i], 1)
+				newRegval.append(int.from_bytes(val, 'big'))
 			else:
-				serial.write("ACK WRITE\n")
-				i2c2.writeto_mem(i2caddr[i], regaddr[i], regval[i])
+				i2c2.writeto_mem((i2caddr[i]>>1), regaddr[i], regval[i].to_bytes(1, 'big'))
 
-		print("Type: " + str(type))
-		print("Length: " + str(length))
-		print(sid)
-		print(i2caddr)
-		print(regaddr)
-		print(regval)
-		print("\n\n")
+		TxPacket = build_packet(2, sid, i2caddr, regaddr, newRegval)
+		serial.write(TxPacket)
 
 		# End of function
 		sid.clear()
 		i2caddr.clear()
 		regaddr.clear()
 		regval.clear()
-		
+
+def uart_handler():
+	buff = bytearray(100)
+	var = serial.readinto(buff)
+    
+	if (var != None):
+		read_packet(buff)
+
+# Setup UART Interrupt
+# serial.irq(trigger=UART.RX_ANY, priority=1, uart_handler());
+
+### MAIN ###
 # Toggle the pin every one second
 while 1:
 	led_1.value(value1)
@@ -83,11 +109,7 @@ while 1:
 		value1 = 1
 		value2 = 0
 
-	buff = bytearray(100)
-	var = serial.readinto(buff)
-    
-	if (var != None):
-		read_packet(buff)
+	uart_handler()
 
 	# Somewhat similar to HAL_Delay()
 	time.sleep(1)
