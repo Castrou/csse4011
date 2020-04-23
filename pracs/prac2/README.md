@@ -17,6 +17,17 @@ Assuming the CSSE4011 Setup Guide has been completed, the program can be flashed
 
 ### PART B - SCU and HCI
 
+### Hardware Guide
+
+The following table shows the hardware configuration for Part B Tasks:  
+
+| Mode  | Argon | B\_L475E\_IOT01A  |
+| ----- | :---: | :---------------: |
+| Rx    | D8    | D0                |
+| Tx    | D7    | D1                |
+
+To connect the boards connect Argon D8 to B\_L475E\_IOT01A D1 and Argon D7 to B\_L475E\_IOT01A D0.  
+
 #### Design Task 1B: Host Controller Interface (HCI)
 
 Host Controller Interface successfully implemented. Both Argon and B\_L4753\_IOT01A communicate using the following packet format, where each item is 1 byte:  
