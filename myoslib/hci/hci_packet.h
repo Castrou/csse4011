@@ -15,6 +15,12 @@
 #define S4434496_HCI_PACKET_H
 
 /* Public typedef ------------------------------------------------------------*/
+typedef enum Sensor_I2C {
+
+    LSM6DSL = 0x6A
+
+} Sensor_I2C;
+
 typedef struct Datafield {
 
     uint8_t sid;
@@ -29,7 +35,7 @@ typedef struct Packet {
     uint8_t preamble;
     uint8_t type;
     uint8_t dataCnt;
-    Datafield data[2];
+    Datafield data[13];
 
 } Packet;
 

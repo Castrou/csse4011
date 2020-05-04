@@ -32,13 +32,13 @@
 #include "os_log.h"
 
 /* Private typedef -----------------------------------------------------------*/
-typedef enum {
-	LSM6DSL = 1,    // IMU
-	LIS3MDL = 2,    // 3-axis magnetometer
-	LPS22HB = 3,    // MEMS nano pressure sensor
-	VL53L0X = 4,    // ToF and Gesture Detection sensor
-	HTS221 = 5      // Temp & Humidity Sensor
-} SID_t;		// Sensor IDs
+// typedef enum {
+// 	LSM6DSL = 1,    // IMU
+// 	LIS3MDL = 2,    // 3-axis magnetometer
+// 	LPS22HB = 3,    // MEMS nano pressure sensor
+// 	VL53L0X = 4,    // ToF and Gesture Detection sensor
+// 	HTS221 = 5      // Temp & Humidity Sensor
+// } SID_t;		// Sensor IDs
 
 typedef enum {
     UART_IDLE,		// Idle state
@@ -178,14 +178,15 @@ void uart_fsmprocessing( char c ) {
         case UART_TL_CHECK:
             type = (c >> 4);	// Bit shift to get type
             recvPacket.type = type;
-            recvLength = (c & 0x0F)-1;	// Mask to get length, -1 for 0 indexing
-            recvDFPos = (recvLength+1)/DF_SIZE; // Number of datafields with 1 indexing
+            recvDFPos = (c & 0x0F); // Number of datafields
+            recvLength = DF_SIZE*(c & 0x0F);	// Mask to get length
             recvPacket.dataCnt = recvDFPos;
 
             if (type == REQUEST) {
                 packetState = PKT_SID;
                 uartState = UART_REQUEST;
             } else if (type == RESPONSE) {
+                packetState = PKT_SID;
                 uartState = UART_RESPONSE;
             } else {
                 uartState = UART_IDLE;
@@ -223,30 +224,6 @@ void uart_fsmprocessing( char c ) {
 void uart_serial_handler( char RxChar ) {
 
     uart_fsmprocessing(RxChar);
-}
-
-/*-----------------------------------------------------------*/
-
-/**
-* @brief  Function for writing to UART
-* @param  None
-* @retval None
-*/
-extern void hal_hci_uart_write( const char *payload, ... ) {
-
-    char buffer[100];
-    va_list argList;
-
-    va_start(argList, payload);
-
-    tiny_vsnprintf(buffer, 100, payload, argList);
-
-	va_end(argList);
-
-    pcBuffer = (char *) xUartBackend.fnClaimBuffer(uartOutput, &bufflen);
-    pvMemcpy(pcBuffer, buffer, 100);
-    xUartBackend.fnSendBuffer(uartOutput, pcBuffer, bufflen);
-
 }
 
 /*-----------------------------------------------------------*/
@@ -295,20 +272,20 @@ extern Datafield hal_hci_build_datafield( char cmd, uint8_t sid,
     uint8_t i2caddr;
 
 	/* Find I2C Address */
-    switch((SID_t)sid) {    // Default the values to write address for now
-        case LSM6DSL:	    // IMU
+    switch(sid) {    // Default the values to write address for now
+        case 1:	    // IMU
 			i2caddr = 0xD4;
             break;
-        case LIS3MDL:	    // 3-axis magno
+        case 2:	    // 3-axis magno
 			i2caddr = 0x3C;
             break;
-        case LPS22HB:	    // Pressure sensor
+        case 3:	    // Pressure sensor
 			i2caddr = 0xBA;
             break;
-        case VL53L0X:       // ToF & Gesture
+        case 4:       // ToF & Gesture
 			i2caddr = 0x52;
             break;
-        case HTS221:        // Temp/Humidity sensor
+        case 5:        // Temp/Humidity sensor
 			i2caddr = 0xBE;
             break;
         default:
@@ -355,7 +332,7 @@ extern void hal_hci_addDatafield( Packet *destPacket, Datafield newField ) {
 */
 extern void hal_hci_send_packet( Packet packet ) {
 	
-	int dfLength = packet.dataCnt*DF_SIZE;
+	int dfLength = packet.dataCnt;
 	int pktPos;
 	char TxPacket[MAX_PKT_SIZE];
 	char typeXlength;
@@ -380,7 +357,7 @@ extern void hal_hci_send_packet( Packet packet ) {
 
     /* Write packet to UART */
 	pcBuffer = (char *) xUartBackend.fnClaimBuffer(uartOutput, &bufflen);
-    pvMemcpy(pcBuffer, TxPacket, dfLength + DF_PKT_START);
+    pvMemcpy(pcBuffer, TxPacket, dfLength*DF_SIZE + DF_PKT_START);
     xUartBackend.fnSendBuffer(uartOutput, pcBuffer, bufflen);
 
 }

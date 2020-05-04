@@ -20,8 +20,11 @@
 
 #include "hci_packet.h"
 
+/* Global Typedef ------------------------------------------------------------*/
+
 /* Global Variables ----------------------------------------------------------*/
 SemaphoreHandle_t SemaphoreUart;
+uint8_t *HCIdata[13];
 
 /* Function prototypes -------------------------------------------------------*/
 extern void os_hci_write( Packet TxPacket );

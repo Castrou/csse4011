@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/cli/cli_task.c
+ * @file myoslib/bt/os_bt.c
  * @author Cameron Stroud - 44344968
- * @date 04042020
- * @brief CLI Task source file
+ * @date 02052020
+ * @brief Bluetooth Comms OS file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -15,110 +15,119 @@
 /* Includes ***************************************************/
 #include <string.h>
 
+#include "board.h"
+
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
+#include "task.h"
 #include "queue.h"
-#include "FreeRTOS_CLI.h"
+#include "semphr.h"
 
+#include "leds.h"
 #include "log.h"
 
+#include "unified_comms_bluetooth.h"
+
 #include "os_log.h"
+#include "os_bt.h"
 
 /* Private typedef -----------------------------------------------------------*/
-typedef struct CLIInput {
-	char Payload[100];
-} CLIInput;
+typedef struct BTMessage {
+    const char *message;
+} BTMessage;
 
 /* Private define ------------------------------------------------------------*/
-#define CLI_PRIORITY (tskIDLE_PRIORITY + 2)
-#define CLI_STACK_SIZE (configMINIMAL_STACK_SIZE * 5)
+#define BT_PRIORITY (tskIDLE_PRIORITY + 2)
+#define BT_STACK_SIZE (configMINIMAL_STACK_SIZE * 5)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-CLIInput CLI;
-QueueHandle_t QueueCLI;
-TaskHandle_t CLIHandler = NULL;
+QueueHandle_t QueueBluetooth;
+TaskHandle_t BTHandler;
+BTMessage BTmsg;
 
 /* Private function prototypes -----------------------------------------------*/
-void CLI_Task(void);
-
+void BT_Task( void );
 
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Queues Serial input
+* @brief  Queues Log to be printed
 * @param  input: string of Serial input
 * @retval None
 */
-extern void cli_task_queue( const char *input ) {
+extern void os_bt_print() {
 
-    strcpy(CLI.Payload, input);
-    if(xQueueSendToBack(QueueCLI, (void *) &CLI, 
+
+    if(xQueueSendToBack(QueueBluetooth, (void *) &BTmsg, 
         (portTickType) 10) != pdPASS) 
     {
-        /* Failed to send */
+        // portENTER_CRITICAL();
+        // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
+        // portEXIT_CRITICAL();
     }
+
 }
 
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Initalises CLI task
+* @brief  Initalises all Log drivers
 * @param  None
 * @retval None
 */
-extern void cli_task_init( void ) {
+extern void os_bt_init( void ) {
 
-    xTaskCreate((void *) &CLI_Task, "CLI Task", \
-                    CLI_STACK_SIZE, NULL, CLI_PRIORITY, &CLIHandler);
+    /* Driver initialisation functions */
+
+
+    /* Create Semaphores */
+
+
+    /* Create task */
+    xTaskCreate((void *) &BT_Task, "Bluetooth Task", \
+                    BT_STACK_SIZE, NULL, BT_PRIORITY, &BTHandler);
 }
 
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Deinitalises CLI task
+* @brief  Initalises all Log drivers
 * @param  None
 * @retval None
 */
-extern void cli_task_deinit( void ) {
+extern void os_bt_deinit( void ) {
 
-    vTaskDelete(CLIHandler);
+    /* Driver deinitialisation functions */
+
+
+    /* Remove Semaphores */
+
+
+    /* Remove task */
+    vTaskDelete(BTHandler);
 }
 
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Main CLI Task
+* @brief  Log printing task
 * @param  None
 * @retval None
 */
-void CLI_Task( void ) {
+void BT_Task( void ) {
 
-    CLIInput Input;
-	char *pcOutputString;
-	BaseType_t xReturned;
-
-    /* Initialise pointer to CLI output buffer. */
-	pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+    BTMessage IncomingBT;
 
     /* Create Queue for retrieving from Serial ISR */
-    QueueCLI = xQueueCreate(10, sizeof(Input));
+    QueueBluetooth = xQueueCreate(10, sizeof(IncomingBT));
 
-    for( ;; ) {
-
-        if (xQueueReceive(QueueCLI, &Input, 10) == pdTRUE) {   
-
-            xReturned = pdTRUE;
-            /* Process command input string. */
-            while (xReturned != pdFALSE) {
-
-                /* Returns pdFALSE, when all strings have been returned */
-                xReturned = FreeRTOS_CLIProcessCommand( Input.Payload, \
-                pcOutputString, configCOMMAND_INT_MAX_OUTPUT_SIZE );
-
-                vTaskDelay(5);	//Must delay between debug_printfs.
-            }
+    for ( ;; ) {
+        // vLedsToggle(LEDS_GREEN);
+        if (xQueueReceive(QueueBluetooth, &IncomingBT, 10) == pdTRUE) {   
+            
         }
+        vTaskDelay(5);
     }
 }
 

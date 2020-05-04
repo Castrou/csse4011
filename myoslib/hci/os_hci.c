@@ -150,6 +150,10 @@ extern void os_hci_setEvent( char cmd ) {
             bits |= Z_BIT;
             break;
 
+        case ALL_AXES:
+            bits |= (X_BIT | Y_BIT | Z_BIT);
+            break;
+
         default:
             break;
     }
@@ -168,15 +172,14 @@ extern void os_hci_setEvent( char cmd ) {
 void HCI_Task( void ) {
     
     EventBits_t axisBits;
-
     Packet TxPacket;
     Packet RxPacket;
-
+    int dataPos;
 	double incomingData;
 	int16_t incomingRaw;
 
-    QueueHCIWrite = xQueueCreate(8, 2*sizeof(TxPacket));
-    QueueHCIRead = xQueueCreate(8, 2*sizeof(RxPacket));
+    QueueHCIWrite = xQueueCreate(5, 2*sizeof(TxPacket));
+    QueueHCIRead = xQueueCreate(5, 2*sizeof(RxPacket));
     EventAccel = xEventGroupCreate();
 
     for ( ;; ) {
@@ -186,36 +189,58 @@ void HCI_Task( void ) {
         }
 
         if (xQueueReceive(QueueHCIRead, &RxPacket, 10) == pdTRUE) {   
+            dataPos = 0;
+
             /* Read packet */
-            if (RxPacket.type == 2) {
-				axisBits = xEventGroupGetBits(EventAccel);
-				incomingRaw = (RxPacket.data[0].regval<<8) | RxPacket.data[1].regval;
+            if (RxPacket.type == 2) { // Response
 
-                if ((axisBits & X_BIT) == X_BIT) {
-                    incomingData = (float) (incomingRaw/G_CONVERT);
-                    xEventGroupClearBits(EventAccel, X_BIT);
-					os_log_print(LOG_INFO, "X Acceleration: %.2fg(s)", incomingData);
+                switch((RxPacket.data[0].i2caddr>>1)) {
+                    case LSM6DSL:
+                        axisBits = xEventGroupGetBits(EventAccel);
 
-                } else if ((axisBits & Y_BIT) == Y_BIT) {
-                    incomingData = ((float)incomingRaw/(float)G_CONVERT);
-                    xEventGroupClearBits(EventAccel, Y_BIT);
-					os_log_print(LOG_INFO, "Y Acceleration: %.2fg(s)", incomingData);
+                        /* Handle X Info */
+                        if ((axisBits & X_BIT) == X_BIT) {
+                            incomingRaw = (RxPacket.data[dataPos].regval<<8) | 
+                                                RxPacket.data[dataPos+1].regval;
+                            incomingData = (float) (incomingRaw/G_CONVERT);
+                            xEventGroupClearBits(EventAccel, X_BIT);
+                            os_log_print(LOG_INFO, "X Acceleration: %.2fg(s)", incomingData);
+                            dataPos += 2;
+                        }
+                        
+                        /* Handle Y Info */
+                        if ((axisBits & Y_BIT) == Y_BIT) {
+                            incomingRaw = (RxPacket.data[dataPos].regval<<8) | 
+                                                RxPacket.data[dataPos+1].regval;
+                            incomingData = ((float)incomingRaw/(float)G_CONVERT);
+                            xEventGroupClearBits(EventAccel, Y_BIT);
+                            os_log_print(LOG_INFO, "Y Acceleration: %.2fg(s)", incomingData);
+                            dataPos += 2;
+                        }
 
-                } else if ((axisBits & Z_BIT) == Z_BIT) {
-                    incomingData = (float) (incomingRaw/G_CONVERT);
-                    xEventGroupClearBits(EventAccel, Z_BIT);
-					os_log_print(LOG_INFO, "Z Acceleration: %.2fg(s)", incomingData);
+                        /* Handle Z Info */
+                        if ((axisBits & Z_BIT) == Z_BIT) {
+                            incomingRaw = (RxPacket.data[dataPos].regval<<8) | 
+                                                RxPacket.data[dataPos+1].regval;
+                            incomingData = (float) (incomingRaw/G_CONVERT);
+                            xEventGroupClearBits(EventAccel, Z_BIT);
+                            os_log_print(LOG_INFO, "Z Acceleration: %.2fg(s)", incomingData);
 
-                } else {
-                    for(int i = 0; i < RxPacket.dataCnt; i++) {
-                        os_log_print(LOG_INFO, "RECV(SID%d): REGADDR=0x%02x REGVAL=0x%02x",
-                                        RxPacket.data[i].sid, RxPacket.data[i].regaddr,
-                                        RxPacket.data[i].regval);
-                    }
+                        }
+                        break;
+
+                    default:
+                        for(int i = 0; i < RxPacket.dataCnt; i++) {
+                            os_log_print(LOG_INFO, "RECV(SID%d): REGADDR=0x%02x REGVAL=0x%02x",
+                                            RxPacket.data[i].sid, RxPacket.data[i].regaddr,
+                                            RxPacket.data[i].regval);
+                        }
+                        break;
                 }
             }
 			xSemaphoreGive(SemaphoreUart);
         }
+
         vTaskDelay(5);
     }
 }

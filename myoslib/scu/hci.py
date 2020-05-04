@@ -26,7 +26,7 @@ value2 = 0
 def build_packet(type, sid, i2caddr, regaddr, regval):
 	preamble = 0xAA
 	packet = bytearray(4*len(sid)+2)
-	tl_byte = (type << 4) | (4*len(sid) & 0x0F)
+	tl_byte = (type << 4) | (len(regval) & 0x0F)
 	packet[0] = preamble
 	packet[1] = tl_byte
 
@@ -50,7 +50,7 @@ def read_packet(packet: bytearray):
 	if(preamble == 0xaa):
 
 		type = (packet[1] >> 4)
-		length = int(packet[1] & 0x0F)
+		length = int(packet[1] & 0x0F) * 4
 
 		# Demo Correct Packet Formatting
 		print("RECV PACKET: TYPE=", end="")
@@ -58,12 +58,12 @@ def read_packet(packet: bytearray):
 			print("REQUEST", end=" { ")
 		elif (type == 2):
 			print("RESPONSE", end=" { ")
-		for i in range(length+2):
+		for i in range(length + 2):
 			print(hex(packet[i]), end=" ")
 		print("}")
 
 		# Get values and do things
-		for i in range((length/4)):
+		for i in range(length):
 			sid.append(packet[2 + 4*i + 0]) 
 			i2caddr.append(packet[2 + 4*i + 1])
 			regaddr.append(packet[2 + 4*i + 2]) 
@@ -81,6 +81,10 @@ def read_packet(packet: bytearray):
 				newRegval.append(regval[i])
 
 		TxPacket = build_packet(2, sid, i2caddr, regaddr, newRegval)
+		print("SENT", end=" { ")
+		for i in range(length + 2):
+			print(hex(TxPacket[i]), end=" ")
+		print("}")
 		serial.write(TxPacket)
 
 		# End of function

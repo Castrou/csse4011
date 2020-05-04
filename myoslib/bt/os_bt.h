@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/cli/cli_task.h
+ * @file myoslib/bt/os_bt.h
  * @author Cameron Stroud - 44344968
- * @date 04042020
- * @brief CLI Task header file
+ * @date 02052020
+ * @brief Bluetooth Comms OS header file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -11,14 +11,16 @@
  *************************************************************** 
  */
 
-#ifndef S4434496_CLI_TASK_H
-#define S4434496_CLI_TASK_H
+#ifndef S4434496_OS_BT_H
+#define S4434496_OS_BT_H
 
-#include "FreeRTOS.h"
+#include "semphr.h"
+
+/* Global Variables ----------------------------------------------------------*/
 
 /* Function prototypes -------------------------------------------------------*/
-extern void cli_task_init(void);
-extern void cli_task_deinit(void);
-extern void cli_task_queue(const char *input);
+extern void os_bt_init( void );
+extern void os_bt_deinit( void );
 
-#endif // S4434496_CLI_TASK_H
+
+#endif // S4434496_OS_BT_H

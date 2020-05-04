@@ -189,14 +189,10 @@ BaseType_t imuCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 	long lParam_len;
 	const char *cCmd_string;
 	const char *axisString;
-	Packet xPacket;
-	Packet yPacket;
-	Packet zPacket;
+	Packet TxPacket;
 	Datafield buffField;
 
-	xPacket.dataCnt = 0;
-	yPacket.dataCnt = 0;
-	zPacket.dataCnt = 0;
+	TxPacket.dataCnt = 0;
 
 	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
 	axisString = FreeRTOS_CLIGetParameter(pcCommandString, 2, &lParam_len);
@@ -206,69 +202,59 @@ BaseType_t imuCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 			case X_AXIS:
 				/* Setup X Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, X_HREGADDR, 0);
-				hal_hci_addDatafield(&xPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, X_LREGADDR, 0);
-				hal_hci_addDatafield(&xPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				/* Send X Packet */
 				os_hci_setEvent(X_AXIS);
-				os_hci_write(xPacket);
+				os_hci_write(TxPacket);
 				break;
 
 			case Y_AXIS:
 				/* Setup Y Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, Y_HREGADDR, 0);
-				hal_hci_addDatafield(&yPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, Y_LREGADDR, 0);
-				hal_hci_addDatafield(&yPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				/* Send Y Packet */
 				os_hci_setEvent(Y_AXIS);
-				os_hci_write(yPacket);
+				os_hci_write(TxPacket);
 				break;
 
 			case Z_AXIS:
 				/* Setup Z Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, Z_HREGADDR, 0);
-				hal_hci_addDatafield(&zPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, Z_LREGADDR, 0);
-				hal_hci_addDatafield(&zPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				/* Send Z Packet */
 				os_hci_setEvent(Z_AXIS);
-				os_hci_write(zPacket);
+				os_hci_write(TxPacket);
 				break;
 
 			case ALL_AXES:
 				/* Setup X Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, X_HREGADDR, 0);
-				hal_hci_addDatafield(&xPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, X_LREGADDR, 0);
-				hal_hci_addDatafield(&xPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 
 				/* Setup Y Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, Y_HREGADDR, 0);
-				hal_hci_addDatafield(&yPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, Y_LREGADDR, 0);
-				hal_hci_addDatafield(&yPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 	
 				/* Setup Z Packet */
 				buffField = hal_hci_build_datafield(READ, IMU, Z_HREGADDR, 0);
-				hal_hci_addDatafield(&zPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 				buffField = hal_hci_build_datafield(READ, IMU, Z_LREGADDR, 0);
-				hal_hci_addDatafield(&zPacket, buffField);
+				hal_hci_addDatafield(&TxPacket, buffField);
 
 				/* Send Packets */
 				if (xSemaphoreTake(SemaphoreUart, (TickType_t) 10) == pdTRUE) {
-					os_hci_setEvent(X_AXIS);
-					os_hci_write(xPacket);
-				}
-
-				if (xSemaphoreTake(SemaphoreUart, (TickType_t) 1000) == pdTRUE) {
-					os_hci_setEvent(Y_AXIS);
-					os_hci_write(yPacket);
-				}
-
-				if (xSemaphoreTake(SemaphoreUart, (TickType_t) 1000) == pdTRUE) {
-					os_hci_setEvent(Z_AXIS);
-					os_hci_write(zPacket);
+					os_hci_setEvent(ALL_AXES);
+					os_hci_write(TxPacket);
 				}
 				break;
 		}
