@@ -99,15 +99,15 @@ void vApplicationStartupCallback( void ) {
 
 void vApplicationTickCallback( uint32_t ulUptime ) {
 	
-	xTdfTime_t xTime;
-	bRtcGetTdfTime(&xTime);	
+	// xTdfTime_t xTime;
+	// bRtcGetTdfTime(&xTime);	
 
-	tdf_datetime_t xTdfTime;
-	xTdfTime.count = ulUptime;
+	// tdf_datetime_t xTdfTime;
+	// xTdfTime.count = ulUptime;
 
-	eTdfAddMulti(BLE_LOG, TDF_DATETIME, TDF_TIMESTAMP_GLOBAL, &xTime, &xTdfTime);
-	eTdfFlushMulti(BLE_LOG);
-
+	// eTdfAddMulti(BLE_LOG, TDF_DATETIME, TDF_TIMESTAMP_GLOBAL, &xTime, &xTdfTime);
+	// eTdfFlushMulti(BLE_LOG);
+	UNUSED(ulUptime);
 	vLedsToggle(LEDS_BLUE);
 
 }

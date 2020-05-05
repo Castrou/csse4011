@@ -16,11 +16,13 @@
 
 #include "semphr.h"
 
-/* Global Variables ----------------------------------------------------------*/
-
 /* Function prototypes -------------------------------------------------------*/
 extern void os_bt_init( void );
 extern void os_bt_deinit( void );
+extern void os_bt_send_unsigned( eTdfIds_t type, eTdfTimestampType_t timestamp, 
+								xTdfTime_t time, uint8_t sendData[13] );
+extern void os_bt_send_signed( eTdfIds_t type, eTdfTimestampType_t timestamp, 
+								xTdfTime_t time, int8_t sendData[13] );
 
 
 #endif // S4434496_OS_BT_H

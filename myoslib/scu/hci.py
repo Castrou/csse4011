@@ -10,11 +10,15 @@ serial.init(115200, bits=8, parity=None, stop=1)
 # Initialise I2C
 i2c2 = I2C(scl=Pin('PB10'), sda=Pin('PB11'), freq=100000)
 
-val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x10, 1), 'big') # Sample rate accel set to normal mode
-i2c2.writeto_mem(0x6A, 0x10, (val | 0x40).to_bytes(1, 'big'))
+def init_accel():
+	val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x10, 1), 'big') # Sample rate accel set to normal mode
+	i2c2.writeto_mem(0x6A, 0x10, (val | 0x40).to_bytes(1, 'big'))
 
-val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x15, 1), 'big') # 
-i2c2.writeto_mem(0x6A, 0x15, (val | 0x10).to_bytes(1, 'big'))
+	val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x15, 1), 'big') # 
+	i2c2.writeto_mem(0x6A, 0x15, (val | 0x10).to_bytes(1, 'big'))
+
+def init_baro():
+	i2c2.writeto_mem(0x5D, 0x10, (0x20).to_bytes(1, 'big'))
 
 # Get PB14 and PA5 and treat them as GPIO Output pins
 led_1 = Pin('PB14', Pin.OUT)
@@ -104,7 +108,9 @@ def uart_handler():
 # serial.irq(trigger=UART.RX_ANY, priority=1, uart_handler());
 
 ### MAIN ###
-# Toggle the pin every one second
+init_accel()
+init_baro()
+
 while 1:
 	led_1.value(value1)
 	led_2.value(value2)

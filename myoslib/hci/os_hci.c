@@ -29,6 +29,7 @@
 #include "os_log.h"
 
 #include "hal_hci.h"
+#include "lib_hci.h"
 #include "cli_hci.h"
 #include "os_hci.h"
 #include "hci_packet.h"
@@ -38,10 +39,12 @@
 #define     Y_BIT       (1<<1)
 #define     Z_BIT       (1<<2)
 
-#define		G_CONVERT	16384.0
+#define		G_CONVERT	    16384.0
+
+#define     TEMP_REGCNT     3
 
 /* Private define ------------------------------------------------------------*/
-#define HCI_PRIORITY (tskIDLE_PRIORITY + 2)
+#define HCI_PRIORITY (tskIDLE_PRIORITY + 3)
 #define HCI_STACK_SIZE (configMINIMAL_STACK_SIZE * 1)
 
 /* Private macro -------------------------------------------------------------*/
@@ -129,11 +132,11 @@ extern void os_hci_read( Packet RxPacket ) {
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Set the event bits for what command is expected in HCI read
+* @brief  Set the accel bits for what command is expected in HCI read
 * @param  cmd: Command entered
 * @retval None
 */
-extern void os_hci_setEvent( char cmd ) {
+extern void os_hci_setAccel( char cmd ) {
     
     EventBits_t bits = 0;
 
@@ -165,6 +168,49 @@ extern void os_hci_setEvent( char cmd ) {
 /*----------------------------------------------------------------------------*/
 
 /**
+* @brief  Clear the HCI array
+* @param  cmd: Command entered
+* @retval None
+*/
+extern void os_hci_clearHCIarray( char sign ) {
+    
+    switch(sign) {
+        case 'u':
+            for(int i = 0; i < MAX_DF; i++) {
+                uHCIdata[i] = 0;
+            }
+            break;
+        default:
+            for(int i = 0; i < MAX_DF; i++) {
+                uHCIdata[i] = 0;
+            }
+            break;
+    }
+     
+}
+
+/**
+* @brief  Clear a packet
+* @param  packet: Packet to be cleared
+* @retval None
+*/
+extern void os_hci_clearPacket( Packet *packet ) {
+    
+    packet->dataCnt = 0;
+    packet->preamble = 0;
+    packet->type = 0;
+    
+    for(int i = 0; i < MAX_DF; i++) {
+        packet->data[i].sid = 0;
+        packet->data[i].i2caddr = 0;
+        packet->data[i].regaddr = 0;
+        packet->data[i].regval = 0;
+    }     
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
 * @brief  HCI task - writing and reading from UART
 * @param  None
 * @retval None
@@ -186,22 +232,31 @@ void HCI_Task( void ) {
         if (xQueueReceive(QueueHCIWrite, &TxPacket, 10) == pdTRUE) {   
             /* Write Packet */
             hal_hci_send_packet(TxPacket);
+            os_hci_clearPacket(&TxPacket);
         }
 
         if (xQueueReceive(QueueHCIRead, &RxPacket, 10) == pdTRUE) {   
+            
+            os_hci_clearHCI();
             dataPos = 0;
 
             /* Read packet */
             if (RxPacket.type == 2) { // Response
-
+                // for(int i = 0; i < RxPacket.dataCnt; i++) {
+                //     os_log_print(LOG_INFO, "RECV(SID%d): REGADDR=0x%02x REGVAL=0x%02x",
+                //                     RxPacket.data[i].sid, RxPacket.data[i].regaddr,
+                //                     RxPacket.data[i].regval);
+                // }
                 switch((RxPacket.data[0].i2caddr>>1)) {
                     case LSM6DSL:
                         axisBits = xEventGroupGetBits(EventAccel);
 
                         /* Handle X Info */
                         if ((axisBits & X_BIT) == X_BIT) {
-                            incomingRaw = (RxPacket.data[dataPos].regval<<8) | 
-                                                RxPacket.data[dataPos+1].regval;
+                            HCIdata[dataPos] = RxPacket.data[dataPos].regval;
+                            HCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
+                            incomingRaw = (HCIdata[dataPos]<<8) | 
+                                                HCIdata[dataPos + 1];
                             incomingData = (float) (incomingRaw/G_CONVERT);
                             xEventGroupClearBits(EventAccel, X_BIT);
                             os_log_print(LOG_INFO, "X Acceleration: %.2fg(s)", incomingData);
@@ -210,8 +265,10 @@ void HCI_Task( void ) {
                         
                         /* Handle Y Info */
                         if ((axisBits & Y_BIT) == Y_BIT) {
-                            incomingRaw = (RxPacket.data[dataPos].regval<<8) | 
-                                                RxPacket.data[dataPos+1].regval;
+                            HCIdata[dataPos] = RxPacket.data[dataPos].regval;
+                            HCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
+                            incomingRaw = (HCIdata[dataPos]<<8) | 
+                                                HCIdata[dataPos + 1];
                             incomingData = ((float)incomingRaw/(float)G_CONVERT);
                             xEventGroupClearBits(EventAccel, Y_BIT);
                             os_log_print(LOG_INFO, "Y Acceleration: %.2fg(s)", incomingData);
@@ -220,8 +277,10 @@ void HCI_Task( void ) {
 
                         /* Handle Z Info */
                         if ((axisBits & Z_BIT) == Z_BIT) {
-                            incomingRaw = (RxPacket.data[dataPos].regval<<8) | 
-                                                RxPacket.data[dataPos+1].regval;
+                            HCIdata[dataPos] = RxPacket.data[dataPos].regval;
+                            HCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
+                            incomingRaw = (HCIdata[dataPos]<<8) | 
+                                                HCIdata[dataPos + 1];
                             incomingData = (float) (incomingRaw/G_CONVERT);
                             xEventGroupClearBits(EventAccel, Z_BIT);
                             os_log_print(LOG_INFO, "Z Acceleration: %.2fg(s)", incomingData);
@@ -229,15 +288,17 @@ void HCI_Task( void ) {
                         }
                         break;
 
-                    default:
-                        for(int i = 0; i < RxPacket.dataCnt; i++) {
-                            os_log_print(LOG_INFO, "RECV(SID%d): REGADDR=0x%02x REGVAL=0x%02x",
-                                            RxPacket.data[i].sid, RxPacket.data[i].regaddr,
-                                            RxPacket.data[i].regval);
+                    case LPS22HB:
+                        for (int i = 0; i < TEMP_REGCNT; i++) {
+                            uHCIdata[i] = RxPacket.data[i].regval;
                         }
+                        break;
+
+                    default:
                         break;
                 }
             }
+            os_hci_clearPacket(&RxPacket);
 			xSemaphoreGive(SemaphoreUart);
         }
 

@@ -17,12 +17,6 @@
 #include "argon.h"
 #include "hci_packet.h"
 
-/* Defines --------------------------------------------------------------------*/
-#define		X_AXIS			'x'
-#define		Y_AXIS			'y'
-#define		Z_AXIS			'z'
-#define		ALL_AXES		'a'
-
 /* Function prototypes -------------------------------------------------------*/
 extern void hal_hci_init( void );
 extern void hal_hci_send_packet( Packet packet );

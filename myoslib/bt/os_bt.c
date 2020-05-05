@@ -25,16 +25,26 @@
 
 #include "leds.h"
 #include "log.h"
+#include "os_log.h"
+
+#include "tdf.h"
+#include "tdf_auto.h"
 
 #include "unified_comms_bluetooth.h"
 
-#include "os_log.h"
+#include "hci_packet.h"
+#include "os_hci.h"
+
 #include "os_bt.h"
+#include "cli_bt.h"
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct BTMessage {
-    const char *message;
-} BTMessage;
+    eTdfIds_t tdfType;
+    xTdfTime_t xTime;
+    eTdfTimestampType_t tdfTimestamp;
+	uint8_t data[MAX_DF];
+} BTMessage_t;
 
 /* Private define ------------------------------------------------------------*/
 #define BT_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -44,7 +54,7 @@ typedef struct BTMessage {
 /* Private variables ---------------------------------------------------------*/
 QueueHandle_t QueueBluetooth;
 TaskHandle_t BTHandler;
-BTMessage BTmsg;
+BTMessage_t BTmsg;
 
 /* Private function prototypes -----------------------------------------------*/
 void BT_Task( void );
@@ -52,12 +62,48 @@ void BT_Task( void );
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Queues Log to be printed
+* @brief  Queues Bluetooth message to be sent
 * @param  input: string of Serial input
 * @retval None
 */
-extern void os_bt_print() {
+extern void os_bt_send_unsigned( eTdfIds_t type, eTdfTimestampType_t timestamp, 
+						xTdfTime_t time, uint8_t sendData[MAX_DF] ) {
 
+	BTmsg.tdfType = type;
+	BTmsg.xTime = time;
+	BTmsg.tdfTimestamp = timestamp;
+	
+	for (int i = 0; i < MAX_DF; i++) {
+		BTmsg.data[i] = sendData[i];
+	}
+
+    if(xQueueSendToBack(QueueBluetooth, (void *) &BTmsg, 
+        (portTickType) 10) != pdPASS) 
+    {
+        // portENTER_CRITICAL();
+        // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
+        // portEXIT_CRITICAL();
+    }
+
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Queues Bluetooth message to be sent
+* @param  input: string of Serial input
+* @retval None
+*/
+extern void os_bt_send_signed( eTdfIds_t type, eTdfTimestampType_t timestamp, 
+						xTdfTime_t time, int8_t sendData[MAX_DF] ) {
+
+	BTmsg.tdfType = type;
+	BTmsg.xTime = time;
+	BTmsg.tdfTimestamp = timestamp;
+	
+	for (int i = 0; i < MAX_DF; i++) {
+		BTmsg.data[i] = sendData[i];
+	}
 
     if(xQueueSendToBack(QueueBluetooth, (void *) &BTmsg, 
         (portTickType) 10) != pdPASS) 
@@ -79,11 +125,9 @@ extern void os_bt_print() {
 extern void os_bt_init( void ) {
 
     /* Driver initialisation functions */
-
+	cli_bt_init();
 
     /* Create Semaphores */
-
-
     /* Create task */
     xTaskCreate((void *) &BT_Task, "Bluetooth Task", \
                     BT_STACK_SIZE, NULL, BT_PRIORITY, &BTHandler);
@@ -99,11 +143,7 @@ extern void os_bt_init( void ) {
 extern void os_bt_deinit( void ) {
 
     /* Driver deinitialisation functions */
-
-
     /* Remove Semaphores */
-
-
     /* Remove task */
     vTaskDelete(BTHandler);
 }
@@ -117,7 +157,7 @@ extern void os_bt_deinit( void ) {
 */
 void BT_Task( void ) {
 
-    BTMessage IncomingBT;
+    BTMessage_t IncomingBT;
 
     /* Create Queue for retrieving from Serial ISR */
     QueueBluetooth = xQueueCreate(10, sizeof(IncomingBT));
@@ -125,8 +165,10 @@ void BT_Task( void ) {
     for ( ;; ) {
         // vLedsToggle(LEDS_GREEN);
         if (xQueueReceive(QueueBluetooth, &IncomingBT, 10) == pdTRUE) {   
-            
+            eTdfAddMulti(BLE_LOG, IncomingBT.tdfType, IncomingBT.tdfTimestamp, &IncomingBT.xTime,  &IncomingBT.data);
+	        eTdfFlushMulti(BLE_LOG);
         }
+
         vTaskDelay(5);
     }
 }

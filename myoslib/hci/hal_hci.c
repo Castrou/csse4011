@@ -202,6 +202,7 @@ void uart_fsmprocessing( char c ) {
 				/* Last receive, send off for printing */
                 packet_process(c);
 				os_hci_read(recvPacket);
+                os_hci_clearPacket(&recvPacket);
                 packetState = PKT_SID;
                 uartState = UART_IDLE;
             }

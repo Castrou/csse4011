@@ -14,10 +14,16 @@
 #ifndef S4434496_HCI_PACKET_H
 #define S4434496_HCI_PACKET_H
 
-/* Public typedef ------------------------------------------------------------*/
+
+/* Global Defines ------------------------------------------------------------*/
+#define        MAX_DF      13
+
+/* Global typedef ------------------------------------------------------------*/
 typedef enum Sensor_I2C {
 
-    LSM6DSL = 0x6A
+    LSM6DSL = 0x6A,
+    LPS22HB = 0x5D,
+    VL53L0X = 0x29
 
 } Sensor_I2C;
 
@@ -35,7 +41,7 @@ typedef struct Packet {
     uint8_t preamble;
     uint8_t type;
     uint8_t dataCnt;
-    Datafield data[13];
+    Datafield data[MAX_DF];
 
 } Packet;
 

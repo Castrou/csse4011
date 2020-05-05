@@ -14,6 +14,8 @@
 
 /* Includes ***************************************************/
 #include "string.h"
+#include "stdint.h"
+#include "stdlib.h"
 
 #include "board.h"
 
@@ -24,17 +26,24 @@
 #include "semphr.h"
 #include "FreeRTOS_CLI.h"
 
+#include "rtc.h"
 #include "tdf.h"
-#include "tdfauto.h"
+#include "tdf_auto.h"
+
 #include "unified_comms_bluetooth.h"
 #include "bluetooth.h"
 
 #include "leds.h"
 #include "log.h"
-
 #include "os_log.h"
-#include "cli_bt.h"
+
 #include "os_bt.h"
+#include "lib_bt.h"
+#include "cli_bt.h"
+
+#include "hci_packet.h"
+#include "lib_hci.h"
+#include "os_hci.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -45,18 +54,20 @@
 #define		OFF			'f'
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+xTdfTime_t xTime;
+
 CLI_Command_Definition_t BTScanCmd = {
 	"ble",
 	"ble s <o/f>: Change BLE scanning state.\r\n",
-	btScanCommand,
-	1
+	btCommand,
+	2
 };
 
-CLI_Command_Definition_t BTdataCmd = {
+CLI_Command_Definition_t BTDataCmd = {
 	"ble",
 	"ble c <TDFID>: Send latest TDF information.\r\n",
-	btDataCommand,
-	1
+	btCommand,
+	2
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,14 +75,14 @@ CLI_Command_Definition_t BTdataCmd = {
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Initialise log commands
+* @brief  Initialise Bluetooth commands
 * @param  None
 * @retval None
 */
-extern void cli_log_init( void ) {
+extern void cli_bt_init( void ) {
 
-    FreeRTOS_CLIRegisterCommand(&btScanCmd);
-	FreeRTOS_CLIRegisterCommand(&btLogCmd);
+    FreeRTOS_CLIRegisterCommand(&BTScanCmd);
+	FreeRTOS_CLIRegisterCommand(&BTDataCmd);
 
 }
 
@@ -82,106 +93,80 @@ extern void cli_log_init( void ) {
 * @param  None
 * @retval None
 */
-extern void cli_log_deinit( void ) {
+extern void cli_bt_deinit( void ) {
 
 
 }
 
 /*----------------------------------------------------------------------------*/
 
-/**
-* @brief  Command for scanning bluetooth devices
-* @param  pcWriteBuffer: output buffer of command
-* @param  xWriteBufferLen: size of output buffer
-* @param  pcCommandString: pointer to command string
-* @retval pdFalse: indicates command is finished
-*/
-BaseType_t btScanCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char * pcCommandString) {
+void send_bt( int tdf_id, char sign ) {
 
-	long lParam_len;
-	long scan_len;
-	const char *cCmd_string;
-	const char *scan_string;
-
-	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
-	scan_string = FreeRTOS_CLIGetParameter(pcCommandString, 2, &scan_len);
-
-	/* Process Argument */
-	switch(cCmd_string[0]) {
-		case SCAN:
-			if(lParam_len > 1) {
-				os_log_print(LOG_ERROR, "Invalid usage: ble s <o/f>");
-				return pdFALSE;
-			}
-			break;
-		default:
-			return pdFalse;
+	if (xSemaphoreTake(SemaphoreUart, (TickType_t) 2000) == pdTRUE) {
+		if (sign == 'u') {
+			bRtcGetTdfTime(&xTime);
+			os_bt_send_unsigned(tdf_id, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, xTime, uHCIdata);			
+			xSemaphoreGive(SemaphoreUart);
+		} else {
+			bRtcGetTdfTime(&xTime);
+			os_bt_send_signed(tdf_id, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, xTime, HCIdata);			
+			xSemaphoreGive(SemaphoreUart);
+		}
 	}
-
-	/* Do the things */
-	switch(scan_string[0]) {
-		case ON:
-			break;
-		case OFF:
-			break;
-		default:
-			return pdFALSE;
-	}
-
-	UNUSED(pcWriteBuffer);
-	UNUSED(xWriteBufferLen);    
-
-	/* Return pdFALSE, as there are no more strings to return */
-	/* Only return pdTRUE, if more strings need to be printed */
-	return pdFALSE;
 }
 
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Command for sending latest sensor readings over bluetooth
+* @brief  Command for Bluetooth processes
 * @param  pcWriteBuffer: output buffer of command
 * @param  xWriteBufferLen: size of output buffer
 * @param  pcCommandString: pointer to command string
 * @retval pdFalse: indicates command is finished
 */
-BaseType_t btDataCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char * pcCommandString) {
+BaseType_t btCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char * pcCommandString) {
 
 	long lParam_len;
 	long tdf_len;
 	const char *cCmd_string;
 	const char *tdf_string;
 	int tdf_id;
-
+	char dataSign;
+	
 	cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 1, &lParam_len);
 	tdf_string = FreeRTOS_CLIGetParameter(pcCommandString, 2, &tdf_len);
 
 	/* Process Argument */
-	switch(cCmd_string[0]) {
-		case DATA:
-			if(lParam_len > 1) {
-				os_log_print(LOG_ERROR, "Invalid usage: ble s <o/f>");
-				return pdFALSE;
-			}
-			break;
-		default:
-			return pdFalse;
-	}
+	if (cCmd_string[0] == DATA) {
+		tdf_id = strtol(tdf_string, NULL, 10);
 
-	tdf_id = strtol(tdf_string, NULL, 10);
-	/* Do the things */
-	switch(tdf_id) {
-		case TDF_MAG_XYZ_SIGNED:
-			break;
+		/* Do the data things */
+		switch(tdf_id) {
+			case TDF_LSM6DSL:
+				lib_bt_tdf_lsm6dsl();
+				dataSign = 'i';
+				break;
 
-		case TDF_LSM6DSL:
-			break;
-
-		case TDF_RANGE_MM:
-			break;
+			case TDF_3D_POSE:
+				lib_bt_tdf_3dpose();
+				dataSign = 'i';
+				break;
 			
-		default:
-			break;
+			case TDF_HEIGHT_MSL:
+				lib_bt_tdf_height_msl();
+				dataSign = 'u';
+				break;
+
+			default:
+				break;
+		}
+
+		send_bt(tdf_id, dataSign);
+		
+	} else if (cCmd_string[0] == SCAN) {
+
+	} else {
+		os_log_print(LOG_ERROR, "Invalid usage");
 	}
 
 	UNUSED(pcWriteBuffer);

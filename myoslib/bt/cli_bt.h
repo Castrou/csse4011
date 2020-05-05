@@ -19,9 +19,7 @@ extern void cli_bt_init( void );
 extern void cli_bt_deinit( void );
 
 /* Commands ------------------------------------------------------------------*/
-BaseType_t btScanCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
-                        const char * pcCommandString);
-BaseType_t btDataCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
+BaseType_t btCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
                         const char * pcCommandString);
 
 
