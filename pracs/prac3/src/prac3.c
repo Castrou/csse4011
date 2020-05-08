@@ -202,18 +202,25 @@ void vCustomBluetoothHandler(xCommsInterface_t *pxComms,
 						  		xUnifiedCommsIncomingRoute_t *pxCurrentRoute,
 						  		xUnifiedCommsMessage_t *pxMessage)
 {
+	EventBits_t btBits = xEventGroupGetBitsFromISR(EventBT);
 	char pcLocalString[100] = {0};
     
-	UNUSED(pxCurrentRoute);
-	UNUSED(pxComms);
+	if ((btBits & SCAN_BIT) == SCAN_BIT) {
+		os_log_print(LOG_INFO, "Bluetooth Recv from:\n\r\tAddress: 0x%x\n\r\tRSSI: %i | %i dBm", 
+					pxMessage->xSource,
+					pxCurrentRoute->xMetadata.ucRssi,
+					30 - pxCurrentRoute->xMetadata.ucRssi);
+	}
+
 	/* 
 	 * Copy the string to a local buffer so it can be NULL terminated properly
 	 * The %s format specifier does not respect provided lengths
 	 */
 	pvMemcpy(pcLocalString, pxMessage->pucPayload, pxMessage->usPayloadLen);
 	
-	os_log_print(LOG_DEBUG, "BT Message Recv: %s", pcLocalString);
 	cli_task_queue(pcLocalString);
+
+	vUnifiedCommsBasicRouter(pxComms, pxCurrentRoute, pxMessage);
 }
 
 /*-----------------------------------------------------------*/

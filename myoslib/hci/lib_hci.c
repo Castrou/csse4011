@@ -48,7 +48,7 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Function for requesting accelerometer data
+* @brief  Function for requesting SCU data
 * @param  device: I2C Address for desired device reading
 * @param  specifier: Accelerometer: 'x' 'y' 'z' or 'a'
 *                    No other implemented options - default to register address

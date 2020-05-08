@@ -127,7 +127,9 @@ extern void os_bt_init( void ) {
     /* Driver initialisation functions */
 	cli_bt_init();
 
-    /* Create Semaphores */
+    /* Create Event Groups */
+    EventBT = xEventGroupCreate();
+
     /* Create task */
     xTaskCreate((void *) &BT_Task, "Bluetooth Task", \
                     BT_STACK_SIZE, NULL, BT_PRIORITY, &BTHandler);

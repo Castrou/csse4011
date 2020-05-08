@@ -124,6 +124,11 @@ BaseType_t btCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char * 
 
 		/* Do the data things */
 		switch(tdf_id) {
+			case TDF_UPTIME:
+				lib_bt_tdf_uptime();
+				dataSign = 'u';
+				break;
+				
 			case TDF_LSM6DSL:
 				lib_bt_tdf_lsm6dsl();
 				dataSign = 'i';
@@ -146,7 +151,17 @@ BaseType_t btCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char * 
 		send_bt(tdf_id, dataSign);
 		
 	} else if (cCmd_string[0] == SCAN) {
+		switch(tdf_string[0]) {
+			case ON:
+				xEventGroupSetBits(EventBT, SCAN_BIT);
+				break;
+			case OFF:
+				xEventGroupClearBits(EventBT, SCAN_BIT);
+				break;
+			default:
+				break;
 
+		}
 	} else {
 		os_log_print(LOG_ERROR, "Invalid usage");
 	}

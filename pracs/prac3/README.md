@@ -1,119 +1,90 @@
 # Cameron Stroud - 44344968
 
-## CSSE4011 Practical 2
+## CSSE4011 Practical 3
 
-## Design Tasks
+## Source Instructions
 
-### Part A - Build Environment
+This documentation assumes that the devices are connected to ports in the following configuration:  
 
-#### Design Task 1A: Micropython Installation and Integration
+| Device          | Port         |
+| --------------- | ------------ |  
+| Particle Argon  | /dev/ttyACM0 |  
+| B-L475E-IOT01A  | /dev/ttyACM1 |
+| Particle Xenon  | /dev/ttyACM2 |
 
-Micropython installed and integrated into development environment
+Unless otherwise specified, the device in question will be the Particle Argon.
 
-#### Design Task 2A: Basic Example
+## User Instructions
 
-Example program has been made in led.py which toggles between two LEDs.  
-Assuming the CSSE4011 Setup Guide has been completed, the program can be flashed using:   `pyboard --device /dev/ttyACMx -f cp /../../myoslib/scu/led.py :main.py` relative to the prac2 folder, where ttyACMx is the B\_L475E\_IOT01A (typically ttyACM0 or ttyACM1).  
-
-### PART B - SCU and HCI
+To run the tdf_receiver.py you will need the Tago python library:
+`$ sudo pip3 install -U tago`  
 
 ### Hardware Guide
 
 The following table shows the hardware configuration for Part B Tasks:  
 
-| Mode  | Argon | B\_L475E\_IOT01A  |
-| ----- | :---: | :---------------: |
-| Rx    | D8    | D0                |
-| Tx    | D7    | D1                |
+| Mode  | Argon | B\_L475E\_IOT01A  |  
+| ----- | :---: | :---------------: |  
+| Rx    | D8    | D0                |  
+| Tx    | D7    | D1                |  
 
 To connect the boards connect Argon D8 to B\_L475E\_IOT01A D1 and Argon D7 to B\_L475E\_IOT01A D0.  
 
+## Design Tasks
+
+### Part A - Bluetooth Wireless Communications
+
+#### Design Task 1A: Tagged Data Format
+
+Implemented sending TDF over Bluetooth for:  
+Accelerometer Data  
+3D Pose Data  
+Height Data  
+Uptime
+
+#### Design Task 2A: Base Station Unit (BSU)
+
+By running unifiedbase on the Xenon, tdf packets can be read using tdf3listen:  
+
+\*TERMINAL 1\*  
+`baselisten -s /dev/ttyACM2 --port=9003`  
+\*TERMINAL 2\*  
+`tdf3listen --port=9003`  
+
+#### Design Task 3A: AHU Bluetooth Scan Library
+
+Bluetooth scanning can be enabled/disabled using the following commands:  
+Enable: `ble s o`  
+Disable: `ble s f`  
+
+To test functionality, run tdf_demo on the Xenon.
+
+### PART B - Measuring Altitude and Orientation
+
 #### Design Task 1B: Host Controller Interface (HCI)
 
-Host Controller Interface successfully implemented. Both Argon and B\_L4753\_IOT01A communicate using the following packet format, where each item is 1 byte:  
-`<PREAMBLE><TYPExLENGTH><DATAFIELD1>[<DATAFIELD2>]`  
-PREAMBLE: 0xAA - ensures signal is a packet.  
-TYPExLENGTH: 4 type bits combined with 4 length bits.  
-TYPE: 0x01 for REQUEST; 0x02 for RESPONSE.  
-LENGTH: Total number of bytes from datafields.  
-DATAFIELD1: First datafield.  
-DATAFIELD2: Optional second datafield, used for reading multiple registers at a time (ie. accelerometer axis data).  
+Orientation is calculated and can be seen on tdf3listen using:
+`ble c 472`  
 
-Datafields are formatted using the following structure, again each item is 1 byte:  
-`<SID><I2CADDR><REGADDR>[<REGVAL>]`  
-SID: Sensor ID (See table in Task 2B for more information).  
-I2CADDR: I2C Address including R/W bit.  
-REGADDR: Register address to read from or write to.  
-REGVAL: In a REQUEST packet this is the value to write, in a RESPONSE this is the value of a register that was read.  
+#### Design Task 2B: Altitude Calculation
 
-#### Design Task 2B: AHU HCI HAL/OS MyOSLib Implementation
+Coarse Altitude (elevation from sea level in m) is calculated and can be seen on tdf3listen using:
+`ble c 476`  
 
-Can successfully read from and write to sensor registers using HCI and I2C Address.  
-The following table shows the SID and respective I2C Addresses:  
-| Sensor Model  | SID | Description     | I2C Address | I2C Write Address | I2C Read Address |
-| ------------- | --- | --------------- | :---------: | :---------------: | :--------------: |
-| LSM6DSL       | 1   | IMU             | 0x6A        | 0xD4              | 0xD5             |
-| LIS3MDL       | 2   | Magnetometer    | 0x1E        | 0x3C              | 0x3D             |
-| LPS22HB       | 3   | Pressure Sensor | 0x5D        | 0xBA              | 0xBB             |
-| VL53L0X       | 4   | Time of Flight  | 0x29        | 0x52              | 0x53             |
-| HTS221        | 5   | Temperature     | 0x5F        | 0xBE              | 0xBF             |
-
-To load hci to the B_L475E_IOT01A relative to the prac2 folder, the following command can be used: `pyboard --device /dev/ttyACMx -f cp /../../myoslib/scu/hci.py :main.py`  
+Pressing the on-board button will also begin streaming altitude calculations over Bluetooth.  
 
 #### Design Task 3B: AHU HCI MyOSLib Implementation
 
-CLI Commands implemented for interfacing with SCU:  
-`i2creg <r/w> <sid> <regaddr> [<regval>]` can be used to read from or write to a specific register at a given I2C address.  
-`lsm6dsl r <x/y/z/a>` can be used to read acceleration data from a given axis (or all). Note there can be a delay between reads when using the '`a`' command.  
+Altitude and Orientation is transferred to BSU over Bluetooth.  
 
-##### Example commands
+### Part C - Data Viewer Dashboard Interface
 
-`i2creg r 1 0x0F`:  
-B\_L475E\_IOT01A Display:  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0xf 0x0 }  
-Argon Display:  
-RECV(SID1): REGADDR=0x0f REGVAL=0x6a  
-  
-`i2creg w 1 0x10 0x01`:  
-B\_L475E\_IOT01A Display:  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x10 0x1 }  
-Argon Display:  
-RECV(SID1): REGADDR=0x10 REGVAL=0x01
+A dashboard was implemented using Tago.IO and can be seen here: [TagoIO Dashboard](http://admin.tago.io/public/dashboard/5eb36f0ce0003e001e84b5f6/cd9ec31c-6ef0-4b3d-95f0-2dab399f35ad)  
 
-`lsm6dsl r x`:  
-B\_L475E\_IOT01A Display:  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x29 0x0 0x1 0xd5 0x28 0x0 }  
-Argon Display:  
-X Acceleration: -0.05g(s)  
-
-`lsm6dsl r y`:  
-B\_L475E\_IOT01A Display:  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2b 0x0 0x1 0xd5 0x2a 0x0 }  
-Argon Display: Y Acceleration: -0.03g(s)  
-
-`lsm6dsl r z`:  
-B\_L475E\_IOT01A Display:  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2d 0x0 0x1 0xd5 0x2c 0x0 }  
-Argon Display: Z Acceleration: 0.99g(s)  
-
-`lsmdsl r a`:  
-B\_L475E\_IOT01A Display:  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x29 0x0 0x1 0xd5 0x28 0x0 }  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2b 0x0 0x1 0xd5 0x2a 0x0 }  
-RECV PACKET: { 0xaa 0x14 0x1 0xd5 0x2d 0x0 0x1 0xd5 0x2c 0x0 }  
-Argon Display:  
-X Acceleration: -0.05g(s)  
-Y Acceleration: -0.03g(s)  
-Z Acceleration: 0.99g(s)  
-
-### Part C - AHU and SCU Hardware
-
-#### Design Task: Create a schematic and PCB for the SCU Interface Board
-
-A schematic has been created for the SCU Interface Board and can be seen in `/pracs/prac2/hw/scu_interface_sch.pdf`  
-A PCB has been created for the SCU Interface Board and Gerber Files generated to `/pracs/prac2/hw/scu_interface_gerber`  
-
----
+Data that can be viewed:  
+Coarse Altitude  
+Roll  
+Pitch  
 
 ## Folder Structure
 
@@ -122,38 +93,44 @@ A PCB has been created for the SCU Interface Board and Gerber Files generated to
 ├── csse4011-s4434496  
 |   ├── ei-changes  
 |   ├── myoslib  
+|   |   ├── bt
+|   |   |   ├── cli_bt.c            (+)
+|   |   |   ├── cli_bt.h            (+)  
+|   |   |   ├── lib_bt.c            (+)  
+|   |   |   ├── lib_bt.h            (+)  
+|   |   |   ├── os_bt.c             (+)  
+|   |   |   └── os_bt.h             (+)  
 |   |   ├── cli  
 |   |   ├── hci  
-|   |   |   ├── cli_hci.c       (+)  
-|   |   |   ├── cli_hci.h       (+)  
-|   |   |   ├── hal_hci.c       (+)  
-|   |   |   ├── hal_hci.h       (+)  
-|   |   |   ├── hci_packet.h    (+)  
-|   |   |   ├── os_hci.c        (+)  
-|   |   |   └── os_hci.h        (+)  
+|   |   |   ├── cli_hci.c  
+|   |   |   ├── cli_hci.h  
+|   |   |   ├── hal_hci.c  
+|   |   |   ├── hal_hci.h  
+|   |   |   ├── hci_packet.h  
+|   |   |   ├── lib_hci.c           (+)  
+|   |   |   ├── lib_hci.h           (+)  
+|   |   |   ├── os_hci.c  
+|   |   |   └── os_hci.h  
 |   |   ├── log  
 |   |   ├── scu  
-|   |   |   ├── hci.py          (+)  
-|   |   |   └── led.py          (+)  
 |   |   └── util  
 |   └── pracs  
 |   |   ├── prac1  
-|   |   └── prac2  
-|   |       ├── hw  
-|   |       |   ├──  scu_interface_gerber   (+)  
-|   |       |   ├──  scu_interface_sch.pdf  (+)  
+|   |   ├── prac2  
+|   |   └── prac3
 |   |       ├── inc  
-|   |       |   ├── application.h           (+)  
-|   |       |   └── gatt_nrf52.h            (+)  
+|   |       |   ├── application.h   (+)  
+|   |       |   └── gatt_nrf52.h    (+)  
 |   |       ├── src  
-|   |       |   ├── gatt_nrf52.c            (+)  
-|   |       |   ├── gatt.xml                (+)  
-|   |       |   └── prac2.c                 (+)  
-|   |       ├── Makefile            (+)
-|   |       ├── filelist.mk         (+)
-|   |       └── README.md           (+)
+|   |       |   ├── gatt_nrf52.c    (+)  
+|   |       |   ├── gatt.xml        (+)  
+|   |       |   └── prac3.c         (+)  
+|   |       ├── sw
+|   |       |   └── tdf_receiver.py (+)  
+|   |       ├── filelist.mk         (+)  
+|   |       └── Makefile            (+)  
 |   └── project  
-└── micropython     (+)  
+└── micropython  
 ```
 
 ---
@@ -161,5 +138,4 @@ A PCB has been created for the SCU Interface Board and Gerber Files generated to
 ## References
 
 [FreeRTOS+CLI](https://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_CLI/Download_FreeRTOS_Plus_CLI.html)  
-[SnapEDA 2821 Symbol & Footprint](https://www.snapeda.com/parts/2821/Adafruit%20Industries%20LLC/view-part/)  
-[KiCAD Header Footprints](https://kicad.github.io/footprints/Connector_PinHeader_2.54mm)  
+[TagoIO Python SDK](https://github.com/tago-io/tago-sdk-python)

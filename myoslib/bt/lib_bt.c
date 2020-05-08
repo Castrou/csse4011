@@ -55,6 +55,11 @@ xTdfTime_t xTime;
 
 /*----------------------------------------------------------------------------*/
 
+/**
+* @brief  Function for sending over bluetooth
+* @param  None
+* @retval None
+*/
 extern void send_bt( int tdf_id, char sign ) {
 
 	if (xSemaphoreTake(SemaphoreUart, (TickType_t) 2000) == pdTRUE) {
@@ -72,6 +77,27 @@ extern void send_bt( int tdf_id, char sign ) {
 
 /*----------------------------------------------------------------------------*/
 
+/**
+* @brief  Function for sending uptime TDF
+* @param  None
+* @retval None
+*/
+extern void lib_bt_tdf_uptime( void ) {
+
+    uint32_t time = ulApplicationUptime();
+    uHCIdata[3] = (time << 24) & 0xFF;
+    uHCIdata[2] = (time << 16) & 0xFF;
+    uHCIdata[1] = (time << 8) & 0xFF;
+    uHCIdata[0] = time & 0xFF;
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Function for sending accelerometer TDF
+* @param  None
+* @retval None
+*/
 extern void lib_bt_tdf_lsm6dsl( void ) {
 
     lib_hci_request_accel(ALL_AXES);
@@ -79,6 +105,11 @@ extern void lib_bt_tdf_lsm6dsl( void ) {
 
 /*----------------------------------------------------------------------------*/
 
+/**
+* @brief  Function for sending 3D Pose TDF
+* @param  None
+* @retval None
+*/
 extern void lib_bt_tdf_3dpose( void ) {
 
     /* Get Accelerometer info */
@@ -116,6 +147,11 @@ extern void lib_bt_tdf_3dpose( void ) {
 
 /*----------------------------------------------------------------------------*/
 
+/**
+* @brief  Function for sending Range TDF
+* @param  None
+* @retval None
+*/
 extern void lib_bt_tdf_range_mm( void ) {
 
     lib_bt_tdf_3dpose();
@@ -133,6 +169,11 @@ extern void lib_bt_tdf_range_mm( void ) {
 
 /*----------------------------------------------------------------------------*/
 
+/**
+* @brief  Function for sending height TDF
+* @param  None
+* @retval None
+*/
 extern void lib_bt_tdf_height_msl( void ) {
 
     lib_hci_request_baro();

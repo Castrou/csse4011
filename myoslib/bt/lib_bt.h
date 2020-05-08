@@ -20,6 +20,7 @@
 /* Global Defines ------------------------------------------------------------*/
 /* Function prototypes -------------------------------------------------------*/
 extern void send_bt( int tdf_id, char sign );
+extern void lib_bt_tdf_uptime( void );
 extern void lib_bt_tdf_lsm6dsl( void );
 extern void lib_bt_tdf_3dpose( void );
 extern void lib_bt_tdf_height_msl( void );

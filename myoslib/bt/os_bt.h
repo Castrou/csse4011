@@ -16,6 +16,11 @@
 
 #include "semphr.h"
 
+/* Global Defines ------------------------------------------------------------*/
+#define 		SCAN_BIT		(1<<0)
+/* Global Variables ----------------------------------------------------------*/
+EventGroupHandle_t EventBT;
+
 /* Function prototypes -------------------------------------------------------*/
 extern void os_bt_init( void );
 extern void os_bt_deinit( void );
