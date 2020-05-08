@@ -48,7 +48,27 @@
 #define     HPA_CONVERT     12.005
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+xTdfTime_t xTime;
+
 /* Private function prototypes -----------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+
+extern void send_bt( int tdf_id, char sign ) {
+
+	if (xSemaphoreTake(SemaphoreUart, (TickType_t) 2000) == pdTRUE) {
+		if (sign == 'u') {
+			bRtcGetTdfTime(&xTime);
+			os_bt_send_unsigned(tdf_id, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, xTime, uHCIdata);			
+			xSemaphoreGive(SemaphoreUart);
+		} else {
+			bRtcGetTdfTime(&xTime);
+			os_bt_send_signed(tdf_id, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, xTime, HCIdata);			
+			xSemaphoreGive(SemaphoreUart);
+		}
+	}
+}
 
 /*----------------------------------------------------------------------------*/
 

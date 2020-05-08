@@ -2,11 +2,13 @@
 #include "string.h"
 #include "stdio.h"
 
+#include "argon.h"
 #include "board.h"
 
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 #include "task.h"
+#include "event_groups.h"
 #include "queue.h"
 #include "FreeRTOS_CLI.h"
 
@@ -31,9 +33,11 @@
 #include "os_log.h"
 #include "os_hci.h"
 #include "os_util.h"
+#include "lib_bt.h"
 #include "os_bt.h"
 
 /* Private Defines ------------------------------------------*/
+#define BUTTON_BIT 	(1 << 0)
 /* Private Macros -------------------------------------------*/
 /* Type Definitions -----------------------------------------*/
 /* Function Declarations ------------------------------------*/
@@ -44,6 +48,43 @@ void vCustomBluetoothHandler(xCommsInterface_t *pxComms,
 						  		xUnifiedCommsIncomingRoute_t *pxCurrentRoute,
 						  		xUnifiedCommsMessage_t *pxMessage);
 /* Private Variables ----------------------------------------*/
+EventGroupHandle_t EventISR;
+TickType_t prevTime = 0;
+uint8_t count = 0;
+
+/*-----------------------------------------------------------*/
+
+void vButtonInterruptHandler(void)
+{
+	TickType_t currTime = xTaskGetTickCount();
+	EventBits_t isrBits;
+	BaseType_t xHigherPriorityTaskWoken, xResult;
+
+	/* xHigherPriorityTaskWoken must be initialised to pdFALSE. */
+	xHigherPriorityTaskWoken = pdFALSE;
+	isrBits = xEventGroupGetBitsFromISR(EventISR);
+
+	if(currTime - prevTime > 100) {
+		vLedsSet(LEDS_ALL);
+		isrBits ^= BUTTON_BIT;
+		xEventGroupClearBitsFromISR(EventISR, 0xFF);
+    	xResult = xEventGroupSetBitsFromISR(
+                              EventISR,   /* The event group being updated. */
+                              isrBits, /* The bits being set. */
+                              &xHigherPriorityTaskWoken );
+		prevTime = currTime;		
+		/* Was the message posted successfully? */
+		
+	}
+
+	if( xResult != pdFAIL ) {
+		/* If xHigherPriorityTaskWoken is now set to pdTRUE then a context
+		switch should be requested.  The macro used is port specific and will
+		be either portYIELD_FROM_ISR() or portEND_SWITCHING_ISR() - refer to
+		the documentation page for the port being used. */
+		portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+	}
+}
 
 /*-----------------------------------------------------------*/
 
@@ -84,6 +125,11 @@ void vApplicationStartupCallback( void ) {
 	/* Start bluetooth scanning */
 	vUnifiedCommsListen( &xBluetoothComms, COMMS_LISTEN_ON_FOREVER );
 
+	/* Setup Interrupt Callback */
+	vGpioSetup( BUTTON_1, GPIO_INPUTPULL, NRF_GPIO_PIN_PULLDOWN); 
+	eGpioConfigureInterrupt(BUTTON_1, true, GPIO_INTERRUPT_RISING_EDGE, vButtonInterruptHandler); 
+	EventISR = xEventGroupCreate();
+
     /* Init functions */
 	cli_task_init();
     os_log_init();
@@ -107,8 +153,27 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 
 	// eTdfAddMulti(BLE_LOG, TDF_DATETIME, TDF_TIMESTAMP_GLOBAL, &xTime, &xTdfTime);
 	// eTdfFlushMulti(BLE_LOG);
-	UNUSED(ulUptime);
 	vLedsToggle(LEDS_BLUE);
+
+	EventBits_t buttonIsr = xEventGroupGetBitsFromISR(EventISR);
+
+	if ((buttonIsr & BUTTON_BIT) == BUTTON_BIT) {
+		vLedsToggle(LEDS_RED);
+		if (count == 2) {
+			lib_bt_tdf_height_msl();
+			send_bt(TDF_HEIGHT_MSL, 'u');
+		}
+
+		if (count == 4) {
+			lib_bt_tdf_3dpose();
+			send_bt(TDF_3D_POSE, 'i');
+			count = 0;
+		}
+
+		count++;
+	}
+
+	UNUSED(ulUptime);
 
 }
 

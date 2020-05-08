@@ -54,7 +54,6 @@
 #define		OFF			'f'
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-xTdfTime_t xTime;
 
 CLI_Command_Definition_t BTScanCmd = {
 	"ble",
@@ -96,23 +95,6 @@ extern void cli_bt_init( void ) {
 extern void cli_bt_deinit( void ) {
 
 
-}
-
-/*----------------------------------------------------------------------------*/
-
-void send_bt( int tdf_id, char sign ) {
-
-	if (xSemaphoreTake(SemaphoreUart, (TickType_t) 2000) == pdTRUE) {
-		if (sign == 'u') {
-			bRtcGetTdfTime(&xTime);
-			os_bt_send_unsigned(tdf_id, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, xTime, uHCIdata);			
-			xSemaphoreGive(SemaphoreUart);
-		} else {
-			bRtcGetTdfTime(&xTime);
-			os_bt_send_signed(tdf_id, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, xTime, HCIdata);			
-			xSemaphoreGive(SemaphoreUart);
-		}
-	}
 }
 
 /*----------------------------------------------------------------------------*/
