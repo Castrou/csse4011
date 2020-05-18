@@ -1,0 +1,120 @@
+Archive member included to satisfy reference by file (symbol)
+
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/watchdog_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac2.o (vWatchdogPrintRebootReason)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o (xUartBackend)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/watchdog.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac2.o (xWatchdogRebootReason)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o (eUartInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/gpio.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (vGpioSetup)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/cpu.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (vInterruptSetPriority)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/rtc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/watchdog.o (eRtcSetDatetime)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/main.o
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/crt0.o (main)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/main.o (vBoardSetupCore)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/log.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac2.o (eLogSetLogLevel)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/memory_operations.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o (pvMemset)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eTdfLoggerConfigure)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xBluetoothLoggerDevice)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/serial_logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xSerialLoggerDevice)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/null_logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xNullLoggerDevice)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vUnifiedCommsInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_bluetooth.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xBluetoothComms)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_serial.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac2.o (xSerialComms)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xGattComms)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/leds.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vLedsInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_utility.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (pxBluetoothSearchCharacteristicUUID)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_controller.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (pxBluetoothMasterConfiguration)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/crypto_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_bluetooth.o (vAes128Crypt)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/rtc_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/rtc.o (eValidateDatetime)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_gap.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vBluetoothGetLocalAddress)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_gatt.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_controller.o (vBluetoothGattRegisterInitiatedConnection)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_stack.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eBluetoothInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/spi.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eSpiInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/temp.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vTempInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/random.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (eRandomGenerate)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/i2c.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eI2CInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/adc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vAdcInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/device_constants.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (bDeviceConstantsRead)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/device_nvm.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eNvmInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/application_defaults.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (vApplicationGattConnected)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/board_defaults.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (fnBoardSerialHandler)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/linked_list.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_controller.o (vLinkedListInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/csiro85_encode.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_bluetooth.o (ulCsiro85Encode)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf.o (eLoggerLog)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf_auto.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf.o (pucTdfStructLengths)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/crc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vCrcInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/system_nrf52.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gcc_startup_nrf52840.o (SystemInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_gpiote.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/gpio.o (nrfx_gpiote_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_ppi.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (nrfx_ppi_channel_alloc)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_saadc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/adc.o (nrfx_saadc_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_twim.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/i2c.o (nrfx_twim_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_drv_clock.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (nrf_drv_clock_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage_sd.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_stack.o (nrf_fstorage_sys_evt_handler)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/app_util_platform.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/cpu.o (nrf_nvic_state)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_atomic.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage_sd.o (nrf_atomic_flag_set_fetch)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_atfifo.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage_sd.o (nrf_atfifo_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/fds.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/device_nvm.o (fds_register)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_clock.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_drv_clock.o (nrfx_clock_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_power.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_clock.o (nrfx_power_irq_enabled)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/fds.o (nrf_fstorage_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/queue.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/rtc.o (xQueueGenericCreateStatic)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/list.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/queue.o (vListInitialise)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/stream_buffer.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (xStreamBufferGenericCreate)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/event_groups.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/a

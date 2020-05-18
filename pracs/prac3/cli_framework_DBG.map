@@ -1,0 +1,426 @@
+Archive member included to satisfy reference by file (symbol)
+
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/watchdog_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac3.o (vWatchdogPrintRebootReason)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o (xUartBackend)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/rtc_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o (bRtcGetTdfTime)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/watchdog.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac3.o (xWatchdogRebootReason)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o (eUartInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/gpio.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac3.o (vGpioSetup)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/cpu.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (vInterruptSetPriority)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/rtc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/watchdog.o (eRtcSetDatetime)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/main.o
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/crt0.o (main)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/main.o (vBoardSetupCore)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/log.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac3.o (eLogSetLogLevel)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/memory_operations.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o (pvMemset)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eTdfLoggerConfigure)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xBluetoothLoggerDevice)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/serial_logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xSerialLoggerDevice)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/null_logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xNullLoggerDevice)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vUnifiedCommsInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_bluetooth.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac3.o (xBluetoothComms)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_serial.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac3.o (xSerialComms)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xGattComms)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/leds.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vLedsInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_utility.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (pxBluetoothSearchCharacteristicUUID)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_controller.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (pxBluetoothMasterConfiguration)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/crypto_common.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_bluetooth.o (vAes128Crypt)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_gap.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vBluetoothGetLocalAddress)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_gatt.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_controller.o (vBluetoothGattRegisterInitiatedConnection)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_stack.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eBluetoothInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/spi.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eSpiInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/temp.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vTempInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/random.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (eRandomGenerate)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/i2c.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eI2CInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/adc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vAdcInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/device_constants.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (bDeviceConstantsRead)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/device_nvm.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (eNvmInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/application_defaults.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_gatt.o (vApplicationGattConnected)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/board_defaults.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (fnBoardSerialHandler)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/linked_list.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_controller.o (vLinkedListInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/csiro85_encode.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_bluetooth.o (ulCsiro85Encode)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/logger.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf.o (eLoggerLog)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf_auto.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf.o (pucTdfStructLengths)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/crc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (vCrcInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/system_nrf52.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gcc_startup_nrf52840.o (SystemInit)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_gpiote.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/gpio.o (nrfx_gpiote_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_ppi.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (nrfx_ppi_channel_alloc)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_saadc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/adc.o (nrfx_saadc_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_twim.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/i2c.o (nrfx_twim_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_drv_clock.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (nrf_drv_clock_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage_sd.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_stack.o (nrf_fstorage_sys_evt_handler)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/app_util_platform.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/cpu.o (nrf_nvic_state)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_atomic.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage_sd.o (nrf_atomic_flag_set_fetch)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_atfifo.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage_sd.o (nrf_atfifo_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/fds.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/device_nvm.o (fds_register)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_clock.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_drv_clock.o (nrfx_clock_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_power.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_clock.o (nrfx_power_irq_enabled)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/fds.o (nrf_fstorage_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/queue.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/rtc.o (xQueueGenericCreateStatic)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/list.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/queue.o (vListInitialise)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/stream_buffer.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (xStreamBufferGenericCreate)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/event_groups.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_hci.o (xEventGroupCreate)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/tasks.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_stack.o (xTaskCreateStatic)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/timers.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/tasks.o (xTimerCreateTimerTask)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/port_cmsis.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/tasks.o (pxPortInitialiseStack)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/port.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/port_cmsis.o (vPortStartFirstTask)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/port_cmsis_systick.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/port_cmsis.o (vPortSetupTimerInterrupt)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/usb.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/argon_board.o (xUsbBackend)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/nrfx_usbd.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/usb.o (nrfx_usbd_is_enabled)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/app_usbd.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/usb.o (app_usbd_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/app_usbd_core.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/app_usbd.o (app_usbd_core_inst)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/app_usbd_cdc_acm.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/usb.o (app_usbd_cdc_acm_class_methods)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/app_usbd_string_desc.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/app_usbd_core.o (app_usbd_string_desc_get)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/aes.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/crypto_common.o (mbedtls_aes_init)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/platform_util.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/aes.o (mbedtls_platform_zeroize)
+/home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/CORE_ARCH/tiny_printf.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_log.o (tiny_vsnprintf)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_atan2.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o (atan2)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o (pow)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_sqrt.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o (sqrt)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-e_atan2.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_atan2.o) (__ieee754_atan2)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-e_pow.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o) (__ieee754_pow)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-e_sqrt.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_sqrt.o) (__ieee754_sqrt)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_atan.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-e_atan2.o) (atan)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_fabs.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-e_atan2.o) (fabs)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_finite.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o) (finite)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_lib_ver.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o) (__fdlib_version)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_matherr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o) (matherr)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_nan.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-e_pow.o) (nan)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_rint.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o) (rint)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_scalbn.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-e_pow.o) (scalbn)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_copysign.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-s_scalbn.o) (copysign)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_systick.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/nrfx_usbd.o (nrfx_systick_delay_us)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_atomic.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/nrfx_usbd.o (nrfx_atomic_u32_fetch_and)
+/home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_drv_power.o
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/app_usbd.o (nrf_drv_power_init)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_arm_addsubdf3.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/CORE_ARCH/tiny_printf.o (__aeabi_dsub)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_arm_muldivdf3.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o (__aeabi_dmul)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_arm_cmpdf2.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/CORE_ARCH/tiny_printf.o (__aeabi_dcmpeq)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_arm_unorddf2.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o) (__aeabi_dcmpun)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_arm_fixdfsi.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o (__aeabi_d2iz)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_arm_fixunsdfsi.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o (__aeabi_d2uiz)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_arm_truncdfsf2.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_hci.o (__aeabi_d2f)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_aeabi_uldivmod.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/uart.o (__aeabi_uldivmod)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_popcountsi2.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/tdf.o (__popcountsi2)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_udivmoddi4.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_aeabi_uldivmod.o) (__udivmoddi4)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_dvmd_tls.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_aeabi_uldivmod.o) (__aeabi_ldiv0)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-errno.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libm.a(lib_a-w_pow.o) (__errno)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-exit.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/crt0.o (exit)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-gmtime.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/platform_util.o (gmtime)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-gmtime_r.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-gmtime.o) (gmtime_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-impure.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-exit.o) (_global_impure_ptr)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-init.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/crt0.o (__libc_init_array)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-memcmp.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/aes.o (memcmp)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-memcpy.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrf_fstorage_sd.o (memcpy)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-memset.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/crt0.o (memset)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-printf.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/aes.o (printf)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-putchar.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/aes.o (putchar)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-puts.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/MBEDTLS/aes.o (puts)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strcmp.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_util.o (strcmp)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strcpy.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_task.o (strcpy)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strlen.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/FreeRTOS_CLI.o (strlen)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strncmp.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/FreeRTOS_CLI.o (strncmp)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strncpy.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/FreeRTOS_CLI.o (strncpy)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strtok.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_hci.o (strtok)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strtok_r.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strtok.o) (__strtok_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strtol.o)
+                              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_hci.o (strtol)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-printf.o) (_vfprintf_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-wsetup.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (__swsetup_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-__call_atexit.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-exit.o) (__call_exitprocs)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-atexit.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-__call_atexit.o) (atexit)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-dtoa.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (_dtoa_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fflush.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (_fflush_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-findfp.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-puts.o) (__sinit)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fini.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-__call_atexit.o) (__libc_fini_array)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-freer.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (_free_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fvwrite.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-puts.o) (__sfvwrite_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fwalk.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-findfp.o) (_fwalk)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-locale.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-strtol.o) (__locale_ctype_ptr_l)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-localeconv.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (_localeconv_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (__retarget_lock_init_recursive)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-makebuf.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-wsetup.o) (__smakebuf_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-mallocr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (_malloc_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-mbtowc_r.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-locale.o) (__ascii_mbtowc)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-memchr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (memchr)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-memmove.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fvwrite.o) (memmove)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-mlock.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-freer.o) (__malloc_lock)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-mprec.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-dtoa.o) (_Balloc)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-putc.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-putchar.o) (_putc_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-reallocr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fvwrite.o) (_realloc_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-s_frexp.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (frexp)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-sbrkr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-freer.o) (_sbrk_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-stdio.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-findfp.o) (__sread)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfiprintf.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfprintf.o) (__sprint_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-wbuf.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-putc.o) (__swbuf_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-wctomb_r.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-locale.o) (__ascii_wctomb)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-writer.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-stdio.o) (_write_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-__atexit.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-atexit.o) (__register_exitproc)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-callocr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-mprec.o) (_calloc_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-closer.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-stdio.o) (_close_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-ctype_.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-locale.o) (_ctype_)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fclose.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-findfp.o) (_fclose_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fputwc.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-vfiprintf.o) (_fputwc_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fstatr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-makebuf.o) (_fstat_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-isattyr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-makebuf.o) (_isatty_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lseekr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-stdio.o) (_lseek_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-readr.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-stdio.o) (_read_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-reent.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-sbrkr.o) (errno)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-wcrtomb.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fputwc.o) (_wcrtomb_r)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/softfp/libgcc.a(_aeabi_ldivmod.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-gmtime_r.o) (__aeabi_ldivmod)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libnosys.a(close.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-closer.o) (_close)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libnosys.a(fstat.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-fstatr.o) (_fstat)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libnosys.a(isatty.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-isattyr.o) (_isatty)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libnosys.a(lseek.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lseekr.o) (_lseek)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libnosys.a(read.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-readr.o) (_read)
+/usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libnosys.a(write.o)
+                              /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-writer.o) (_write)
+
+Allocating common symbols
+Common symbol       size              file
+
+nrf_nvic_state      0xc               /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/app_util_platform.o
+BTHandler           0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_bt.o
+CLI                 0x64              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_task.o
+__lock___atexit_recursive_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+QueueLog            0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_log.o
+EventISR            0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/prac3.o
+__lock___arc4random_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+SemaphoreDebugLog   0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_task.o
+m_ep_feeder_state   0x6c              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/nrfx_usbd.o
+TxLED               0xc               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_util.o
+bufflen             0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+SemaphoreErrorLog   0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_task.o
+recvPacket          0x37              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+errno               0x4               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-reent.o)
+SemaphoreLED        0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_util.o
+packetState         0x1               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+gattdb_model_number_string
+                    0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+uartState           0x1               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+eSetPolynomial      0x1               /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/crc.o
+ulCrc               0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/crc.o
+nrfx_power_irq_enabled
+                    0x1               /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_power.o
+gattdb_csiro_payloads
+                    0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+xQueueRegistry      0x50              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_FREERTOS/queue.o
+xBluetoothRxModule  0x58              /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/unified_comms_bluetooth.o
+QueueCLI            0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/cli_task.o
+__lock___env_recursive_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+printBuff           0x50              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+__lock___sinit_recursive_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+EventBT             0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_bt.o
+QueueBluetooth      0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_bt.o
+LEDControlHandler   0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_util.o
+recvLength          0x1               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+gattdb_csiro_out_nacked
+                    0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+__lock___malloc_recursive_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+gattdb_firmware_revision_string
+                    0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+uHCIdata            0xd               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+QueueHCIWrite       0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_hci.o
+HCIHandler          0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_hci.o
+QueueLED            0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_util.o
+recvDFPos           0x1               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+BTmsg               0x18              /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_bt.o
+gattdb_csiro_in     0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+gattdb_device_information
+                    0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+LogHandler          0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_log.o
+gattdb_manufacturer_name_string
+                    0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+SemaphoreUart       0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+nrfx_clock_irq_enabled
+                    0x1               /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/NRF_SDK/nrfx_clock.o
+m_ep_consumer_state
+                    0x6c              /home/castrou/csse4011/ei-freertos/build/DBG/lib_nrf52/NRF_USBD/nrfx_usbd.o
+pxBluetoothState    0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/lib/CORE_CSIRO/bluetooth_controller.o
+xTime               0x6               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/lib_bt.o
+__lock___at_quick_exit_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+gattdb_csiro_out_acked
+                    0x2               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/gatt_nrf52.o
+EventAccel          0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_hci.o
+__lock___dd_hash_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+__lock___tz_mutex   0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+Log                 0x8               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_log.o
+QueueHCIRead        0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/os_hci.o
+pcBuffer            0x4               /home/castrou/csse4011/ei-freertos/build/DBG/argon/obj/cli_framework/hal_hci.o
+__lock___sfp_recursive_mutex
+                    0x1               /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libg.a(lib_a-lock.o)
+SemaphoreInfoLog    0x4    
