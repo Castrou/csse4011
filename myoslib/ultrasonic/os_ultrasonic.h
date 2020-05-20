@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/hci/hal_ultrasonic.h
+ * @file myoslib/ultrasonic/os_ultrasonic.h
  * @author Cameron Stroud - 44344968
- * @date 18052020
- * @brief Ultrasonic Driver Header
+ * @date 20052020
+ * @brief Ultrasonic OS header file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -11,15 +11,13 @@
  *************************************************************** 
  */
 
-#ifndef S4434496_HAL_US_H
-#define S4434496_HAL_US_H
+#ifndef S4434496_OS_US_H
+#define S4434496_OS_US_H
 
 /* Global Defines ------------------------------------------------------------*/
-#define     TRIG_PIN       (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 2 )}
-#define     ECHO_PIN       (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 1 )}
-
+/* Global Variables ----------------------------------------------------------*/
 /* Function prototypes -------------------------------------------------------*/
-extern void hal_ultrasonic_init( void );
-extern uint32_t hal_ultrasonic_echo( void );
+extern void os_ultrasonic_init( void );
+extern void os_ultrasonic_deinit( void );
 
-#endif // S4434496_HAL_US_H
+#endif // S4434496_OS_US_H

@@ -29,18 +29,19 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define LOC_PRIORITY (tskIDLE_PRIORITY + 3)
-#define LOC_STACK_SIZE (configMINIMAL_STACK_SIZE * 1)
+#define RSSI_PRIORITY (tskIDLE_PRIORITY + 3)
+#define RSSI_STACK_SIZE (configMINIMAL_STACK_SIZE * 1)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-TaskHandle_t LocHandler;
+TaskHandle_t RSSIHandler;
 QueueHandle_t QueueNode;
 
 Node RxNode;
+Node *NodeArr;
 
 /* Private function prototypes -----------------------------------------------*/
-void Loc_Task( void );
+void RSSI_Task( void );
 
 /*----------------------------------------------------------------------------*/
 
@@ -54,8 +55,8 @@ extern void os_loc_init( void ) {
 	/* Create Semaphore */
 	
     /* Create task */
-    xTaskCreate((void *) &Loc_Task, "Localisation Task",
-                    LOC_STACK_SIZE, NULL, LOC_PRIORITY, &LocHandler);
+    xTaskCreate((void *) &RSSI_Task, "RSSI Ranging Task",
+                    RSSI_STACK_SIZE, NULL, RSSI_PRIORITY, &RSSIHandler);
 
 }
 
@@ -71,7 +72,46 @@ extern void os_loc_deinit( void ) {
 	/* Delete Semaphore */
 
     /* Delete Task */
-    vTaskDelete(LocHandler);
+    vTaskDelete(RSSIHandler);
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Checks if Node exists in array
+* @param  None
+* @retval None
+*/
+uint8_t node_check(Node node) {
+    UNUSED(node);
+    // Loop through array and check to see if address exists
+
+    return 0xFF; // Return position if it exists, 0xFF otherwise
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Adds Node to the array
+* @param  None
+* @retval None
+*/
+void add_node(Node node) {
+
+    UNUSED(node);
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Sends node info to base
+* @param  None
+* @retval None
+*/
+void send_node(Node node) {
+
+    UNUSED(node);
+
 }
 
 /*----------------------------------------------------------------------------*/
@@ -81,13 +121,18 @@ extern void os_loc_deinit( void ) {
 * @param  None
 * @retval None
 */
-void Loc_Task( void ) {
+void RSSI_Task( void ) {
 
     QueueNode = xQueueCreate(5, sizeof(RxNode));
 
     for ( ;; ) {
 
         if (xQueueReceive(QueueNode, &RxNode, 10) == pdTRUE) {   
+            // Check if node exists, add it to array otherwise
+
+            // Update RSSI on array
+
+            // Send to base host
 
         }
 

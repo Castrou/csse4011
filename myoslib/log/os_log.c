@@ -46,9 +46,16 @@ typedef struct LogMessage {
     LogLevel_t logType;
 } LogMessage;
 
+typedef struct FlashMessage {
+    
+} FlashMessage;
+
 /* Private define ------------------------------------------------------------*/
 #define Log_PRIORITY (tskIDLE_PRIORITY + 2)
 #define Log_STACK_SIZE (configMINIMAL_STACK_SIZE * 5)
+
+#define Flash_PRIORITY (tskIDLE_PRIORITY + 2)
+#define Flash_STACK_SIZE (configMINIMAL_STACK_SIZE * 5)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -56,8 +63,13 @@ QueueHandle_t QueueLog;
 TaskHandle_t LogHandler;
 LogMessage Log;
 
+QueueHandle_t QueueFlash;
+TaskHandle_t FlashHandler;
+FlashMessage Flash;
+
 /* Private function prototypes -----------------------------------------------*/
 void Log_Task( void );
+void Flash_Task( void );
 
 /*----------------------------------------------------------------------------*/
 
@@ -94,6 +106,27 @@ extern void os_log_print( LogLevel_t type, const char *payload, ... ) {
 /*----------------------------------------------------------------------------*/
 
 /**
+* @brief  Queues Log to be printed
+* @param  input: string of Serial input
+* @retval None
+*/
+extern void os_log_flash( void ) {
+
+    if(xQueueSendToBack(QueueFlash, (void *) &Flash, 
+        (portTickType) 10) != pdPASS) 
+    {
+        // portENTER_CRITICAL();
+        // // debug_printf("Failed to post the message, after 10 ticks.\n\r");
+        // portEXIT_CRITICAL();
+    }
+
+    vTaskDelay(5);
+}
+
+/*----------------------------------------------------------------------------*/
+
+
+/**
 * @brief  Initalises all Log drivers
 * @param  None
 * @retval None
@@ -115,6 +148,8 @@ extern void os_log_init( void ) {
     /* Create task */
     xTaskCreate((void *) &Log_Task, "Log Task", \
                     Log_STACK_SIZE, NULL, Log_PRIORITY, &LogHandler);
+    xTaskCreate((void *) &Flash_Task, "Log Task", \
+                    Flash_STACK_SIZE, NULL, Flash_PRIORITY, &FlashHandler);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -136,6 +171,7 @@ extern void os_log_deinit( void ) {
 
     /* Remove task */
     vTaskDelete(LogHandler);
+    vTaskDelete(FlashHandler);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -179,6 +215,28 @@ void Log_Task( void ) {
                 default:
                     break;
             }
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Log flashing task
+* @param  None
+* @retval None
+*/
+void Flash_Task( void ) {
+
+    FlashMessage IncomingFlash;
+
+    /* Create Queue for retrieving from Serial ISR */
+    QueueFlash = xQueueCreate(5, sizeof(IncomingFlash));
+
+    for ( ;; ) {
+        if (xQueueReceive(QueueFlash, &IncomingFlash, 10) == pdTRUE) {   
+             
+              
         }
     }
 }

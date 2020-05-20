@@ -14,3 +14,4 @@ APP_CFLAGS += -I$(US_PATH)
 APPLICATION_SRCS += $(LOG_PATH)/cli_log.c
 APPLICATION_SRCS += $(LOG_PATH)/os_log.c
 APPLICATION_SRCS += $(US_PATH)/hal_ultrasonic.c
+APPLICATION_SRCS += $(US_PATH)/os_ultrasonic.c

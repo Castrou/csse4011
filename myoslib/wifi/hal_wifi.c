@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/hci/hal_ultrasonic.c
+ * @file myoslib/wifi/hal_wifi.c
  * @author Cameron Stroud - 44344968
- * @date 18052020
- * @brief Ultrasonic Driver file
+ * @date 02052020
+ * @brief Bluetooth Comms OS file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -11,17 +11,23 @@
  *************************************************************** 
  */
 
-/* Includes ***************************************************/
-#include "board.h"
-#include "tiny_printf.h"
 
-#include "gpio.h"
+/* Includes ***************************************************/
+#include <string.h>
+
+#include "board.h"
+#include "argon.h"
+
+#include "FreeRTOS.h"
+#include "FreeRTOSConfig.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+
 #include "leds.h"
 #include "log.h"
-
 #include "os_log.h"
 
-#include "hal_ultrasonic.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -29,18 +35,17 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 
-/*-----------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 /**
-* @brief  brief
+* @brief  Initalises all wifi drivers
 * @param  None
 * @retval None
 */
-extern void hal_ultrasonic_init( void ) {
+extern void hal_wifi_init( void ) {
 
-    vGpioSetup( TRIG_PIN, GPIO_PUSHPULL, NRF_GPIO_PIN_SENSE_HIGH); 
-    vGpioSetup( ECHO_PIN, GPIO_INPUTPULL, NRF_GPIO_PIN_PULLDOWN); 
+
 
 }
 
-/*-----------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
