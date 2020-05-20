@@ -7,6 +7,7 @@ UTIL_PATH = $(MYOSLIB_PATH)/util
 LOG_PATH = $(MYOSLIB_PATH)/log
 HCI_PATH = $(MYOSLIB_PATH)/hci
 BT_PATH = $(MYOSLIB_PATH)/bt
+FLASH_PATH = $(MYOSLIB_PATH)/flash
 LOC_PATH = $(MYOSLIB_PATH)/localisation
 
 # Set folder path with header files to include.
@@ -15,6 +16,7 @@ APP_CFLAGS += -I$(UTIL_PATH)
 APP_CFLAGS += -I$(LOG_PATH)
 APP_CFLAGS += -I$(HCI_PATH)
 APP_CFLAGS += -I$(BT_PATH)
+APP_CFLAGS += -I$(FLASH_PATH)
 APP_CFLAGS += -I$(LOC_PATH)
 
 # List all c files that must be included (use space as seperate e.g. LIBSRCS += file1.c file2.c)
@@ -35,5 +37,9 @@ APPLICATION_SRCS += $(HCI_PATH)/os_hci.c
 APPLICATION_SRCS += $(BT_PATH)/os_bt.c
 APPLICATION_SRCS += $(BT_PATH)/lib_bt.c
 APPLICATION_SRCS += $(BT_PATH)/cli_bt.c
+# Flash
+APPLICATION_SRCS += $(FLASH_PATH)/cli_flash.c
+APPLICATION_SRCS += $(FLASH_PATH)/hal_flash.c
+APPLICATION_SRCS += $(FLASH_PATH)/os_flash.c
 # Localisation
 APPLICATION_SRCS += $(LOC_PATH)/os_loc.c

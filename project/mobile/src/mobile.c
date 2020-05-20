@@ -35,6 +35,7 @@
 #include "os_util.h"
 #include "lib_bt.h"
 #include "os_bt.h"
+#include "os_loc.h"
 
 /* Private Defines ------------------------------------------*/
 #define BUTTON_BIT 	(1 << 0)
@@ -136,6 +137,7 @@ void vApplicationStartupCallback( void ) {
     os_hci_init();
 	os_util_init();
 	os_bt_init();
+	os_loc_init();
 
     /* Clear for takeoff */
     vLedsSet(LEDS_NONE);
@@ -203,6 +205,7 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 							uint8_t *pucData, uint8_t ucDataLen )
 {
 	EventBits_t btBits = xEventGroupGetBitsFromISR(EventBT);
+	Node TxNode;
 	UNUSED(eAddressType);
 	UNUSED(bConnectable);
 	UNUSED(pucData);
@@ -218,6 +221,14 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 					pucAddress,
 					cRssi);
 	}
+
+	// Add to node to be sent to queue
+	for(int i = 0; i < NODE_ADDR_SIZE; i++) {
+		TxNode.address[i] = pucAddress[i];
+	}
+	TxNode.prevRssi = cRssi;
+
+	os_loc_sendNode(TxNode);
 }
 
 /*-----------------------------------------------------------*/

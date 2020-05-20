@@ -18,13 +18,15 @@
 #include "semphr.h"
 
 /* Global Defines ------------------------------------------------------------*/
+#define     NODE_ADDR_SIZE   6
 /* Global typedef ------------------------------------------------------------*/
 typedef struct Node {
 
     int x_pos;
     int y_pos;
-    const uint8_t address;
+    uint8_t address[NODE_ADDR_SIZE];
     int8_t prevRssi;
+    int32_t dist100;
 
 } Node;
 
@@ -33,5 +35,8 @@ typedef struct Node {
 /* Function prototypes -------------------------------------------------------*/
 extern void os_loc_init( void );
 extern void os_loc_deinit( void );
+extern void os_loc_sendNode(Node node);
+void update_node(int arrPos, uint8_t *address, int8_t rssi, 
+					int xPos, int yPos);
 
 #endif // S4434496_OS_LOC_H

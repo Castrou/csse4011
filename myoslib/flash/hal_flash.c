@@ -1,9 +1,9 @@
 /** 
  **************************************************************
- * @file myoslib/ultrasonic/hal_ultrasonic.c
+ * @file myoslib/flash/hal_flash.c
  * @author Cameron Stroud - 44344968
  * @date 18052020
- * @brief Ultrasonic Driver file
+ * @brief Flash Driver file
  ***************************************************************
  * EXTERNAL FUNCTIONS 
  ***************************************************************
@@ -21,7 +21,7 @@
 
 #include "os_log.h"
 
-#include "hal_ultrasonic.h"
+#include "hal_flash.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -36,10 +36,9 @@
 * @param  None
 * @retval None
 */
-extern void hal_ultrasonic_init( void ) {
+extern void hal_flash_init( void ) {
 
-    vGpioSetup( TRIG_PIN, GPIO_PUSHPULL, NRF_GPIO_PIN_SENSE_HIGH); 
-    vGpioSetup( ECHO_PIN, GPIO_INPUTPULL, NRF_GPIO_PIN_PULLDOWN); 
+    
 
 }
 
