@@ -36,6 +36,7 @@
 #include "lib_bt.h"
 #include "os_bt.h"
 #include "os_loc.h"
+#include "os_flash.h"
 
 /* Private Defines ------------------------------------------*/
 #define BUTTON_BIT 	(1 << 0)
@@ -138,9 +139,10 @@ void vApplicationStartupCallback( void ) {
 	os_util_init();
 	os_bt_init();
 	os_loc_init();
+	os_flash_init();
 
     /* Clear for takeoff */
-    vLedsSet(LEDS_NONE);
+    vLedsToggle(LEDS_ALL);
 }
 
 /*-----------------------------------------------------------*/

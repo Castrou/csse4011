@@ -23,9 +23,10 @@ APP_CFLAGS			:= #-I$(NRF_SDK_PATH)/components/libraries/uart
 # Application Specific Library Source Files
 ##############################################################################
 
-CORE_CSIRO          := $(EIFREERTOS_PATH)/core_csiro
-APPLICATION_SRCS 	:= 
-override REPO_ROOT	:= $(EIFREERTOS_PATH)
+CORE_CSIRO          		:= $(EIFREERTOS_PATH)/core_csiro
+APPLICATION_SRCS 			:= 
+override REPO_ROOT			:= $(EIFREERTOS_PATH)
+override CORE_CSIRO_SRCS 	+= $(CORE_CSIRO_DIR)/peripherals/memory/src/mx25r.c
 
 ##############################################################################
 # Main Build Rules

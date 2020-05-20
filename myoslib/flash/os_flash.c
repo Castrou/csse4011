@@ -37,12 +37,13 @@
 #include "unified_comms_serial.h"
 
 #include "os_log.h"
+#include "hal_flash.h"
 #include "os_flash.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct FlashMessage {
-    
+    char payload[80];
 } FlashMessage;
 
 /* Private define ------------------------------------------------------------*/
@@ -89,7 +90,10 @@ extern void os_log_flashWrite( void ) {
 */
 extern void os_flash_init( void ) {
 
-    xTaskCreate((void *) &Flash_Task, "Log Task", \
+    /* Initialise Drivers */
+    hal_flash_init();
+
+    xTaskCreate((void *) &Flash_Task, "Flash Task", 
                     Flash_STACK_SIZE, NULL, Flash_PRIORITY, &FlashHandler);
 }
 
@@ -115,6 +119,9 @@ extern void os_flash_deinit( void ) {
 void Flash_Task( void ) {
 
     FlashMessage IncomingFlash;
+    eModuleError_t eResult;
+
+    UNUSED(eResult);
 
     /* Create Queue for retrieving from Serial ISR */
     QueueFlashWrite = xQueueCreate(5, sizeof(IncomingFlash));
@@ -123,6 +130,8 @@ void Flash_Task( void ) {
     for ( ;; ) {
         if (xQueueReceive(QueueFlashWrite, &IncomingFlash, 10) == pdTRUE) {   
              
+            // uint64_t ullAddress = ( (uint64_t) ulBlockNum << pxOnboardFlash->xSettings.ucPageSizePower );
+	        // eResult = eFlashWrite( pxOnboardFlash, ullAddress, pvBlockData, ulBlockSize, pdMS_TO_TICKS( 1000 ) );
               
         }
 
