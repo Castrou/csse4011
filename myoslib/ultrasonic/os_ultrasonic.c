@@ -32,11 +32,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define     HIGH    1
-#define     LOW     0
-
 #define Ultrasonic_PRIORITY (tskIDLE_PRIORITY + 2)
 #define Ultrasonic_STACK_SIZE (configMINIMAL_STACK_SIZE * 5)
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 // QueueHandle_t QueueUs;
@@ -85,34 +83,16 @@ extern void os_ultrasonic_deinit( void ) {
 * @retval None
 */
 void Ultrasonic_Task( void ) {
-    float dist;
-    int echo = 0;
-    uint32_t pulseStart;
-    uint32_t pulseEnd;
-    uint8_t pulseTime;
+
+    double dist;
     /* Create Queue for US  */
     // QueueUs = xQueueCreate(10, sizeof(echo));
-
+    
     for ( ;; ) {
 
-        vGpioWrite(TRIG_PIN, HIGH); // start pulse
-        while (!echo) {
-            echo = bGpioRead(ECHO_PIN);
-            pulseStart = ulApplicationUptime(); // time of beginning to recieve pulse
-        }
-        
-        vGpioWrite(TRIG_PIN, LOW); // end pulse
-        while (echo) {
-            echo = bGpioRead(ECHO_PIN);
-            pulseEnd = ulApplicationUptime(); // time of end of pulse
-        }
+        dist = hal_ultrasonic_ping();
+        os_log_print(LOG_DEBUG, "dist: %f", dist);
 
-        pulseTime = pulseEnd - pulseStart; // Get pulse width
-
-        /* convert time to dist */
-        // dist = (pulseTime / 2) * ?speed?
-        UNUSED(dist);
-        UNUSED(pulseTime);
         vTaskDelay(5);
     }
 }

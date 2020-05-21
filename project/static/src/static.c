@@ -14,6 +14,8 @@
 
 #include "os_log.h"
 
+#include "os_ultrasonic.h"
+
 /* Private Defines ------------------------------------------*/
 /* Private Macros -------------------------------------------*/
 /* Type Definitions -----------------------------------------*/
@@ -46,6 +48,9 @@ void vApplicationStartupCallback( void ) {
 	if (pxRebootData != NULL) {
 		vWatchdogPrintRebootReason(LOG_APPLICATION, LOG_INFO, pxRebootData);
 	}
+
+	os_log_init();
+	os_ultrasonic_init();
 
 	vLedsOff(LEDS_ALL);
 }

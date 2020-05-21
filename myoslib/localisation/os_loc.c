@@ -15,6 +15,7 @@
 /* Includes ***************************************************/
 #include "string.h"
 #include "stdio.h"
+#include "math.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -29,8 +30,11 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define     NEW_NODE	0xFF
-#define		MAX_NODES	10
+#define     NEW_NODE		0xFF
+#define		MAX_NODES		10
+
+#define		ENV_FACTOR		20.0
+#define		MEAS_POWER		-60
 
 #define RSSI_PRIORITY (tskIDLE_PRIORITY + 3)
 #define RSSI_STACK_SIZE (configMINIMAL_STACK_SIZE * 1)
@@ -182,7 +186,7 @@ void base_sendNode( void ) {
 void RSSI_Task( void ) {
 
 	int nodeCheck;
-	float dist;
+	double dist;
 	UNUSED(dist);
 	UNUSED(nodeCheck);
 
@@ -198,6 +202,16 @@ void RSSI_Task( void ) {
 
 			for(int i = 0; i < NODE_ADDR_SIZE; i++) {
 				// os_log_print(LOG_INFO, "%x", RxNode.address[i]);
+			}
+			os_log_print(LOG_DEBUG, "rssi: %d", RxNode.prevRssi);
+			dist = pow(10, ((double)(MEAS_POWER - RxNode.prevRssi) / ENV_FACTOR));
+			os_log_print(LOG_DEBUG, "dist: %fm", dist);
+
+			// Occupancy
+			if(dist < 0.5) {
+				vLedsSet(LEDS_RED);
+			} else {
+				vLedsSet(LEDS_NONE);
 			}
 
 			// if(nodeCheck == NEW_NODE) {

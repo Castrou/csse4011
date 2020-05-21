@@ -15,11 +15,11 @@
 #define S4434496_HAL_US_H
 
 /* Global Defines ------------------------------------------------------------*/
-#define     TRIG_PIN       (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 2 )}
-#define     ECHO_PIN       (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 1 )}
+#define     TRIG_PIN       (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 1 )}
+#define     ECHO_PIN       (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 2 )}
 
 /* Function prototypes -------------------------------------------------------*/
 extern void hal_ultrasonic_init( void );
-extern uint32_t hal_ultrasonic_echo( void );
+extern double hal_ultrasonic_ping( void );
 
 #endif // S4434496_HAL_US_H
