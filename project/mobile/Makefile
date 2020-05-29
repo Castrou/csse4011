@@ -7,6 +7,7 @@ SUPPORTED_TARGETS 	:= nrf52840dk bleatag argon xenon
 
 EIFREERTOS_PATH = $(realpath ./../../../ei-freertos)
 FREERTOSPLUS_PATH = $(realpath ./../../ei-changes/FreeRTOS-Plus)
+NANOPB_PATH = $(realpath ./../../ei-changes/nanopb-0.4.1-linux-x86)
 MYOSLIB_PATH = $(realpath ./../../myoslib/)
 
 
@@ -33,5 +34,6 @@ override CORE_CSIRO_SRCS 	+= $(CORE_CSIRO_DIR)/peripherals/memory/src/mx25r.c
 ##############################################################################
 
 include $(FREERTOSPLUS_PATH)/filelist.mk
+include $(NANOPB_PATH)/filelist.mk
 include filelist.mk
 include $(CORE_CSIRO)/m_common.mk

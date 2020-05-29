@@ -207,6 +207,7 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 							uint8_t *pucData, uint8_t ucDataLen )
 {
 	EventBits_t btBits = xEventGroupGetBitsFromISR(EventBT);
+	// char pcLocalString[60] = {0};
 	Node TxNode;
 	UNUSED(eAddressType);
 	UNUSED(bConnectable);
@@ -218,19 +219,21 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 		return;
 	}
 
+
 	if ((btBits & SCAN_BIT) == SCAN_BIT) {
-		os_log_print(LOG_INFO, "Bluetooth Recv:\n\r\tAddress: 0x%x\n\r\tRSSI: %3d dBm", 
-					pucAddress,
+		os_log_print(LOG_INFO, "Bluetooth Recv:\n\r\tAddress: %02x:%02x:%02x:%02x:%02x:%02x\n\r\tRSSI: %3d dBm", 
+					pucAddress[0], pucAddress[1], pucAddress[2], pucAddress[3], pucAddress[4], pucAddress[5],
 					cRssi);
 	}
 
-	// Add to node to be sent to queue
+	/* Add address to node to be sent to queue */
 	for(int i = 0; i < NODE_ADDR_SIZE; i++) {
 		TxNode.address[i] = pucAddress[i];
 	}
+	/* Other parameters */
 	TxNode.prevRssi = cRssi;
 
-	os_loc_sendNode(TxNode);
+	os_loc_queueNode(TxNode);
 }
 
 /*-----------------------------------------------------------*/

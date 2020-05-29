@@ -43,3 +43,4 @@ APPLICATION_SRCS += $(FLASH_PATH)/hal_flash.c
 APPLICATION_SRCS += $(FLASH_PATH)/os_flash.c
 # Localisation
 APPLICATION_SRCS += $(LOC_PATH)/os_loc.c
+APPLICATION_SRCS += $(LOC_PATH)/cli_loc.c

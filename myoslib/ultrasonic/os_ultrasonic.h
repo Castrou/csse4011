@@ -19,5 +19,6 @@
 /* Function prototypes -------------------------------------------------------*/
 extern void os_ultrasonic_init( void );
 extern void os_ultrasonic_deinit( void );
+extern double os_ultrasonic_read();
 
 #endif // S4434496_OS_US_H

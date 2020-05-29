@@ -18,25 +18,46 @@
 #include "semphr.h"
 
 /* Global Defines ------------------------------------------------------------*/
-#define     NODE_ADDR_SIZE   6
-/* Global typedef ------------------------------------------------------------*/
-typedef struct Node {
+#define NODE_ADDR_SIZE		6
 
+#define	NODE_RSSI			0
+#define NODE_TYPE			1
+#define NODE_XY				2
+
+/* Global typedef ------------------------------------------------------------*/
+typedef enum {
+
+    MOBILE_NODE,
+    STATIC_NODE,
+    US_STATIC_NODE
+
+} NodeType_t;
+
+typedef struct {
+
+    NodeType_t type;
+    uint8_t address[NODE_ADDR_SIZE];
     int x_pos;
     int y_pos;
-    uint8_t address[NODE_ADDR_SIZE];
     int8_t prevRssi;
-    int32_t dist100;
+    int16_t mmDist;
 
 } Node;
 
 /* Global Macros -------------------------------------------------------------*/
-/* Global Variables ----------------------------------------------------------*/
+#define os_loc_updateNode_rssi(address, node)		updateNode(address, node, NODE_RSSI)
+#define os_loc_updateNode_type(address, node)		updateNode(address, node, NODE_TYPE)
+#define	os_loc_updateNode_xy(address, node)			updateNode(address, node, NODE_XY)
+
 /* Function prototypes -------------------------------------------------------*/
 extern void os_loc_init( void );
 extern void os_loc_deinit( void );
-extern void os_loc_sendNode(Node node);
-void update_node(int arrPos, uint8_t *address, int8_t rssi, 
-					int xPos, int yPos);
+extern void os_loc_queueNode(Node node);
+extern void os_loc_addNode(uint8_t *address);
+extern void os_loc_printNodes( void );
+extern int os_loc_getX( void );
+extern int os_loc_getY( void );
+void updateNode( uint8_t *arrPos, Node node, int parameter);
+
 
 #endif // S4434496_OS_LOC_H

@@ -15,6 +15,7 @@
 /* Includes ***************************************************/
 #include "string.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "math.h"
 
 #include "FreeRTOS.h"
@@ -23,10 +24,12 @@
 
 #include "leds.h"
 #include "log.h"
+#include "memory_operations.h"
 
 #include "os_log.h"
 
 #include "os_loc.h"
+#include "cli_loc.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -44,7 +47,10 @@ TaskHandle_t RSSIHandler;
 QueueHandle_t QueueNode;
 
 Node RxNode;
-Node *NodeArr;
+Node NodeArr[MAX_NODES];
+const Node initNode = {0, {0}, 0, 0, 0, 0};
+
+int nodeArrPos;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -58,6 +64,9 @@ void RSSI_Task( void );
 * @retval None
 */
 extern void os_loc_init( void ) {
+
+	/* Initialise Drivers */
+	cli_loc_init();
 
     /* Create task */
     xTaskCreate((void *) &RSSI_Task, "RSSI Ranging Task",
@@ -85,21 +94,41 @@ extern void os_loc_deinit( void ) {
 * @param  None
 * @retval None
 */
-uint8_t node_check(Node node) {
+const char *nodeType(NodeType_t type) {
 
-	int matchCnt = 0;
-    // Loop through array and check to see if address exists
-	for (int i = 0; i < MAX_NODES; i++) {
-		for (int j = 0; j < NODE_ADDR_SIZE; j++) {
-			if (NodeArr[i].address[j] == node.address[j]) {
-				matchCnt++;
-			}
-		}
+	switch (type)
+	{
+	case MOBILE_NODE:
+		return "MOBILE";
+	
+	case STATIC_NODE:
+		return "STATIC";
 
-		if(matchCnt == NODE_ADDR_SIZE) return i;
-		matchCnt = 0;
+	case US_STATIC_NODE:
+		return "US_STATIC";
+
+	default:
+		return "NONE";
 	}
+}
 
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Checks if Node exists in array
+* @param  None
+* @retval None
+*/
+uint8_t node_check(uint8_t *address) {
+
+	uint32_t mismatch;
+	int i;
+    // Loop through array and check to see if address exists
+	for (i = 0; i < nodeArrPos; i++) {
+		mismatch = lMemcmp(NodeArr[i].address, address, NODE_ADDR_SIZE);
+		if (!mismatch) return i;
+		// os_log_print(LOG_ERROR, "mismatch @ [%d] = %d", i, mismatch);
+	}
     return NEW_NODE; // Return position if it exists, 0xFF otherwise
 }
 
@@ -110,25 +139,33 @@ uint8_t node_check(Node node) {
 * @param  None
 * @retval None
 */
-void update_node(int arrPos, uint8_t *address, int8_t rssi, 
-					int xPos, int yPos) 
+void updateNode(uint8_t *address, Node node, int parameter) 
 {
-	for (int i = 0; i < NODE_ADDR_SIZE; i++) {
-		NodeArr[arrPos].address[i] = address[i];
+	int arrPos = node_check(address);
+
+	if (arrPos != NEW_NODE) {
+		switch (parameter) {
+			case NODE_RSSI:
+				NodeArr[arrPos].prevRssi = node.prevRssi;
+				NodeArr[arrPos].mmDist = node.mmDist;
+				break;
+
+			case NODE_TYPE:
+				NodeArr[arrPos].type = node.type;
+				os_loc_printNodes();
+				break;
+
+			case NODE_XY:
+				NodeArr[arrPos].x_pos = node.x_pos;
+				NodeArr[arrPos].y_pos = node.y_pos;
+				os_loc_printNodes();
+				break;
+			
+			default:
+				NodeArr[arrPos] = node;
+				break;
+		}
 	}
-	NodeArr[arrPos].prevRssi = rssi;
-	NodeArr[arrPos].x_pos = xPos;
-	NodeArr[arrPos].y_pos = yPos;
-
-	os_log_print(LOG_DEBUG, "Updated node:\n\r\t rssi: %d, addr: %x:%x:%x:%x:%x:%x", 
-					NodeArr[arrPos].prevRssi = rssi,
-					NodeArr[arrPos].address[0],
-					NodeArr[arrPos].address[1],
-					NodeArr[arrPos].address[2],
-					NodeArr[arrPos].address[3],
-					NodeArr[arrPos].address[4],
-					NodeArr[arrPos].address[5]);
-
 }
 
 /*----------------------------------------------------------------------------*/
@@ -138,19 +175,26 @@ void update_node(int arrPos, uint8_t *address, int8_t rssi,
 * @param  None
 * @retval None
 */
-void add_node(Node *node) {
+extern void os_loc_addNode(uint8_t *address) {
 
-    UNUSED(node);
+	if(node_check(address) == NEW_NODE) {
+		NodeArr[nodeArrPos] = initNode;
+		pvMemcpy(NodeArr[nodeArrPos].address, address, NODE_ADDR_SIZE);
+		nodeArrPos++;
+		os_loc_printNodes();
+	} else {
+		os_log_print(LOG_ERROR, "Node exists");
+	}
 }
 
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Sends node info to base
+* @brief  Adds received node info to the queue
 * @param  None
 * @retval None
 */
-void os_loc_sendNode(Node node) {
+void os_loc_queueNode(Node node) {
 
     if(xQueueSendToBack(QueueNode, (void *) &node, 
         (portTickType) 10) != pdPASS) 
@@ -166,13 +210,39 @@ void os_loc_sendNode(Node node) {
 /*----------------------------------------------------------------------------*/
 
 /**
+* @brief  Displays Node Array
+* @param  None
+* @retval None
+*/
+extern void os_loc_printNodes( void ) {
+
+	os_log_print(LOG_INFO, "---------------------------------------------------------------------------------");
+	os_log_print(LOG_INFO, "| NODE NUMBER\t| TYPE\t\t| ADDRESS\t\t| X_POS\t| Y_POS\t| RSSI\t|");
+	os_log_print(LOG_INFO, "---------------------------------------------------------------------------------");
+
+	for (int i = 0; i < nodeArrPos; i++) {
+		/* Display Nodes */
+		os_log_print(LOG_INFO, "| NODE %d\t| %s\t| %02x:%02x:%02x:%02x:%02x:%02x\t| %d\t| %d\t| %d\t|", 
+						i, nodeType(NodeArr[i].type),
+						NodeArr[i].address[0], NodeArr[i].address[1], NodeArr[i].address[2], 
+						NodeArr[i].address[3], NodeArr[i].address[4], NodeArr[i].address[5],
+						NodeArr[i].x_pos, NodeArr[i].y_pos, NodeArr[i].prevRssi);
+	}
+
+	os_log_print(LOG_INFO, "---------------------------------------------------------------------------------");
+
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
 * @brief  Sends node info to base
 * @param  None
 * @retval None
 */
-void base_sendNode( void ) {
+void base_sendNodes( void ) {
 
-    // just send NodeArr
+    // just send NodeArr with mobile node tag
 
 }
 
@@ -192,46 +262,28 @@ void RSSI_Task( void ) {
 
     QueueNode = xQueueCreate(20, sizeof(RxNode));
 
+	/* Initialise */
+	nodeArrPos = 0;
+	for(int i = 0; i < MAX_NODES; i++) {
+		NodeArr[i] = initNode;
+	}
+
     for ( ;; ) {
 		
         if (xQueueReceive(QueueNode, &RxNode, 10) == pdTRUE) {   
 
-            // Check if node exists, add it to array otherwise
-            nodeCheck = node_check(RxNode);
-			os_log_print(LOG_DEBUG, "node check: %x", nodeCheck);
+            /* Check if node exists, add it to array otherwise */
+            nodeCheck = node_check(RxNode.address);
 
-			for(int i = 0; i < NODE_ADDR_SIZE; i++) {
-				// os_log_print(LOG_INFO, "%x", RxNode.address[i]);
-			}
-			os_log_print(LOG_DEBUG, "rssi: %d", RxNode.prevRssi);
+			/* Calculate distance based on RSSI */
 			dist = pow(10, ((double)(MEAS_POWER - RxNode.prevRssi) / ENV_FACTOR));
-			os_log_print(LOG_DEBUG, "dist: %fm", dist);
+			RxNode.mmDist = (uint16_t)(dist*1000);
 
-			// Occupancy
-			if(dist < 0.5) {
-				vLedsSet(LEDS_RED);
-			} else {
-				vLedsSet(LEDS_NONE);
-			}
-
-			// if(nodeCheck == NEW_NODE) {
-            //     add_node(&RxNode);
-            // }
-
-            // Update RSSI on array
-			// update_node_rssi(nodeCheck, RxNode.prevRssi);
-			// os_log_print(LOG_DEBUG, "Node:\n\r\t rssi: %d, addr: %x:%x:%x:%x:%x:%x", 
-			// 		NodeArr[nodeCheck].prevRssi,
-			// 		NodeArr[nodeCheck].address[0],
-			// 		NodeArr[nodeCheck].address[1],
-			// 		NodeArr[nodeCheck].address[2],
-			// 		NodeArr[nodeCheck].address[3],
-			// 		NodeArr[nodeCheck].address[4],
-			// 		NodeArr[nodeCheck].address[5]);
-            // Send to base host
-
+			if(nodeCheck != NEW_NODE) {
+                /* Update RSSI on array */
+				os_loc_updateNode_rssi(RxNode.address, RxNode);
+            }
         }
-
         vTaskDelay(5);
     }
 }

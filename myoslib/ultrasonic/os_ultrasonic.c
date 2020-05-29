@@ -37,8 +37,8 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-// QueueHandle_t QueueUs;
 TaskHandle_t UltrasonicHandler;
+double dist;
 
 /* Private function prototypes -----------------------------------------------*/
 void Ultrasonic_Task( void );
@@ -73,6 +73,19 @@ extern void os_ultrasonic_deinit( void ) {
     /* Remove Semaphores */
     /* Remove task */
     vTaskDelete(UltrasonicHandler);
+    
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Fetch Ultrasonic reading
+* @param  None
+* @retval None
+*/
+extern double os_ultrasonic_read( void ) {
+
+    return dist;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -83,15 +96,12 @@ extern void os_ultrasonic_deinit( void ) {
 * @retval None
 */
 void Ultrasonic_Task( void ) {
-
-    double dist;
-    /* Create Queue for US  */
-    // QueueUs = xQueueCreate(10, sizeof(echo));
     
+    dist = 0;
+
     for ( ;; ) {
 
         dist = hal_ultrasonic_ping();
-        os_log_print(LOG_DEBUG, "dist: %f", dist);
 
         vTaskDelay(5);
     }

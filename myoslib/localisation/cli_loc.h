@@ -15,15 +15,14 @@
 #define S4434496_CLI_LOC_H
 
 /* Function prototypes -------------------------------------------------------*/
-extern void cli_hci_init( void );
-extern void cli_hci_deinit( void );
-extern void os_hci_queue_write( Packet TxPacket );
+extern void cli_loc_init( void );
+extern void cli_loc_deinit( void );
 
 /* Commands ------------------------------------------------------------------*/
-BaseType_t nodePosCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
+BaseType_t nodeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
                         const char * pcCommandString);
-BaseType_t nodeTypeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
+BaseType_t locCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
                         const char * pcCommandString);
 
 
-#endif // S4434496_CLI_HCI_H
+#endif // S4434496_CLI_LOC_H
