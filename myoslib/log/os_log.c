@@ -108,10 +108,12 @@ extern void os_log_init( void ) {
     SemaphoreErrorLog = xSemaphoreCreateBinary();
     SemaphoreInfoLog = xSemaphoreCreateBinary();
     SemaphoreDebugLog = xSemaphoreCreateBinary();
+    SemaphoreOtherLog = xSemaphoreCreateBinary();
 
     xSemaphoreGive(SemaphoreErrorLog);
     xSemaphoreGive(SemaphoreInfoLog);
     xSemaphoreGive(SemaphoreDebugLog);
+    xSemaphoreGive(SemaphoreOtherLog);
 
     /* Create task */
     xTaskCreate((void *) &Log_Task, "Log Task", \
@@ -134,6 +136,7 @@ extern void os_log_deinit( void ) {
     vSemaphoreDelete(SemaphoreErrorLog);
     vSemaphoreDelete(SemaphoreInfoLog);
     vSemaphoreDelete(SemaphoreDebugLog);
+    vSemaphoreDelete(SemaphoreOtherLog);
 
     /* Remove task */
     vTaskDelete(LogHandler);
@@ -163,6 +166,7 @@ void Log_Task( void ) {
                         xSemaphoreGive(SemaphoreErrorLog);
                     }
                     break;
+
                 case LOG_INFO:
                     if(xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 10) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
@@ -170,6 +174,7 @@ void Log_Task( void ) {
                         xSemaphoreGive(SemaphoreInfoLog);
                     }
                     break;
+
                 case LOG_DEBUG:
                     if(xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 10) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
@@ -177,7 +182,10 @@ void Log_Task( void ) {
                         xSemaphoreGive(SemaphoreDebugLog);
                     }
                     break;
+
                 default:
+                    eLog(LOG_APPLICATION, LOG_INFO, \
+                            "ZZ%s\r\n", IncomingLog.message);
                     break;
             }
         }

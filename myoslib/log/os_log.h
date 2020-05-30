@@ -20,6 +20,7 @@
 SemaphoreHandle_t SemaphoreErrorLog;
 SemaphoreHandle_t SemaphoreInfoLog;
 SemaphoreHandle_t SemaphoreDebugLog;
+SemaphoreHandle_t SemaphoreOtherLog;
 
 /* Function prototypes -------------------------------------------------------*/
 extern void os_log_print( LogLevel_t type, const char *payload, ... );

@@ -113,6 +113,7 @@ BaseType_t logCommand(char * pcWriteBuffer, size_t xWriteBufferLen, const char *
 			xSemaphoreGive(SemaphoreErrorLog);
 			xSemaphoreGive(SemaphoreInfoLog);
 			xSemaphoreGive(SemaphoreDebugLog);
+			xSemaphoreGive(SemaphoreOtherLog);
 			break;
 	}
 
