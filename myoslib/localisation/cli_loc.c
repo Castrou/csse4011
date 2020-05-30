@@ -145,6 +145,7 @@ BaseType_t nodeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
 			for (int i = 0; i < NODE_ADDR_SIZE; i++) {
 				addrBuffer = strtok(NULL, ":");
 				address[i] = strtol(addrBuffer, NULL, 16);
+				os_log_print(LOG_DEBUG, "%x", address[i]);
 			}
 			/* Extract values */
 			cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 3, &lParam_len);

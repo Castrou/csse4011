@@ -272,7 +272,7 @@ class Baselisten():
         self.last_rx = time.time()
         self.rx_sequence = None
         self.tx_sequence = 0
-        self.serialData = 0
+        self.serialData = ""
 
     def run(self):
         self.socket_thread = threading.Thread(target=self.run_sockets_receive)
@@ -327,10 +327,10 @@ class Baselisten():
             if not consumed:
                 try:
                     char = recv_byte.decode('utf-8')
-                    # print(char, end='')
                     if char == "\n":
-                        if (pending_line[0:2] == "ZZ"):
+                        if (pending_line[0:2] == "aa"):
                             self.serialData = pending_line[2:]
+                            # print(self.serialData)
                         else: 
                             print(pending_line)
                         self.sockets.debug_group.distribute(pending_line.encode('utf-8'))

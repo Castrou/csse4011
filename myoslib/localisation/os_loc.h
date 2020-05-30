@@ -18,6 +18,7 @@
 #include "semphr.h"
 
 /* Global Defines ------------------------------------------------------------*/
+#define NODE_SIZE           11
 #define NODE_ADDR_SIZE		6
 
 #define	NODE_RSSI			0
@@ -37,10 +38,11 @@ typedef struct {
 
     NodeType_t type;
     uint8_t address[NODE_ADDR_SIZE];
-    int x_pos;
-    int y_pos;
-    int8_t prevRssi;
+    int8_t x_pos;
+    int8_t y_pos;
     int16_t mmDist;
+    uint16_t ultrasonic;
+    int8_t prevRssi;
 
 } Node;
 

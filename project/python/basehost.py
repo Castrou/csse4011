@@ -26,29 +26,32 @@ import logging
 from MessageTransport import PacpTransportSerial, PacpTransportSocket
 import PacpMessage
 ##
+# Constants
+ADDRESS_LENGTH = 6
 
 class Node:
-    def __init__(self, address):
-        self.address = address
+	def __init__(self, address, mmDist):
+		self.address = address
+		self.mmDist = mmDist
 
 class mobileNode(Node):
-	def __init__(self, address):
-		super().__init__(address)
+	def __init__(self, address, mmDist):
+		super().__init__(address, mmDist)
 		self.type = 0
 		self.nodes = {}
 		self.kx = 0
 		self.ky = 0
 
 class staticNode(Node):
-	def __init__(self, address):
-		super().__init__(address)
+	def __init__(self, address, mmDist):
+		super().__init__(address, mmDist)
 		self.type = 1
 		self.xPos = 0
 		self.yPos = 0
 
 class usStaticNode(staticNode):
 	def __init__(self, address):
-		super().__init__(address)
+		super().__init__(address, mmDist)
 		self.type = 2
 		self.usDist = 0
 
@@ -58,16 +61,16 @@ basehost = None
 # payload:		ADDRESS / NODETYPE / MMDIST / X / Y
 
 # Declare mobile test nodes
-testMobile0 = mobileNode(0x000000000000)
-testMobile1 = mobileNode(0x000000000001)
+testMobile0 = mobileNode(0x000000000000, 0)
+testMobile1 = mobileNode(0x000000000001, 0)
 # Declare static test nodes
-testStatic0 = staticNode(0x000000000002)
+testStatic0 = staticNode(0x000000000002, 0)
 testStatic0.xPos, testStatic0.yPos = 0, 0
-testStatic1 = staticNode(0x000000000003)
+testStatic1 = staticNode(0x000000000003, 0)
 testStatic1.xPos, testStatic1.yPos = 1000, 0
-testStatic2 = staticNode(0x000000000004)
+testStatic2 = staticNode(0x000000000004, 0)
 testStatic2.xPos, testStatic2.yPos = 1000, 1000
-testStatic3 = staticNode(0x000000000005)
+testStatic3 = staticNode(0x000000000005, 0)
 testStatic3.xPos, testStatic3.yPos = 0, 1000
 # Initialise mobile test nodes with static 0:3
 
@@ -142,10 +145,60 @@ def run_baselisten_thread():
 
 def run_calc_thread():
 	global basehost
+	packet = []
+
+
 	while (basehost == None):
 		pass
 	while True:
-		pass
+		# Receive packet from Baselisten
+		for i in range(int(len(basehost.serialData)/2)):
+			hexVal = int(basehost.serialData[2*i:2*i+2], 16)
+			try:
+				packet[i] = hexVal
+			except IndexError:
+				packet.append(hexVal)
+
+		# Extract packet data
+		## Tx Device Address 
+		index = 0
+		recvAddress = packet[index:ADDRESS_LENGTH]
+		index += ADDRESS_LENGTH
+
+		## Number of Nodes in payload
+		try:
+			recvSize = packet[index]
+			index += 1
+		except IndexError:
+			recvSize = 0
+		## Cycle through nodes and add to respected arrays
+		for i in range(recvSize):
+			## Get node type
+			nodeType = packet[index]
+			index += 1
+			## Get Address
+			for i in range(ADDRESS_LENGTH):
+				nodeAddr = packet[index:index + ADDRESS_LENGTH]
+			index += ADDRESS_LENGTH
+			print(nodeAddr)
+			## Mobile node process
+			if (nodeType == 0):
+				mmDist = (packet[index] << 8) | packet[index+1]
+				index += 2
+			## Static node process
+			elif (nodeType == 1):
+				
+				mmDist = (packet[index] << 8) | packet[index+1]
+				index += 2
+			## Ultrasonic node process
+			elif (nodeType == 2):
+				pass		
+		
+		index += ADDRESS_LENGTH
+
+		# End of function
+		packet = []
+		time.sleep(5)
 
 
 if __name__ == '__main__':

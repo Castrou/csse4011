@@ -145,6 +145,33 @@ extern void os_log_deinit( void ) {
 /*----------------------------------------------------------------------------*/
 
 /**
+* @brief  Takes semaphores so nothing is printed while in critical state
+* @param  None
+* @retval None
+*/
+extern void os_log_enterCRITICAL( void ) {
+    xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 10);
+    xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 10);
+    xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 10);
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Enable printing again
+* @param  None
+* @retval None
+*/
+extern void os_log_exitCRITICAL( void ) {
+    xSemaphoreGive(SemaphoreInfoLog);
+    xSemaphoreGive(SemaphoreErrorLog);
+    xSemaphoreGive(SemaphoreDebugLog);
+}
+
+/*----------------------------------------------------------------------------*/
+
+
+/**
 * @brief  Log printing task
 * @param  None
 * @retval None
@@ -160,7 +187,7 @@ void Log_Task( void ) {
         if (xQueueReceive(QueueLog, &IncomingLog, 10) == pdTRUE) {   
             switch(IncomingLog.logType) {
                 case LOG_ERROR:
-                    if(xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 10) == pdTRUE) {
+                    if(xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 1000) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
                                 "\e[1;31m%s\e[0m\r\n", IncomingLog.message);
                         xSemaphoreGive(SemaphoreErrorLog);
@@ -168,7 +195,7 @@ void Log_Task( void ) {
                     break;
 
                 case LOG_INFO:
-                    if(xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 10) == pdTRUE) {
+                    if(xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 1000) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
                                 "\e[1;32m%s\e[0m\r\n", IncomingLog.message);
                         xSemaphoreGive(SemaphoreInfoLog);
@@ -176,7 +203,7 @@ void Log_Task( void ) {
                     break;
 
                 case LOG_DEBUG:
-                    if(xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 10) == pdTRUE) {
+                    if(xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 1000) == pdTRUE) {
                         eLog(LOG_APPLICATION, IncomingLog.logType, \
                                 "\e[1;34m%s\e[0m\r\n", IncomingLog.message);
                         xSemaphoreGive(SemaphoreDebugLog);
@@ -185,7 +212,7 @@ void Log_Task( void ) {
 
                 default:
                     eLog(LOG_APPLICATION, LOG_INFO, \
-                            "ZZ%s\r\n", IncomingLog.message);
+                            "%s", IncomingLog.message);
                     break;
             }
         }

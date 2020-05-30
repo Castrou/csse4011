@@ -25,11 +25,16 @@
 #include "leds.h"
 #include "log.h"
 #include "memory_operations.h"
+#include "bluetooth.h"
 
 #include "os_log.h"
 
 #include "os_loc.h"
 #include "cli_loc.h"
+
+#include "pb_common.h"
+#include "pb_encode.h"
+// #include "os_loc.pb.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -48,9 +53,9 @@ QueueHandle_t QueueNode;
 
 Node RxNode;
 Node NodeArr[MAX_NODES];
-const Node initNode = {0, {0}, 0, 0, 0, 0};
+const Node initNode = {0, {0}, 0, 0, 0, 0, 0};
 
-int nodeArrPos;
+uint8_t nodeArrPos;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -242,8 +247,48 @@ extern void os_loc_printNodes( void ) {
 */
 void base_sendNodes( void ) {
 
-    // just send NodeArr with mobile node tag
+	uint8_t buffer[NODE_ADDR_SIZE];
+	UNUSED(buffer);
+	xBluetoothAddress_t pxLocalAddress;
+	vBluetoothGetLocalAddress(&pxLocalAddress);
 
+	/* Send Packet */
+	os_log_enterCRITICAL();
+	os_log_print(LOG_VERBOSE, "%02x", 0xAA); // Packet start
+	/* Mobile Address */
+	for (int i = 0; i < NODE_ADDR_SIZE; i++) {
+		buffer[i] = pxLocalAddress.pucAddress[i];
+		os_log_print(LOG_VERBOSE, "%02x", buffer[i]);
+		
+	}
+	/* Node Array Size */
+	os_log_print(LOG_VERBOSE, "%02x", (int)nodeArrPos);
+	/* Node Array Info */
+	for (int i = 0; i < nodeArrPos; i++) {
+		/* Node Type */
+		os_log_print(LOG_VERBOSE, "%02x", (int)NodeArr[i].type);
+
+		/* Node Address */
+		for (int j = 0; j < NODE_ADDR_SIZE; j++) {
+			os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].address[j]);
+		}
+
+		/* Node Recorded Distance */
+		os_log_print(LOG_VERBOSE, "%04x", NodeArr[i].mmDist);
+
+		/* Static X/Y */
+		if (NodeArr[i].type != MOBILE_NODE) {
+			os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].x_pos);
+			os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].y_pos);
+		}
+
+		/* Ultrasonic vals */
+		if (NodeArr[i].type == US_STATIC_NODE) {
+			os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].ultrasonic);
+		}
+	}
+	os_log_print(LOG_VERBOSE, "\n"); // Packet end
+	os_log_exitCRITICAL();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -257,6 +302,7 @@ void RSSI_Task( void ) {
 
 	int nodeCheck;
 	double dist;
+	uint16_t counter;
 	UNUSED(dist);
 	UNUSED(nodeCheck);
 
@@ -284,6 +330,14 @@ void RSSI_Task( void ) {
 				os_loc_updateNode_rssi(RxNode.address, RxNode);
             }
         }
+
+		if (counter % 1000 == 0) {
+			base_sendNodes();
+		} if (counter >= 10000){
+			counter = 0;
+		}
+		counter++;
+
         vTaskDelay(5);
     }
 }

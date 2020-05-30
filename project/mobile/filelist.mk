@@ -9,6 +9,7 @@ HCI_PATH = $(MYOSLIB_PATH)/hci
 BT_PATH = $(MYOSLIB_PATH)/bt
 FLASH_PATH = $(MYOSLIB_PATH)/flash
 LOC_PATH = $(MYOSLIB_PATH)/localisation
+# LOC_PATH = $(MYOSLIB_PATH)/serial
 
 # Set folder path with header files to include.
 APP_CFLAGS += -I$(CLITASK_PATH)
@@ -18,6 +19,7 @@ APP_CFLAGS += -I$(HCI_PATH)
 APP_CFLAGS += -I$(BT_PATH)
 APP_CFLAGS += -I$(FLASH_PATH)
 APP_CFLAGS += -I$(LOC_PATH)
+# APP_CFLAGS += -I$(SERIAL_PATH)
 
 # List all c files that must be included (use space as seperate e.g. LIBSRCS += file1.c file2.c)
 APPLICATION_SRCS += $(CLITASK_PATH)/cli_task.c
@@ -43,4 +45,7 @@ APPLICATION_SRCS += $(FLASH_PATH)/hal_flash.c
 APPLICATION_SRCS += $(FLASH_PATH)/os_flash.c
 # Localisation
 APPLICATION_SRCS += $(LOC_PATH)/os_loc.c
+# APPLICATION_SRCS += $(LOC_PATH)/os_loc.pb.c
 APPLICATION_SRCS += $(LOC_PATH)/cli_loc.c
+# Serial
+# APPLICATION_SRCS += $(SERIAL_PATH)/os_serial.c

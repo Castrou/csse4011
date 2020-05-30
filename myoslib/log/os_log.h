@@ -26,6 +26,8 @@ SemaphoreHandle_t SemaphoreOtherLog;
 extern void os_log_print( LogLevel_t type, const char *payload, ... );
 extern void os_log_init( void );
 extern void os_log_deinit( void );
+extern void os_log_enterCRITICAL( void );
+extern void os_log_exitCRITICAL( void );
 
 
 #endif // S4434496_OS_LOG_H
