@@ -145,7 +145,6 @@ BaseType_t nodeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
 			for (int i = 0; i < NODE_ADDR_SIZE; i++) {
 				addrBuffer = strtok(NULL, ":");
 				address[i] = strtol(addrBuffer, NULL, 16);
-				os_log_print(LOG_DEBUG, "%x", address[i]);
 			}
 			/* Extract values */
 			cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 3, &lParam_len);
@@ -161,14 +160,13 @@ BaseType_t nodeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
 				address[i] = strtol(addrBuffer, NULL, 16);
 			}
 			/* Extract values */
-			cCmd_string = FreeRTOS_CLIGetParameter(pcCommandString, 3, &lParam_len);
-			pvMemcpy(command, cCmd_string, strlen(cCmd_string)); // const chars suck
-			bufferNode.x_pos = strtol(command, NULL, 10); // string to val
-			valBuff = strtok(command, " ");	// y position
+			valBuff = strtok(addrBuffer, " "); // Last piece of address
+			valBuff = strtok(NULL, " "); // x pos
+			bufferNode.x_pos = strtol(valBuff, NULL, 10); // string to val
+			valBuff = strtok(NULL, " ");	// y position
 			bufferNode.y_pos = strtol(valBuff, NULL, 10); // string to val
-			// os_log_print(LOG_DEBUG, "x val: %d", bufferNode.x_pos);
-			// os_log_print(LOG_DEBUG, "y val: %d", bufferNode.y_pos);
 			/* Update Node */
+			os_log_print(LOG_DEBUG, "xy: %d %d", bufferNode.x_pos, bufferNode.y_pos);
 			os_loc_updateNode_xy(address, bufferNode);
 			break;
 

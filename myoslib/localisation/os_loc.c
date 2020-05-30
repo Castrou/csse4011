@@ -185,6 +185,7 @@ extern void os_loc_addNode(uint8_t *address) {
 	if(node_check(address) == NEW_NODE) {
 		NodeArr[nodeArrPos] = initNode;
 		pvMemcpy(NodeArr[nodeArrPos].address, address, NODE_ADDR_SIZE);
+		NodeArr[nodeArrPos].mmDist = 707;
 		nodeArrPos++;
 		os_loc_printNodes();
 	} else {
@@ -324,6 +325,7 @@ void RSSI_Task( void ) {
 			/* Calculate distance based on RSSI */
 			dist = pow(10, ((double)(MEAS_POWER - RxNode.prevRssi) / ENV_FACTOR));
 			RxNode.mmDist = (uint16_t)(dist*1000);
+			RxNode.mmDist = 707;
 
 			if(nodeCheck != NEW_NODE) {
                 /* Update RSSI on array */
@@ -331,7 +333,7 @@ void RSSI_Task( void ) {
             }
         }
 
-		if (counter % 1000 == 0) {
+		if (counter % 200 == 0) {
 			base_sendNodes();
 		} if (counter >= 10000){
 			counter = 0;

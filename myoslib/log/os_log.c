@@ -150,9 +150,9 @@ extern void os_log_deinit( void ) {
 * @retval None
 */
 extern void os_log_enterCRITICAL( void ) {
-    xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 10);
-    xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 10);
-    xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 10);
+    xSemaphoreTake(SemaphoreInfoLog, (TickType_t) 1);
+    xSemaphoreTake(SemaphoreErrorLog, (TickType_t) 1);
+    xSemaphoreTake(SemaphoreDebugLog, (TickType_t) 1);
 }
 
 /*----------------------------------------------------------------------------*/

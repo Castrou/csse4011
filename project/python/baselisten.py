@@ -330,7 +330,7 @@ class Baselisten():
                     if char == "\n":
                         if (pending_line[0:2] == "aa"):
                             self.serialData = pending_line[2:]
-                            # print(self.serialData)
+                            print(self.serialData)
                         else: 
                             print(pending_line)
                         self.sockets.debug_group.distribute(pending_line.encode('utf-8'))
