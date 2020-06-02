@@ -34,6 +34,6 @@ override CORE_CSIRO_SRCS 	+= $(CORE_CSIRO_DIR)/peripherals/memory/src/mx25r.c
 ##############################################################################
 
 include $(FREERTOSPLUS_PATH)/filelist.mk
-include $(NANOPB_PATH)/filelist.mk
+# include $(NANOPB_PATH)/filelist.mk
 include filelist.mk
 include $(CORE_CSIRO)/m_common.mk

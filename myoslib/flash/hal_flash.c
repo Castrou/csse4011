@@ -90,3 +90,22 @@ extern void hal_flash_init( void ) {
 }
 
 /*-----------------------------------------------------------*/
+
+/**
+* @brief  flash write
+* @param  None
+* @retval None
+*/
+void hal_flash_write(uint64_t ullFlashAddress, uint8_t *pucData, uint32_t ulLength) {
+
+	UNUSED(ullFlashAddress);
+	UNUSED(pucData);
+	UNUSED(ulLength);
+	// eResult = eFlashWrite( xMX25rDevice, ullFlashAddress, pucData, ulLength, pdMS_TO_TICKS( 1000 ) );
+}
+
+/*-----------------------------------------------------------*/
+
+
+
+/*-----------------------------------------------------------*/

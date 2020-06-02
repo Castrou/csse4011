@@ -130,8 +130,7 @@ void Flash_Task( void ) {
     for ( ;; ) {
         if (xQueueReceive(QueueFlashWrite, &IncomingFlash, 10) == pdTRUE) {   
              
-            // uint64_t ullAddress = ( (uint64_t) ulBlockNum << pxOnboardFlash->xSettings.ucPageSizePower );
-	        // eResult = eFlashWrite( pxOnboardFlash, ullAddress, pvBlockData, ulBlockSize, pdMS_TO_TICKS( 1000 ) );
+            
               
         }
 

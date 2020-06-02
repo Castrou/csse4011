@@ -61,7 +61,7 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 	
 	xTdfTime_t xTime;
 	tdf_range_mm_t xRange;
-	tdf_acc_xyz_4g_t xPosition;
+	// tdf_acc_xyz_4g_t xPosition;
 	UNUSED(ulUptime);
 
 	vLedsToggle(LEDS_ALL);
@@ -73,6 +73,7 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 
 	/* Send ultrasonic value over bluetooth */
 	xRange.range = (uint16_t)(ultrasonicDist*1000);
+	os_log_print(LOG_INFO, "Ultrasonic Send: %d", xRange.range);
 	eTdfAddMulti(BLE_LOG, TDF_RANGE_MM, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, &xTime, &xRange);
 
 	/** 

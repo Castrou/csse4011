@@ -53,7 +53,7 @@ class staticNode(Node):
 		self.yPos = 0
 
 class usStaticNode(staticNode):
-	def __init__(self, address):
+	def __init__(self, address, mmDist):
 		super().__init__(address, mmDist)
 		self.type = 2
 		self.usDist = 0
@@ -66,69 +66,30 @@ mobileList = dict()
 xMobile,yMobile = [],[]
 xStatic, yStatic = [],[]
 
-# Init localisation
-# lxP = lx.Project(mode="2D",solver="LSE")
-# lxP.add_anchor(testStatic0.address, (testStatic0.xPos, testStatic0.yPos))
-# lxP.add_anchor(testStatic1.address, (testStatic1.xPos, testStatic1.yPos))
-# lxP.add_anchor(testStatic2.address, (testStatic2.xPos, testStatic2.yPos))
-# lxP.add_anchor(testStatic3.address, (testStatic3.xPos, testStatic3.yPos))
-
-# mob1, (testMobile0.address) = lxP.add_target()
-
 def update_xy():
 	# Init variables
 	global x, y, xMobile, yMobile, xStatic, yStatic
 	i, j = 0, 0
 	x = 0
 	y = 0
+	xStatic, yStatic = [],[]
 	xMobile, yMobile = [],[]
 	try:
 		for mobileAddr, mobile in mobileList.items():
 			# Update Statics:
 			for staticAddr, static in mobile.statNodes.items():
-				try:
-					xStatic[j], yStatic[j] = static.xPos, static.yPos
-				except IndexError:
-					xStatic.append(static.xPos)
-					yStatic.append(static.yPos)
+				xStatic.append(static.xPos)
+				yStatic.append(static.yPos)
 				j += 1
-			
+				
 			# Update Mobile
-			# try:
 			mobile.lxP.solve()
-			try:
-				xMobile[i], yMobile[i] = (mobile.lxObj.loc.x), (mobile.lxObj.loc.y)
-			except IndexError:
-				xMobile.append(mobile.lxObj.loc.x)
-				yMobile.append(mobile.lxObj.loc.y)
-			print(xMobile)
+			xMobile.append(mobile.lxObj.loc.x)
+			yMobile.append(mobile.lxObj.loc.y)
 			i += 1
-			# except ZeroDivisionError:
-			# 	pass
 
 	except AttributeError:
 		pass
-	# for node in nodesList:
-	# 	if node.type == 0:
-			# mob1.add_measure(testStatic0.address, mmDist)
-			# mob1.add_measure(testStatic1.address, mmDist)
-			# mob1.add_measure(testStatic2.address, mmDist)
-			# mob1.add_measure(testStatic3.address, mmDist)
-
-			# lxP.solve()
-			# try:
-				# xMobile[i], yMobile[i] = mob1.loc.x, mob1.loc.y
-			# except IndexError:
-				# xMobile.append(mob1.loc.x)
-				# yMobile.append(mob1.loc.y)
-			
-		# elif node.type == 1:
-		# 	try:
-		# 		xStatic[i], yStatic[i] = node.xPos, node.yPos
-		# 	except IndexError:
-		# 		xStatic.append(node.xPos)
-		# 		yStatic.append(node.yPos)
-		# i += 1
 
 # Create figure for plotting
 fig, ax = plt.subplots()
@@ -136,8 +97,8 @@ fig, ax = plt.subplots()
 left,right = ax.get_xlim()
 low,high = ax.get_ylim()
 axes = plt.gca()
-axes.set_xlim([-1, 5])
-axes.set_ylim([-1, 5])
+axes.set_xlim([0, 3])
+axes.set_ylim([0, 3])
 plt.grid()
 
 def animate(i):
@@ -147,7 +108,7 @@ def animate(i):
 	return grid
 
 def run_animate_thread():
-	anim = animation.FuncAnimation(fig, animate,frames=120, interval=1000, blit=True)
+	anim = animation.FuncAnimation(fig, animate,frames=30, interval=1000, blit=True)
 	plt.show()
 
 def run_baselisten_thread():
@@ -220,7 +181,9 @@ def run_data_thread():
 				newStatic = staticNode(nodeAddr, mmDist)
 				newStatic.xPos, newStatic.yPos = x_pos, y_pos
 				if nodeAddr in mobileList[recvAddress].statNodes:
-					# update
+					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
+					mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
+														mobileList[recvAddress].statNodes[nodeAddr].mmDist/1000)
 					pass
 				else:
 					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
@@ -232,7 +195,31 @@ def run_data_thread():
 
 			## Ultrasonic node process
 			elif (nodeType == 2):
-				pass	
+				### Get distance
+				mmDist = (packet[index] << 8) | packet[index+1]
+				index += 2
+				### Get X/Y pos
+				x_pos, y_pos = packet[index], packet[index+1]
+				index += 2
+				### Get ultrasonic dist
+				usDist = (packet[index] << 8) | packet[index+1]
+				index += 2
+				### Add to mobile node list
+				newStatic = usStaticNode(nodeAddr, mmDist)
+				newStatic.xPos, newStatic.yPos = x_pos, y_pos
+				newStatic.usDist = usDist
+				if nodeAddr in mobileList[recvAddress].statNodes:
+					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
+					mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
+														mobileList[recvAddress].statNodes[nodeAddr].mmDist/1000)
+					pass
+				else:
+					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
+					mobileList[recvAddress].lxP.add_anchor(mobileList[recvAddress].statNodes[nodeAddr].address, 
+															(mobileList[recvAddress].statNodes[nodeAddr].xPos, 
+															mobileList[recvAddress].statNodes[nodeAddr].yPos))
+				mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
+														mobileList[recvAddress].statNodes[nodeAddr].mmDist/1000)
 
 		# End of function
 		packet = []

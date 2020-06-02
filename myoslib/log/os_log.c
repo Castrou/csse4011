@@ -47,7 +47,7 @@ typedef struct LogMessage {
 } LogMessage;
 
 /* Private define ------------------------------------------------------------*/
-#define Log_PRIORITY (tskIDLE_PRIORITY + 2)
+#define Log_PRIORITY (tskIDLE_PRIORITY + 3)
 #define Log_STACK_SIZE (configMINIMAL_STACK_SIZE * 5)
 
 /* Private macro -------------------------------------------------------------*/

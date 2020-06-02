@@ -24,6 +24,10 @@
 #define	NODE_RSSI			0
 #define NODE_TYPE			1
 #define NODE_XY				2
+#define NODE_US             3
+
+#define NODE_TIMEOUT        3
+#define NODE_MM_THRESH      1330
 
 /* Global typedef ------------------------------------------------------------*/
 typedef enum {
@@ -34,6 +38,21 @@ typedef enum {
 
 } NodeType_t;
 
+typedef enum {
+
+	OUTOF_CONTACT = 0,
+	IN_CONTACT
+
+} ContactType_t;
+
+typedef struct {
+
+	ContactType_t contactType;
+	uint32_t contactTime;
+	uint32_t prevTime;
+
+} Contact;
+
 typedef struct {
 
     NodeType_t type;
@@ -43,17 +62,21 @@ typedef struct {
     int16_t mmDist;
     uint16_t ultrasonic;
     int8_t prevRssi;
+	Contact contact;
 
 } Node;
 
 /* Global Macros -------------------------------------------------------------*/
-#define os_loc_updateNode_rssi(address, node)		updateNode(address, node, NODE_RSSI)
-#define os_loc_updateNode_type(address, node)		updateNode(address, node, NODE_TYPE)
-#define	os_loc_updateNode_xy(address, node)			updateNode(address, node, NODE_XY)
+#define os_loc_updateNode_rssi(address, node)		    updateNode(address, node, NODE_RSSI)
+#define os_loc_updateNode_type(address, node)		    updateNode(address, node, NODE_TYPE)
+#define	os_loc_updateNode_xy(address, node)			    updateNode(address, node, NODE_XY)
+#define	os_loc_updateNode_ultrasonic(address, node)		updateNode(address, node, NODE_US)
 
 /* Function prototypes -------------------------------------------------------*/
 extern void os_loc_init( void );
 extern void os_loc_deinit( void );
+extern void os_loc_enableTx( void );
+extern void os_loc_disableTx( void );
 extern void os_loc_queueNode(Node node);
 extern void os_loc_addNode(uint8_t *address);
 extern void os_loc_printNodes( void );

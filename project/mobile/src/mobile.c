@@ -17,6 +17,7 @@
 #include "log.h"
 #include "rtc.h"
 #include "tdf.h"
+#include "tdf_parse.h"
 #include "watchdog.h"
 
 #include "test_reporting.h"
@@ -50,6 +51,9 @@ void vCustomSerialHandler(xCommsInterface_t *pxComms,
 void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t eAddressType, 
 							int8_t cRssi, bool bConnectable, 
 							uint8_t *pucData, uint8_t ucDataLen );
+void vBluetoothTdfHandler( xCommsInterface_t *			 pxComms,
+							xUnifiedCommsIncomingRoute_t *pxCurrentRoute,
+							xUnifiedCommsMessage_t *	 pxMessage );
 /* Private Variables ----------------------------------------*/
 EventGroupHandle_t EventISR;
 TickType_t prevTime = 0;
@@ -125,6 +129,7 @@ void vApplicationStartupCallback( void ) {
 
 	/* Setup our Bluetooth receive handler */
 	vUnifiedCommsBluetoothCustomHandler(vCustomBluetoothHandler);
+	xBluetoothComms.fnReceiveHandler = vBluetoothTdfHandler;
 	vUnifiedCommsListen(&xBluetoothComms, COMMS_LISTEN_ON_FOREVER);
 
 	/* Setup Interrupt Callback */
@@ -207,7 +212,6 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 							uint8_t *pucData, uint8_t ucDataLen )
 {
 	EventBits_t btBits = xEventGroupGetBitsFromISR(EventBT);
-	// char pcLocalString[60] = {0};
 	Node TxNode;
 	UNUSED(eAddressType);
 	UNUSED(bConnectable);
@@ -215,10 +219,9 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 	UNUSED(ucDataLen);
 
 	/* Limit printed devices based on RSSI */
-	if (cRssi < -60) {
+	if (cRssi < -57) {
 		return;
 	}
-
 
 	if ((btBits & SCAN_BIT) == SCAN_BIT) {
 		os_log_print(LOG_INFO, "Bluetooth Recv:\n\r\tAddress: %02x:%02x:%02x:%02x:%02x:%02x\n\r\tRSSI: %3d dBm", 
@@ -237,3 +240,36 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 }
 
 /*-----------------------------------------------------------*/
+
+void vBluetoothTdfHandler( xCommsInterface_t *			 pxComms,
+							xUnifiedCommsIncomingRoute_t *pxCurrentRoute,
+							xUnifiedCommsMessage_t *	 pxMessage ) 
+{
+	xTdfParser_t incomingTdf;
+	xTdf_t xUltrasonic;
+	uint8_t payload[100];
+	uint16_t usDist = 0;
+	uint8_t address[NODE_ADDR_SIZE];
+	Node node;
+
+
+	UNUSED(pxComms);
+	UNUSED(pxCurrentRoute);
+
+	pvMemcpy(payload, pxMessage->pucPayload, pxMessage->usPayloadLen);
+
+	vTdfParseStart( &incomingTdf, payload, pxMessage->usPayloadLen );
+	if (eTdfParse(&incomingTdf, &xUltrasonic) == ERROR_NONE) {
+		/* Ultrasonic set */
+		usDist |= (xUltrasonic.pucData[0] & 0xFF);
+		usDist |= (xUltrasonic.pucData[1] << 8);
+		node.ultrasonic = usDist;
+		/* Address set */
+		for(int i = 0; i < NODE_ADDR_SIZE; i++) {
+			address[i] = ((uint64_t)pxMessage->xSource >> 8*i) & 0xFF;
+			node.address[i] = address[i];
+		}
+		/* Update Node */
+		os_loc_updateNode_ultrasonic(address, node);
+	}
+}

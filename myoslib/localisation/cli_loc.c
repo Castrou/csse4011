@@ -34,10 +34,13 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define		SEND		's'
 #define		PRINT		'p'
 #define		ADD			'a'
 #define		TYPE		't'
 #define		XY			'x'
+
+#define 	ON			'o'
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 CLI_Command_Definition_t nodeAddCmd = {
@@ -124,6 +127,14 @@ BaseType_t nodeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
 	strtok(command, " ");
 
 	switch(cCmd_string[0]) {
+		case SEND:
+			if (strtok(NULL, " ")[0] == ON) {
+				os_loc_enableTx();
+			} else {
+				os_loc_disableTx();
+			}
+			break;	
+
 		case PRINT:
 			/* Just call print nodes function */
 			os_loc_printNodes();
