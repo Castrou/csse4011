@@ -41,7 +41,7 @@
 #define     NEW_NODE		0xFF
 #define		MAX_NODES		10
 
-#define		ENV_FACTOR		30.0
+#define		ENV_FACTOR		40.0
 #define		MEAS_POWER		-55
 
 #define		BYTE_SIZE		8

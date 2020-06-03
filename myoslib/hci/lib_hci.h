@@ -37,6 +37,11 @@
 #define     PRESS_LREGADDR      0x29
 #define     PRESS_XLREGADDR     0x28
 
+#define		IMU				1
+#define     MAGNO           2
+#define     TEMP            3
+#define     TOF             4
+
 /* Global Macro --------------------------------------------------------------*/
 #define     lib_hci_request_accel(axis)     lib_hci_request_data(LSM6DSL, axis)
 #define     lib_hci_request_baro()          lib_hci_request_data(LPS22HB, NO_SPEC)

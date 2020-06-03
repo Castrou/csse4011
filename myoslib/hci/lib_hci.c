@@ -36,11 +36,8 @@
 #define     REGVAL			4
 
 #define		READ			'r'
-#define		IMU				1
-#define     MAGNO           2
-#define     TEMP            3
-#define     TOF             4
 
+#define     PEDO            'p'
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -125,6 +122,18 @@ extern void lib_hci_request_data( uint8_t device, uint8_t specifier ) {
                 /* Send Packets */
                 if (xSemaphoreTake(SemaphoreUart, (TickType_t) 10) == pdTRUE) {
                     os_hci_setAccel(ALL_AXES);
+                    os_hci_write(TxPacket);
+                }
+                break;
+            
+            case PEDO:
+                /* Setup Pedo Packet */
+                buffField = hal_hci_build_datafield(READ, IMU, 0x4B, 0);
+                hal_hci_addDatafield(&TxPacket, buffField);
+                buffField = hal_hci_build_datafield(READ, IMU, 0x4C, 0);
+                hal_hci_addDatafield(&TxPacket, buffField);
+                /* Send X Packet */
+                if (xSemaphoreTake(SemaphoreUart, (TickType_t) 10) == pdTRUE) {
                     os_hci_write(TxPacket);
                 }
                 break;

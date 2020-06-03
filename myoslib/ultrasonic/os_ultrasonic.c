@@ -25,6 +25,8 @@
 
 #include "leds.h"
 #include "log.h"
+#include "tdf.h"
+#include "tdf_struct.h"
 #include "os_log.h"
 
 #include "hal_ultrasonic.h"
@@ -99,6 +101,8 @@ extern double os_ultrasonic_read( void ) {
 void Ultrasonic_Task( void ) {
     
     dist = 0;
+    tdf_range_mm_t xRange;
+    xTdfTime_t xTime;
 
     for ( ;; ) {
 
@@ -109,9 +113,20 @@ void Ultrasonic_Task( void ) {
                 connectedSonic = DISCONNECTED;
             }
         }
-        
 
-        vTaskDelay(5);
+        /* Send ultrasonic value over bluetooth */
+        xRange.range = (uint16_t)(dist);
+        eTdfAddMulti(BLE_LOG, TDF_RANGE_MM, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, &xTime, &xRange);
+        /** 
+         * Force the BLE_LOG to send all data.
+         * If this is not called, data will be buffered until the TDF Logger fills up
+         * 
+         * Note that the payload sizes received at baselisten will be larger than those specified
+         * above due to the packet headers and data padding on bluetooth.
+         */
+        eTdfFlushMulti(BLE_LOG);
+
+        vTaskDelay(300/portTICK_PERIOD_MS);
     }
 }
 

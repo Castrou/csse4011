@@ -17,6 +17,9 @@ def init_accel():
 	val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x15, 1), 'big') # 
 	i2c2.writeto_mem(0x6A, 0x15, (val | 0x10).to_bytes(1, 'big'))
 
+	val = int.from_bytes(i2c2.readfrom_mem(0x6A, 0x19, 1), 'big')
+	i2c2.writeto_mem(0x6A, 0x19, (val | 0x14).to_bytes(1, 'big'))
+
 def init_baro():
 	i2c2.writeto_mem(0x5D, 0x10, (0x20).to_bytes(1, 'big'))
 
@@ -126,6 +129,8 @@ while 1:
 		value2 = 0
 
 	uart_handler()
-
+	val1 = i2c2.readfrom_mem(0x6A, 0x4B, 1)
+	val2 = i2c2.readfrom_mem(0x6A, 0x4C, 1)
+	print(val1,val2)
 	# Somewhat similar to HAL_Delay()
 	time.sleep(1)

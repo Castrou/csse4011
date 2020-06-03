@@ -242,11 +242,7 @@ void HCI_Task( void ) {
 
             /* Read packet */
             if (RxPacket.type == 2) { // Response
-                // for(int i = 0; i < RxPacket.dataCnt; i++) {
-                //     os_log_print(LOG_INFO, "RECV(SID%d): REGADDR=0x%02x REGVAL=0x%02x",
-                //                     RxPacket.data[i].sid, RxPacket.data[i].regaddr,
-                //                     RxPacket.data[i].regval);
-                // }
+
                 switch((RxPacket.data[0].i2caddr>>1)) {
                     case LSM6DSL:
                         axisBits = xEventGroupGetBits(EventAccel);
@@ -286,8 +282,16 @@ void HCI_Task( void ) {
                             os_log_print(LOG_INFO, "Z Acceleration: %.2fg(s)", incomingData);
 
                         }
-                        break;
 
+                        if(dataPos == 0) {
+                            uHCIdata[dataPos] = RxPacket.data[dataPos].regval;
+                            uHCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
+                            incomingRaw = (uHCIdata[dataPos+1]<<8) | 
+                                                uHCIdata[dataPos];
+                            os_log_print(LOG_DEBUG, "STEP: %d", incomingRaw);
+                        }
+                        break;
+                        
                     case LPS22HB:
                         for (int i = 0; i < TEMP_REGCNT; i++) {
                             uHCIdata[i] = RxPacket.data[i].regval;
