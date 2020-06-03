@@ -32,6 +32,7 @@
 #include "lib_hci.h"
 #include "cli_hci.h"
 #include "os_hci.h"
+#include "os_loc.h"
 #include "hci_packet.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -288,7 +289,8 @@ void HCI_Task( void ) {
                             uHCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
                             incomingRaw = (uHCIdata[dataPos+1]<<8) | 
                                                 uHCIdata[dataPos];
-                            os_log_print(LOG_DEBUG, "STEP: %d", incomingRaw);
+                            // os_log_print(LOG_DEBUG, "STEP: %d", incomingRaw);
+                            os_loc_setStep(incomingRaw);
                         }
                         break;
                         

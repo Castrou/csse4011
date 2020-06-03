@@ -83,6 +83,8 @@ extern void os_loc_printNodes( void );
 extern void os_loc_printLog( void );
 extern int os_loc_getX( void );
 extern int os_loc_getY( void );
+extern void os_loc_setStep( uint16_t stepVal );
+extern void os_loc_setHead( uint16_t headVal );
 void updateNode( uint8_t *arrPos, Node node, int parameter);
 
 

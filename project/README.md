@@ -56,9 +56,9 @@ To register nodes for use in the CSIW setup the following commands must be used:
 Note the formatting of the address.  
 
 Types that can be used:  
-MOBILE_NODE - 0  
-STATIC_NODE - 1  
-US_STATIC_NODE - 2  
+MOBILE_NODE = 0  
+STATIC_NODE = 1  
+US_STATIC_NODE = 2  
 
 To review the list of nodes the following command can be used:  
 `node print`  

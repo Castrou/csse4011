@@ -26,6 +26,8 @@ class tdf3listen:
         self.debug = 0
         self.mobile = dict()
         self.static = dict()
+        self.heading = 0
+        self.steps = 0
 
     def run(self):
         tdfparse = tdf3.Tdf()
@@ -109,6 +111,8 @@ class tdf3listen:
                                 nodeName = "Node "+ str(nodeId)
                                 # mm Dist
                                 mmDist = point['phenomena']['gyro_x']['raw']
+                                self.heading = point['phenomena']['gyro_z']['raw']
+                                self.steps = point['phenomena']['acc_z']['raw']
                                 ## Static / Ultrasonic Split ##
                                 if (nodeType == 1):
                                     # X/Y

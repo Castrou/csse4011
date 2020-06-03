@@ -68,6 +68,8 @@ Node NodeArr[MAX_NODES];
 const Node initNode = {0, {0}, 0, 0, 0, 0, 0, {0}};
 
 uint8_t nodeArrPos;
+uint16_t heading;
+uint16_t steps;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -94,8 +96,6 @@ extern void os_loc_init( void ) {
     /* Create task */
     xTaskCreate((void *) &RSSI_Task, "RSSI Ranging Task",
                     RSSI_STACK_SIZE, NULL, RSSI_PRIORITY, &RSSIHandler);
-	xTaskCreate((void *) &BaseSend_Task, "Send Node Task",
-                    BaseSend_STACK_SIZE, NULL, BaseSend_PRIORITY, &BaseSendHandler);
 	xTaskCreate((void *) &Occupancy_Task, "Occupancy Task",
                     Occupancy_STACK_SIZE, NULL, Occupancy_PRIORITY, &OccupancyHandler);
 
@@ -112,7 +112,6 @@ extern void os_loc_deinit( void ) {
 
     /* Delete Task */
     vTaskDelete(RSSIHandler);
-	// vTaskDelete(BaseSendHandler);
 	vTaskDelete(OccupancyHandler);
 }
 
@@ -273,21 +272,22 @@ void os_loc_queueNode(Node node) {
 */
 extern void os_loc_printLog( void ) {
 
-	os_log_print(LOG_INFO, "-----------------------------------------");
-	os_log_print(LOG_INFO, "| NODE ADDRESS\t\t| CONTACT TIME\t|");
-	os_log_print(LOG_INFO, "-----------------------------------------");
+	os_log_print(LOG_INFO, "-------------------------------------------------------------------------");
+	os_log_print(LOG_INFO, "| NODE ADDRESS\t\t| CONTACT TIME\t| TIMESTAMP\t| EST. DIST\t|");
+	os_log_print(LOG_INFO, "-------------------------------------------------------------------------");
 
 	for (int i = 0; i < nodeArrPos; i++) {
 		/* Display Nodes */
-		if (NodeArr[i].type == MOBILE_NODE) {
-			os_log_print(LOG_INFO, "| %02x:%02x:%02x:%02x:%02x:%02x\t| %d\t\t|",
-							NodeArr[i].address[0], NodeArr[i].address[1], NodeArr[i].address[2], 
-							NodeArr[i].address[3], NodeArr[i].address[4], NodeArr[i].address[5],
-							NodeArr[i].contact.contactTime);
-		}
+		// if (NodeArr[i].type == MOBILE_NODE) {
+		os_log_print(LOG_INFO, "| %02x:%02x:%02x:%02x:%02x:%02x\t| %d\t\t| %d\t\t| %d\t\t|",
+						NodeArr[i].address[0], NodeArr[i].address[1], NodeArr[i].address[2], 
+						NodeArr[i].address[3], NodeArr[i].address[4], NodeArr[i].address[5],
+						NodeArr[i].contact.contactTime, NodeArr[i].contact.prevTime, 
+						NodeArr[i].mmDist);
+		// }
 	}
 
-	os_log_print(LOG_INFO, "-----------------------------------------");
+	os_log_print(LOG_INFO, "-------------------------------------------------------------------------");
 
 }
 
@@ -320,74 +320,27 @@ extern void os_loc_printNodes( void ) {
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Sends node info to base
+* @brief  my brain dead lol
 * @param  None
 * @retval None
 */
-void base_sendNodes( void ) {
+extern void os_loc_setStep( uint16_t stepVal ) {
 
-	uint8_t buffer[NODE_ADDR_SIZE];
-	UNUSED(buffer);
-	xBluetoothAddress_t pxLocalAddress;
-	vBluetoothGetLocalAddress(&pxLocalAddress);
+    steps = stepVal;
 
-	uint64_t TxAddr = 0;
-	uint64_t nodeId = 0;
-	uint64_t nodeInfo[MAX_NODES] = {0};
+}
 
-	/* Send Packet */
-	os_log_enterCRITICAL();
-	// os_log_print(LOG_VERBOSE, "%02x", 0xAA); // Packet start
+/*----------------------------------------------------------------------------*/
 
-	/* Mobile Address */
-	for (int i = 0; i < NODE_ADDR_SIZE; i++) {
-		// buffer[i] = pxLocalAddress.pucAddress[i];
-		// os_log_print(LOG_VERBOSE, "%02x", buffer[i]);
-		TxAddr |= (pxLocalAddress.pucAddress[i] << 8*i);
-		
-	}
+/**
+* @brief  my brain dead lol
+* @param  None
+* @retval None
+*/
+extern void os_loc_setHead( uint16_t headVal ) {
 
-	/* Node Array Size */
-	// os_log_print(LOG_VERBOSE, "%02x", (int)nodeArrPos);
-	nodeId |= ((uint64_t)(nodeArrPos & 0xF) << 56);
+	heading = headVal;
 
-	/* Node Array Info */
-	for (int i = 0; i < nodeArrPos; i++) {
-		int nodeInfoIndex = 0;
-		/* Node Type */
-		// os_log_print(LOG_VERBOSE, "%02x", (int)NodeArr[i].type);
-		nodeInfo[i] |= ((int)NodeArr[i].type << BYTE_SIZE*nodeInfoIndex);
-		nodeInfoIndex++;
-
-
-		/* Node Address */
-		// for (int j = 0; j < NODE_ADDR_SIZE; j++) {
-		// 	os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].address[j]);
-		// }
-		nodeId |= (i << 4*i);
-		/* Node Recorded Distance */
-		// os_log_print(LOG_VERBOSE, "%04x", (uint16_t)(NodeArr[i].mmDist));
-		nodeInfo[i] |= (NodeArr[i].mmDist << BYTE_SIZE*nodeInfoIndex);
-		nodeInfoIndex += 2;
-
-		/* Static X/Y */
-		if (NodeArr[i].type != MOBILE_NODE) {
-			// os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].x_pos);
-			// os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].y_pos);
-			nodeInfo[i] |= (NodeArr[i].x_pos << BYTE_SIZE*nodeInfoIndex);
-			nodeInfo[i] |= (NodeArr[i].y_pos << BYTE_SIZE*(nodeInfoIndex+1));
-			nodeInfoIndex += 2;
-		}
-
-		/* Ultrasonic vals */
-		if (NodeArr[i].type == US_STATIC_NODE) {
-			// os_log_print(LOG_VERBOSE, "%04x", NodeArr[i].ultrasonic);
-			nodeInfo[i] |= (NodeArr[i].ultrasonic << BYTE_SIZE*nodeInfoIndex);
-
-		}
-	}
-	// os_log_print(LOG_VERBOSE, "\n"); // Packet end
-	os_log_exitCRITICAL();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -399,8 +352,6 @@ void base_sendNodes( void ) {
 */
 void base_sendUpdate( int nodePos ) {
 	/* Variables */
-	// tdf_fence_line_t mobAddr = {0};
-	// tdf_cvm_info_t nodeInfo = {0};
 	tdf_lsm6dsl_t nodeInfo = {0};
 	uint16_t xy_pos = 0;
 	uint16_t idxtype = 0;
@@ -408,15 +359,16 @@ void base_sendUpdate( int nodePos ) {
 	xBluetoothAddress_t pxLocalAddress;
 	vBluetoothGetLocalAddress(&pxLocalAddress);
 
-	/* Mobile Address */
-	// for (int i = 0; i < NODE_ADDR_SIZE; i++) {
-	// 	mobAddr.fence_line |= (pxLocalAddress.pucAddress[i] << 8*i);
-	// }
-
 	/* ID and Type */
 	idxtype |= (nodePos << 4);
 	idxtype |= (NodeArr[nodePos].type << 8);
 	nodeInfo.acc_x = idxtype;
+
+	/* heading */
+	nodeInfo.gyro_z = heading;
+
+	/* steps */
+	nodeInfo.acc_z = steps;
 
 	/* X/Y Position */
 	xy_pos |= NodeArr[nodePos].x_pos;
@@ -430,10 +382,8 @@ void base_sendUpdate( int nodePos ) {
 	nodeInfo.gyro_y = NodeArr[nodePos].ultrasonic;
 
 	/* Send */
-	// os_log_enterCRITICAL();
 	eTdfAddMulti(SERIAL_LOG, TDF_LSM6DSL, TDF_TIMESTAMP_NONE, NULL, &nodeInfo);
 	eTdfFlushMulti(SERIAL_LOG);
-	// os_log_exitCRITICAL();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -512,26 +462,6 @@ void RSSI_Task( void ) {
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Send Node Task
-* @param  None
-* @retval None
-*/
-void BaseSend_Task( void ) {
-
-    for ( ;; ) {
-
-		if (xSemaphoreTake(SemaphoreSerialNode, (TickType_t) 10) == pdTRUE) {
-			// base_sendNodes();
-			xSemaphoreGive(SemaphoreSerialNode);
-		}
-
-        vTaskDelay(1000);
-    }
-}
-
-/*----------------------------------------------------------------------------*/
-
-/**
 * @brief  Occupancy Task
 * @param  None
 * @retval None
@@ -549,16 +479,16 @@ void Occupancy_Task( void ) {
 		time = ulApplicationUptime();
 		for (int i = 0; i < nodeArrPos; i++) {
 			prevTime = NodeArr[i].contact.prevTime;
-			if (NodeArr[i].type == MOBILE_NODE) {
-				if (time - prevTime > NODE_TIMEOUT) {
-					/* Connection Lost or >thresh for long enough */
-					NodeArr[i].contact.contactType = OUTOF_CONTACT;
-				} else {
-					/* Within Range */
-					NodeArr[i].contact.contactType = IN_CONTACT;
-					contactCount++;
-				}				
-			}
+			// if (NodeArr[i].type == MOBILE_NODE) {
+			if (time - prevTime > NODE_TIMEOUT) {
+				/* Connection Lost or >thresh for long enough */
+				NodeArr[i].contact.contactType = OUTOF_CONTACT;
+			} else {
+				/* Within Range */
+				NodeArr[i].contact.contactType = IN_CONTACT;
+				contactCount++;
+			}				
+			// }
 		}
 
 		/* Update LED */

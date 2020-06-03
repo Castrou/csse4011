@@ -177,7 +177,8 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 		} else if (heading < 0) {
 			heading += 36000.0;
 		}
-		os_log_print(LOG_DEBUG, "HEADING: %f", heading);
+		// os_log_print(LOG_DEBUG, "HEADING: %d", (uint16_t)heading);
+		os_loc_setHead((uint16_t)heading);
 	}
 	
 	if (count == 4) {

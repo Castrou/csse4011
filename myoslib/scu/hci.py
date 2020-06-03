@@ -129,8 +129,8 @@ while 1:
 		value2 = 0
 
 	uart_handler()
-	val1 = i2c2.readfrom_mem(0x6A, 0x4B, 1)
-	val2 = i2c2.readfrom_mem(0x6A, 0x4C, 1)
+	val1 = i2c2.readfrom_mem(0x1E, 0x29, 1)
+	val2 = i2c2.readfrom_mem(0x1E, 0x28, 1)
 	print(val1,val2)
 	# Somewhat similar to HAL_Delay()
 	time.sleep(1)

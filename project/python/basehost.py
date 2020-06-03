@@ -108,8 +108,11 @@ def update_xy():
 				lxObj.add_measure(static.name, (static.kDist+0.00000000001))
 				
 			# Update Mobile
+			print("Heading:", tdf3.heading/100)
+			print("Steps:", tdf3.steps)
 			try:
 				lxP.solve()
+				
 			except ZeroDivisionError:
 				pass
 			xMobile.append(lxObj.loc.x)
