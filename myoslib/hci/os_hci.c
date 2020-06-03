@@ -294,6 +294,33 @@ void HCI_Task( void ) {
                         }
                         break;
 
+                    case LIS3MDL:
+                        /* Handle X Info */
+                        HCIdata[dataPos] = RxPacket.data[dataPos].regval;
+                        HCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
+                        // incomingRaw = (HCIdata[dataPos]<<8) | 
+                        //                     HCIdata[dataPos + 1];
+                        // incomingData = (float) (incomingRaw/G_CONVERT);
+                        // os_log_print(LOG_INFO, "X Magno: %.2fg(s)", incomingData);
+                        dataPos += 2;
+                        
+                        /* Handle Y Info */
+                        HCIdata[dataPos] = RxPacket.data[dataPos].regval;
+                        HCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
+                        // incomingRaw = (HCIdata[dataPos]<<8) | 
+                        //                     HCIdata[dataPos + 1];
+                        // incomingData = ((float)incomingRaw/(float)G_CONVERT);
+                        // os_log_print(LOG_INFO, "Y Magno: %.2fg(s)", incomingData);
+                        dataPos += 2;
+
+                        /* Handle Z Info */
+                        HCIdata[dataPos] = RxPacket.data[dataPos].regval;
+                        HCIdata[dataPos + 1] = RxPacket.data[dataPos + 1].regval;
+                        // incomingRaw = (HCIdata[dataPos]<<8) | 
+                        //                     HCIdata[dataPos + 1];
+                        // incomingData = (float) (incomingRaw/G_CONVERT);
+                        // os_log_print(LOG_INFO, "Z Magno: %.2fg(s)", incomingData);
+
                     default:
                         break;
                 }

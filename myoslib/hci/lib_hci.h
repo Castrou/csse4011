@@ -40,6 +40,8 @@
 /* Global Macro --------------------------------------------------------------*/
 #define     lib_hci_request_accel(axis)     lib_hci_request_data(LSM6DSL, axis)
 #define     lib_hci_request_baro()          lib_hci_request_data(LPS22HB, NO_SPEC)
+#define     lib_hci_request_magno()         lib_hci_request_data(LIS3MDL, NO_SPEC)
+
 
 /* Function prototypes -------------------------------------------------------*/
 extern void lib_hci_request_data( uint8_t device, uint8_t specifier );

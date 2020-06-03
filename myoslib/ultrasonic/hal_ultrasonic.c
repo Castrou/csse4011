@@ -24,10 +24,12 @@
 #include "os_log.h"
 
 #include "hal_ultrasonic.h"
+#include "os_ultrasonic.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define     US_CONVERT  0.34 / 2 // Speed of sound / 2 (because it travels there and back)
+#define     TIMEOUT     1
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -65,11 +67,14 @@ extern double hal_ultrasonic_ping( void ) {
     nrf_delay_us(10);            // us delay
     vGpioClear(TRIG_PIN); // end pulse
 
-    while (!bGpioRead(ECHO_PIN)); // pulse hasnt come back yet
-    
+    while (!bGpioRead(ECHO_PIN) && pulseTime++ < TIMEOUT); // pulse hasnt come back yet
+    pulseTime = 0;
     while (bGpioRead(ECHO_PIN)) {
         pulseTime++;
         nrf_delay_us(1);
+        if(pulseTime > TIMEOUT) { 
+            return DISCONNECTED;
+        }
     }
 
     /* convert time to dist */

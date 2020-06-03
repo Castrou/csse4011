@@ -21,7 +21,7 @@ def init_baro():
 	i2c2.writeto_mem(0x5D, 0x10, (0x20).to_bytes(1, 'big'))
 
 def init_magno():
-	i2c2.writeto_mem(0x1E, 0x22, 0x00.to_bytes(1, 'big'))
+	i2c2.writeto_mem(0x1E, 0x22, (0x00).to_bytes(1, 'big'))
 
 # Get PB14 and PA5 and treat them as GPIO Output pins
 led_1 = Pin('PB14', Pin.OUT)

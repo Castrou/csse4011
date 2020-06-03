@@ -1,6 +1,7 @@
 /* Includes ***************************************************/
 #include "string.h"
 #include "stdio.h"
+#include "math.h"
 
 #include "argon.h"
 #include "board.h"
@@ -32,6 +33,7 @@
 
 #include "cli_task.h"
 #include "os_log.h"
+#include "lib_hci.h"
 #include "os_hci.h"
 #include "os_util.h"
 #include "lib_bt.h"
@@ -156,6 +158,8 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 	
 	vLedsToggle(LEDS_BLUE);
 	// char buffer[100];
+	int16_t xMagno, yMagno;
+	double heading;
 
 	EventBits_t buttonIsr = xEventGroupGetBitsFromISR(EventISR);
 
@@ -175,6 +179,20 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 		count++;
 	}
 
+	/* Magno Read */
+	lib_hci_request_magno();
+	xMagno = (HCIdata[0]<<8) | HCIdata[1];
+	yMagno = (HCIdata[2]<<8) | HCIdata[3];
+	// os_log_print(LOG_DEBUG,
+	/* Heading Info */
+	heading = atan2(yMagno, xMagno) * (180 / M_PI) * 100.0;
+	if (heading > 36000.0) {
+		heading -= 36000.0;
+	} else if (heading < 0) {
+		heading += 36000.0;
+	}
+
+	os_log_print(LOG_DEBUG, "HEADING: %d", (uint16_t)heading);
 	UNUSED(ulUptime);
 
 }

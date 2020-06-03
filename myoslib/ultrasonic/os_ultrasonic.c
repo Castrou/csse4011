@@ -39,6 +39,7 @@
 /* Private variables ---------------------------------------------------------*/
 TaskHandle_t UltrasonicHandler;
 double dist;
+int connectedSonic = 1;
 
 /* Private function prototypes -----------------------------------------------*/
 void Ultrasonic_Task( void );
@@ -101,7 +102,14 @@ void Ultrasonic_Task( void ) {
 
     for ( ;; ) {
 
-        dist = hal_ultrasonic_ping();
+        if (connectedSonic) {
+            vLedsToggle(LEDS_RED);
+            dist = hal_ultrasonic_ping();
+            if (!dist) {
+                connectedSonic = DISCONNECTED;
+            }
+        }
+        
 
         vTaskDelay(5);
     }
