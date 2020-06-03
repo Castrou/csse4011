@@ -31,6 +31,17 @@ To connect the boards connect Argon D8 to B\_L475E\_IOT01A D1 and Argon D7 to B\
 
 ## Application Guide
 
+### Flashing the boards
+
+To setup a static node plug in the Xenon, navigate to `project/static/` and run:  
+`make TARGET=xenon flashdbg -j`  
+
+Setup the mobile node by connecting the Argon it to the pc, navigating to `project/mobile` and running:  
+`make TARGET=argon flashdbg -j`  
+
+The SCU can be programmed using the following from any of the project subdirectories:
+`pyboard --device /dev/ttyACM1 -f cp ../../myoslib/scu/hci.py :main.py`  
+
 ### Listening to the base
 
 To listen to the AHU/Argon, run the following command from `project/python/`:  
@@ -44,9 +55,19 @@ To register nodes for use in the CSIW setup the following commands must be used:
 `node xy <11:22:33:44:55:66> <x> <y>`  
 Note the formatting of the address.  
 
-To review the list of nodes the following command can be used:
-`node print`
-This will print the full list of nodes along with their address, type, X/Y positions, RSSI, Equivalent mm distance and ultrasonic readings
+Types that can be used:  
+MOBILE_NODE - 0  
+STATIC_NODE - 1  
+US_STATIC_NODE - 2  
+
+To review the list of nodes the following command can be used:  
+`node print`  
+This will print the full list of nodes along with their address, type, X/Y positions, RSSI, Equivalent mm distance and ultrasonic readings  
+
+### View Log
+
+The following command can be used to show a list of nodes come into contact with as well as their contact duration:  
+`node log`
 
 ### Localizing the Mobile Node
 
