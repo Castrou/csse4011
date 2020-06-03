@@ -80,6 +80,7 @@ extern void os_loc_disableTx( void );
 extern void os_loc_queueNode(Node node);
 extern void os_loc_addNode(uint8_t *address);
 extern void os_loc_printNodes( void );
+extern void os_loc_printLog( void );
 extern int os_loc_getX( void );
 extern int os_loc_getY( void );
 void updateNode( uint8_t *arrPos, Node node, int parameter);

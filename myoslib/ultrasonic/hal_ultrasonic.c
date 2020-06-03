@@ -27,7 +27,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define     US_CONVERT  0.034 / 2 // Speed of sound / 2 (because it travels there and back)
+#define     US_CONVERT  0.34 / 2 // Speed of sound / 2 (because it travels there and back)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/

@@ -36,6 +36,7 @@
 /* Private define ------------------------------------------------------------*/
 #define		SEND		's'
 #define		PRINT		'p'
+#define		LOG			'l'
 #define		ADD			'a'
 #define		TYPE		't'
 #define		XY			'x'
@@ -138,6 +139,10 @@ BaseType_t nodeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
 		case PRINT:
 			/* Just call print nodes function */
 			os_loc_printNodes();
+			break;
+
+		case LOG:
+			os_loc_printLog();
 			break;
 
 		case ADD:

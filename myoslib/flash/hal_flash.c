@@ -18,6 +18,7 @@
 #include "spi.h"
 #include "flash_interface.h"
 #include "mx25r.h"
+#include "onboard_logger.h"
 
 #include "gpio.h"
 #include "leds.h"
@@ -50,6 +51,11 @@ xFlashDevice_t xMX25rDevice = {
 
 xFlashDevice_t *const  pxOnboardFlash = &xMX25rDevice;
 
+// TDF_LOGGER_STRUCTURES( ONBOARD_STORAGE_LOG, xFlashLog, "FlashLog", (xLoggerDevice_t *) &xOnboardLoggerDevice, 256, 0, LOGGER_LENGTH_REMAINING_BLOCKS );
+// eTdfLoggerConfigure( &xFlashLog, LOGGER_CONFIG_INIT_DEVICE, NULL );
+// eTdfLoggerConfigure( &xFlashLog, LOGGER_CONFIG_COMMIT_ONLY_USED_BYTES, 0 );
+// eTdfLoggerConfigure( &xFlashLog, LOGGER_CONFIG_APPEND_MODE, 0 );
+
 /* Private function prototypes -----------------------------------------------*/
 
 /*-----------------------------------------------------------*/
@@ -68,6 +74,7 @@ extern void hal_flash_init( void ) {
 	vGpioSetup( FLASH_MISO_GPIO, GPIO_PUSHPULL, GPIO_PUSHPULL_HIGH );
 	vGpioSetup( FLASH_MOSI_GPIO, GPIO_PUSHPULL, GPIO_PUSHPULL_HIGH );
 	vGpioSetup( FLASH_SCK_GPIO, GPIO_PUSHPULL, GPIO_PUSHPULL_HIGH );
+	vGpioSetup( FLASH_WP_GPIO, GPIO_PUSHPULL, GPIO_PUSHPULL_HIGH);
 
 	/* Setup the MX25 external flash interface channel */
 	pxFlashSpi->xPlatform.xMosi = FLASH_MOSI_GPIO;
@@ -81,7 +88,8 @@ extern void hal_flash_init( void ) {
 	}
 
 	/* Initialise flash chip */
-	eBoardEnablePeripheral( PERIPHERAL_ONBOARD_FLASH, NULL, portMAX_DELAY );
+	// eBoardEnablePeripheral( PERIPHERAL_ONBOARD_FLASH, NULL, portMAX_DELAY );
+	vGpioClear( FLASH_WP_GPIO );
 	eResult = eFlashInit( &xMX25rDevice );
 	if ( eResult != ERROR_NONE ) {
 		eLog( LOG_APPLICATION, LOG_APOCALYPSE, "Failed to initialise Flash with error code %d\r\n", eResult );
@@ -96,16 +104,28 @@ extern void hal_flash_init( void ) {
 * @param  None
 * @retval None
 */
-void hal_flash_write(uint64_t ullFlashAddress, uint8_t *pucData, uint32_t ulLength) {
+extern void hal_flash_write(uint32_t ulBlockNum, void *pvBlockData, uint32_t ulBlockSize) {
 
-	UNUSED(ullFlashAddress);
-	UNUSED(pucData);
-	UNUSED(ulLength);
-	// eResult = eFlashWrite( xMX25rDevice, ullFlashAddress, pucData, ulLength, pdMS_TO_TICKS( 1000 ) );
+	// uint64_t ullAddress = ( (uint64_t) ulBlockNum << pxOnboardFlash->xSettings.ucPageSizePower );
+	// uint32_t ulEraseSize = pxOnboardFlash->xSettings.usErasePages << pxOnboardFlash->xSettings.ucPageSizePower;
+
+	// /* If the block is the start of an erase boundary, erase if */
+	// if ( ulBlockNum % pxOnboardFlash->xSettings.usErasePages == 0 ) {
+	// 	eFlashErase( pxOnboardFlash, ullAddress, ulEraseSize, pdMS_TO_TICKS( 1000 ) );
+	// }
+
+	// return eFlashWrite( pxOnboardFlash, ullAddress, pvBlockData, ulBlockSize, pdMS_TO_TICKS( 1000 ) );
+	xOnboardLoggerDevice.fnWriteBlock(ulBlockNum, pvBlockData, ulBlockSize);
+
 }
 
 /*-----------------------------------------------------------*/
 
-
+extern void hal_flash_read( uint32_t ulBlockNum, uint16_t usOffset, void *pvBlockData, uint32_t ulBlockSize )
+{
+	// uint64_t ullAddress = ( (uint64_t) ulBlockNum << pxOnboardFlash->xSettings.ucPageSizePower ) + usOffset;
+	// return eFlashRead( pxOnboardFlash, ullAddress, pvBlockData, ulBlockSize, pdMS_TO_TICKS( 1000 ) );
+	xOnboardLoggerDevice.fnReadBlock(ulBlockNum, usOffset, &pvBlockData, ulBlockSize);
+}
 
 /*-----------------------------------------------------------*/

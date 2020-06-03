@@ -267,6 +267,33 @@ void os_loc_queueNode(Node node) {
 * @param  None
 * @retval None
 */
+extern void os_loc_printLog( void ) {
+
+	os_log_print(LOG_INFO, "-----------------------------------------");
+	os_log_print(LOG_INFO, "| NODE ADDRESS\t\t| CONTACT TIME\t|");
+	os_log_print(LOG_INFO, "-----------------------------------------");
+
+	for (int i = 0; i < nodeArrPos; i++) {
+		/* Display Nodes */
+		if (NodeArr[i].type == MOBILE_NODE) {
+			os_log_print(LOG_INFO, "| %02x:%02x:%02x:%02x:%02x:%02x\t| %d\t\t|",
+							NodeArr[i].address[0], NodeArr[i].address[1], NodeArr[i].address[2], 
+							NodeArr[i].address[3], NodeArr[i].address[4], NodeArr[i].address[5],
+							NodeArr[i].contact.contactTime);
+		}
+	}
+
+	os_log_print(LOG_INFO, "-----------------------------------------");
+
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Displays Node Array
+* @param  None
+* @retval None
+*/
 extern void os_loc_printNodes( void ) {
 
 	os_log_print(LOG_INFO, "-------------------------------------------------------------------------------------------");
@@ -325,7 +352,7 @@ void base_sendNodes( void ) {
 		}
 
 		/* Node Recorded Distance */
-		os_log_print(LOG_VERBOSE, "%04x", NodeArr[i].mmDist);
+		os_log_print(LOG_VERBOSE, "%04x", (uint16_t)(NodeArr[i].mmDist));
 
 		/* Static X/Y */
 		if (NodeArr[i].type != MOBILE_NODE) {

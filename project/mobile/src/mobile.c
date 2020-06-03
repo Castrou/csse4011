@@ -154,15 +154,8 @@ void vApplicationStartupCallback( void ) {
 
 void vApplicationTickCallback( uint32_t ulUptime ) {
 	
-	// xTdfTime_t xTime;
-	// bRtcGetTdfTime(&xTime);	
-
-	// tdf_datetime_t xTdfTime;
-	// xTdfTime.count = ulUptime;
-
-	// eTdfAddMulti(BLE_LOG, TDF_DATETIME, TDF_TIMESTAMP_GLOBAL, &xTime, &xTdfTime);
-	// eTdfFlushMulti(BLE_LOG);
 	vLedsToggle(LEDS_BLUE);
+	// char buffer[100];
 
 	EventBits_t buttonIsr = xEventGroupGetBitsFromISR(EventISR);
 
@@ -181,6 +174,10 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 
 		count++;
 	}
+
+	// os_flash_write("fuck");
+	// os_flash_read(&buffer, 4);
+	// os_log_print(LOG_DEBUG, "%s", buffer);
 
 	UNUSED(ulUptime);
 
@@ -219,7 +216,7 @@ void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t
 	UNUSED(ucDataLen);
 
 	/* Limit printed devices based on RSSI */
-	if (cRssi < -57) {
+	if (cRssi < -75) {
 		return;
 	}
 

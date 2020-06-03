@@ -14,11 +14,11 @@ import numpy
 class Kalman:
     def __init__(self, x_init, cov_init, meas_err, proc_err):
         self.ndim = len(x_init)
-        self.A = numpy.eye(ndim)        #state transition model
-        self.H = numpy.eye(ndim)        #observation model
+        self.A = numpy.eye(self.ndim)        #state transition model
+        self.H = numpy.eye(self.ndim)        #observation model
         self.x_hat =  x_init
         self.cov = cov_init
-        self.Q_k = numpy.eye(ndim)*proc_err #covariance matrix of process noise
+        self.Q_k = numpy.eye(self.ndim)*proc_err #covariance matrix of process noise
         self.R = numpy.eye(len(self.H))*meas_err   #covariance matrix of observation noise
         
     def update(self, obs):
@@ -32,7 +32,7 @@ class Kalman:
         self.error_cov = numpy.dot(self.H,numpy.dot(self.cov_est,numpy.transpose(self.H))) + self.R
         self.K = numpy.dot(numpy.dot(self.cov_est,numpy.transpose(self.H)),numpy.linalg.inv(self.error_cov))
         self.x_hat = self.x_hat_est + numpy.dot(self.K,self.error_x)
-        if ndim>1:
+        if self.ndim>1:
             self.cov = numpy.dot((numpy.eye(self.ndim) - numpy.dot(self.K,self.H)),self.cov_est)
         else:
             self.cov = (1-self.K)*self.cov_est 

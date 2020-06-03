@@ -35,6 +35,7 @@
 #include "device_nvm.h"
 
 #include "unified_comms_serial.h"
+#include "onboard_logger.h"
 
 #include "os_log.h"
 #include "hal_flash.h"
@@ -43,7 +44,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct FlashMessage {
-    char payload[80];
+    char payload[100];
+    int payloadLen;
 } FlashMessage;
 
 /* Private define ------------------------------------------------------------*/
@@ -63,11 +65,35 @@ void Flash_Task( void );
 /*----------------------------------------------------------------------------*/
 
 /**
-* @brief  Queues Log to be printed
+* @brief  Reads flash
 * @param  input: string of Serial input
 * @retval None
 */
-extern void os_log_flashWrite( void ) {
+extern void os_flash_read( void *dataBuffer, uint32_t blockSize ) {
+
+    hal_flash_read( 0, 0, &dataBuffer, blockSize );
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  Queues flash write
+* @param  input: string of Serial input
+* @retval None
+*/
+extern void os_flash_write(const char *payload, ... ) {
+
+    char buffer[100];
+    va_list argList;
+
+    va_start(argList, payload);
+
+    tiny_vsnprintf(buffer, 100, payload, argList);
+
+	va_end(argList);
+
+    pvMemcpy(Flash.payload, buffer, 100);
+    Flash.payloadLen = strlen(buffer);
 
     if(xQueueSendToBack(QueueFlashWrite, (void *) &Flash, 
         (portTickType) 10) != pdPASS) 
@@ -125,17 +151,11 @@ void Flash_Task( void ) {
 
     /* Create Queue for retrieving from Serial ISR */
     QueueFlashWrite = xQueueCreate(5, sizeof(IncomingFlash));
-    QueueFlashRead = xQueueCreate(5, sizeof(IncomingFlash));
 
     for ( ;; ) {
         if (xQueueReceive(QueueFlashWrite, &IncomingFlash, 10) == pdTRUE) {   
              
-            
-              
-        }
-
-        if (xQueueReceive(QueueFlashRead, &IncomingFlash, 10) == pdTRUE) {   
-             
+            hal_flash_write(0, IncomingFlash.payload, Flash.payloadLen);
               
         }
     }

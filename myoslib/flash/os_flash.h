@@ -18,6 +18,8 @@
 /* Function prototypes -------------------------------------------------------*/
 extern void os_flash_init( void );
 extern void os_flash_deinit( void );
+extern void os_flash_write(const char *payload, ... );
+extern void os_flash_read( void *dataBuffer, uint32_t blockSize );
 
 
 #endif // S4434496_OS_FLASH_H

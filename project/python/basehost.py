@@ -25,6 +25,7 @@ import logging
 
 from MessageTransport import PacpTransportSerial, PacpTransportSocket
 import PacpMessage
+
 ##
 # Constants
 ADDRESS_LENGTH = 6
@@ -38,28 +39,45 @@ class mobileNode(Node):
 	def __init__(self, address):
 		super().__init__(address, 0)
 		self.type = 0
-		self.lxP = lx.Project(mode="2D",solver="LSE")
-		self.lxObj, address = self.lxP.add_target()
 		self.statNodes = dict()
 		self.mobNodes = dict()
-		self.kx = 0
-		self.ky = 0
 
 class staticNode(Node):
-	def __init__(self, address, mmDist):
+	def __init__(self, address, x_pos, y_pos, mmDist):
 		super().__init__(address, mmDist)
 		self.type = 1
-		self.xPos = 0
-		self.yPos = 0
+		self.xPos = x_pos
+		self.yPos = y_pos
+		self.kalman = kalman.Kalman(np.array([0]), np.eye(1), 0.01, 1e-5)
+		self.kDist = 0
+
+	def updateKalman(self):
+		arr = np.array([self.mmDist])
+		self.kalman.update(arr)
+		self.kDist = self.kalman.x_hat_est
+
+	def updateInfo(self, x_pos, y_pos, mmDist):
+		self.x_pos = x_pos
+		self.y_pos = y_pos
+		self.mmDist = mmDist
+		self.updateKalman()
+
+	
+
 
 class usStaticNode(staticNode):
-	def __init__(self, address, mmDist):
+	def __init__(self, address, x_pos, y_pos, mmDist, usDist):
 		super().__init__(address, mmDist)
 		self.type = 2
+		self.xPos = x_pos
+		self.yPos = y_pos
 		self.usDist = 0
 
 # Init basehost
 basehost = None
+ndim = 2
+nsteps = 50
+k = dict()
 # Init Mobile Node dictionary
 mobileList = dict()
 # Init x, y lists
@@ -74,18 +92,25 @@ def update_xy():
 	y = 0
 	xStatic, yStatic = [],[]
 	xMobile, yMobile = [],[]
+	lxP = lx.Project(mode="2D",solver="LSE")
+	# staticAP = []
+	# rssiVal = []
 	try:
 		for mobileAddr, mobile in mobileList.items():
+			lxObj, mobile.address = lxP.add_target()
 			# Update Statics:
 			for staticAddr, static in mobile.statNodes.items():
 				xStatic.append(static.xPos)
 				yStatic.append(static.yPos)
+				lxP.add_anchor(static.address, (static.xPos, static.yPos))
+				print(static.mmDist)
+				lxObj.add_measure(static.address, (static.kDist+0.0000000000000001))
 				j += 1
-				
 			# Update Mobile
-			mobile.lxP.solve()
-			xMobile.append(mobile.lxObj.loc.x)
-			yMobile.append(mobile.lxObj.loc.y)
+			lxP.solve()
+			xMobile.append(lxObj.loc.x)
+			yMobile.append(lxObj.loc.y)
+			print(xMobile, yMobile)
 			i += 1
 
 	except AttributeError:
@@ -97,14 +122,14 @@ fig, ax = plt.subplots()
 left,right = ax.get_xlim()
 low,high = ax.get_ylim()
 axes = plt.gca()
-axes.set_xlim([0, 3])
-axes.set_ylim([0, 3])
+axes.set_xlim([0, 3000])
+axes.set_ylim([0, 3000])
 plt.grid()
 
 def animate(i):
 	global xStatic, yStatic, xMobile, yMobile
 	update_xy()
-	grid = (plt.scatter(xStatic, yStatic, s=100, marker='o', c='b'), plt.scatter(xMobile, yMobile, s=100, marker='o', c='m'))
+	grid = (plt.scatter(xStatic, yStatic, s=100, marker='x', c='b'), plt.scatter(xMobile, yMobile, s=100, marker='o', c='m'))
 	return grid
 
 def run_animate_thread():
@@ -118,7 +143,7 @@ def run_baselisten_thread():
 
 def run_data_thread():
 	# Init
-	global basehost
+	global basehost, ndim
 	packet = []
 	while (basehost == None):
 		pass
@@ -175,23 +200,17 @@ def run_data_thread():
 				mmDist = (packet[index] << 8) | packet[index+1]
 				index += 2
 				### Get X/Y pos
-				x_pos, y_pos = packet[index], packet[index+1]
+				x_pos, y_pos = packet[index]*100, packet[index+1]*100
 				index += 2
 				### Add to mobile node list
-				newStatic = staticNode(nodeAddr, mmDist)
-				newStatic.xPos, newStatic.yPos = x_pos, y_pos
 				if nodeAddr in mobileList[recvAddress].statNodes:
-					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
-					mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
-														mobileList[recvAddress].statNodes[nodeAddr].mmDist/1000)
+					mobileList[recvAddress].statNodes[nodeAddr].updateInfo(x_pos, y_pos, mmDist)
 					pass
 				else:
+					newStatic = staticNode(nodeAddr, x_pos, y_pos, mmDist)
 					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
-					mobileList[recvAddress].lxP.add_anchor(mobileList[recvAddress].statNodes[nodeAddr].address, 
-															(mobileList[recvAddress].statNodes[nodeAddr].xPos, 
-															mobileList[recvAddress].statNodes[nodeAddr].yPos))
-				mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
-														mobileList[recvAddress].statNodes[nodeAddr].mmDist/1000)
+				# mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
+				# 										mobileList[recvAddress].statNodes[nodeAddr].mmDist)
 
 			## Ultrasonic node process
 			elif (nodeType == 2):
@@ -205,21 +224,21 @@ def run_data_thread():
 				usDist = (packet[index] << 8) | packet[index+1]
 				index += 2
 				### Add to mobile node list
-				newStatic = usStaticNode(nodeAddr, mmDist)
-				newStatic.xPos, newStatic.yPos = x_pos, y_pos
-				newStatic.usDist = usDist
+				newStatic = usStaticNode(nodeAddr, x_pos, y_pos, mmDist, usDist)
 				if nodeAddr in mobileList[recvAddress].statNodes:
 					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
-					mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
-														mobileList[recvAddress].statNodes[nodeAddr].mmDist/1000)
+					# mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
+					# 									mobileList[recvAddress].statNodes[nodeAddr].mmDist)
 					pass
 				else:
 					mobileList[recvAddress].statNodes[nodeAddr] = newStatic
-					mobileList[recvAddress].lxP.add_anchor(mobileList[recvAddress].statNodes[nodeAddr].address, 
-															(mobileList[recvAddress].statNodes[nodeAddr].xPos, 
-															mobileList[recvAddress].statNodes[nodeAddr].yPos))
-				mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
-														mobileList[recvAddress].statNodes[nodeAddr].mmDist/1000)
+					# mobileList[recvAddress].lxP.add_anchor(mobileList[recvAddress].statNodes[nodeAddr].address, 
+					# 										(mobileList[recvAddress].statNodes[nodeAddr].xPos, 
+					# 										mobileList[recvAddress].statNodes[nodeAddr].yPos))
+					# k[recvAddress] = kalman.Kalman(np.array([0, 0]), np.eye(ndim),0.01, 1e-5)
+					# k[recvAddress].update([mmDist, usDist])
+				# mobileList[recvAddress].lxObj.add_measure(mobileList[recvAddress].statNodes[nodeAddr].address, 
+				# 										(k[recvAddress].x_hat[-1]/1000 + 0.0000000001))
 
 		# End of function
 		packet = []
