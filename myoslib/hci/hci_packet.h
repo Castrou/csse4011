@@ -23,7 +23,8 @@ typedef enum Sensor_I2C {
 
     LSM6DSL = 0x6A,
     LPS22HB = 0x5D,
-    VL53L0X = 0x29
+    VL53L0X = 0x29,
+    LIS3MDL = 0x1E
 
 } Sensor_I2C;
 

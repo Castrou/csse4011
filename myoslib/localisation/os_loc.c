@@ -26,6 +26,8 @@
 
 #include "leds.h"
 #include "log.h"
+#include "tdf.h"
+#include "tdf_struct.h"
 #include "memory_operations.h"
 #include "bluetooth.h"
 
@@ -39,8 +41,10 @@
 #define     NEW_NODE		0xFF
 #define		MAX_NODES		10
 
-#define		ENV_FACTOR		20.0
-#define		MEAS_POWER		-60
+#define		ENV_FACTOR		30.0
+#define		MEAS_POWER		-55
+
+#define		BYTE_SIZE		8
 
 #define RSSI_PRIORITY (tskIDLE_PRIORITY + 3)
 #define RSSI_STACK_SIZE (configMINIMAL_STACK_SIZE * 1)
@@ -108,7 +112,7 @@ extern void os_loc_deinit( void ) {
 
     /* Delete Task */
     vTaskDelete(RSSIHandler);
-	vTaskDelete(BaseSendHandler);
+	// vTaskDelete(BaseSendHandler);
 	vTaskDelete(OccupancyHandler);
 }
 
@@ -327,46 +331,109 @@ void base_sendNodes( void ) {
 	xBluetoothAddress_t pxLocalAddress;
 	vBluetoothGetLocalAddress(&pxLocalAddress);
 
+	uint64_t TxAddr = 0;
+	uint64_t nodeId = 0;
+	uint64_t nodeInfo[MAX_NODES] = {0};
+
 	/* Send Packet */
 	os_log_enterCRITICAL();
-	os_log_print(LOG_VERBOSE, "%02x", 0xAA); // Packet start
+	// os_log_print(LOG_VERBOSE, "%02x", 0xAA); // Packet start
 
 	/* Mobile Address */
 	for (int i = 0; i < NODE_ADDR_SIZE; i++) {
-		buffer[i] = pxLocalAddress.pucAddress[i];
-		os_log_print(LOG_VERBOSE, "%02x", buffer[i]);
+		// buffer[i] = pxLocalAddress.pucAddress[i];
+		// os_log_print(LOG_VERBOSE, "%02x", buffer[i]);
+		TxAddr |= (pxLocalAddress.pucAddress[i] << 8*i);
 		
 	}
 
 	/* Node Array Size */
-	os_log_print(LOG_VERBOSE, "%02x", (int)nodeArrPos);
+	// os_log_print(LOG_VERBOSE, "%02x", (int)nodeArrPos);
+	nodeId |= ((uint64_t)(nodeArrPos & 0xF) << 56);
 
 	/* Node Array Info */
 	for (int i = 0; i < nodeArrPos; i++) {
+		int nodeInfoIndex = 0;
 		/* Node Type */
-		os_log_print(LOG_VERBOSE, "%02x", (int)NodeArr[i].type);
+		// os_log_print(LOG_VERBOSE, "%02x", (int)NodeArr[i].type);
+		nodeInfo[i] |= ((int)NodeArr[i].type << BYTE_SIZE*nodeInfoIndex);
+		nodeInfoIndex++;
+
 
 		/* Node Address */
-		for (int j = 0; j < NODE_ADDR_SIZE; j++) {
-			os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].address[j]);
-		}
-
+		// for (int j = 0; j < NODE_ADDR_SIZE; j++) {
+		// 	os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].address[j]);
+		// }
+		nodeId |= (i << 4*i);
 		/* Node Recorded Distance */
-		os_log_print(LOG_VERBOSE, "%04x", (uint16_t)(NodeArr[i].mmDist));
+		// os_log_print(LOG_VERBOSE, "%04x", (uint16_t)(NodeArr[i].mmDist));
+		nodeInfo[i] |= (NodeArr[i].mmDist << BYTE_SIZE*nodeInfoIndex);
+		nodeInfoIndex += 2;
 
 		/* Static X/Y */
 		if (NodeArr[i].type != MOBILE_NODE) {
-			os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].x_pos);
-			os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].y_pos);
+			// os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].x_pos);
+			// os_log_print(LOG_VERBOSE, "%02x", NodeArr[i].y_pos);
+			nodeInfo[i] |= (NodeArr[i].x_pos << BYTE_SIZE*nodeInfoIndex);
+			nodeInfo[i] |= (NodeArr[i].y_pos << BYTE_SIZE*(nodeInfoIndex+1));
+			nodeInfoIndex += 2;
 		}
 
 		/* Ultrasonic vals */
 		if (NodeArr[i].type == US_STATIC_NODE) {
-			os_log_print(LOG_VERBOSE, "%04x", NodeArr[i].ultrasonic);
+			// os_log_print(LOG_VERBOSE, "%04x", NodeArr[i].ultrasonic);
+			nodeInfo[i] |= (NodeArr[i].ultrasonic << BYTE_SIZE*nodeInfoIndex);
+
 		}
 	}
-	os_log_print(LOG_VERBOSE, "\n"); // Packet end
+	// os_log_print(LOG_VERBOSE, "\n"); // Packet end
 	os_log_exitCRITICAL();
+}
+
+/*----------------------------------------------------------------------------*/
+
+/**
+* @brief  send update to node
+* @param  None
+* @retval None
+*/
+void base_sendUpdate( int nodePos ) {
+	/* Variables */
+	// tdf_fence_line_t mobAddr = {0};
+	// tdf_cvm_info_t nodeInfo = {0};
+	tdf_lsm6dsl_t nodeInfo = {0};
+	uint16_t xy_pos = 0;
+	uint16_t idxtype = 0;
+
+	xBluetoothAddress_t pxLocalAddress;
+	vBluetoothGetLocalAddress(&pxLocalAddress);
+
+	/* Mobile Address */
+	// for (int i = 0; i < NODE_ADDR_SIZE; i++) {
+	// 	mobAddr.fence_line |= (pxLocalAddress.pucAddress[i] << 8*i);
+	// }
+
+	/* ID and Type */
+	idxtype |= (nodePos << 4);
+	idxtype |= (NodeArr[nodePos].type << 8);
+	nodeInfo.acc_x = idxtype;
+
+	/* X/Y Position */
+	xy_pos |= NodeArr[nodePos].x_pos;
+	xy_pos |= (NodeArr[nodePos].y_pos << 8);
+	nodeInfo.acc_y = xy_pos;
+
+	/* mm value */
+	nodeInfo.gyro_x = NodeArr[nodePos].mmDist;
+	
+	/* ultrasonic value */
+	nodeInfo.gyro_y = NodeArr[nodePos].ultrasonic;
+
+	/* Send */
+	// os_log_enterCRITICAL();
+	eTdfAddMulti(SERIAL_LOG, TDF_LSM6DSL, TDF_TIMESTAMP_NONE, NULL, &nodeInfo);
+	eTdfFlushMulti(SERIAL_LOG);
+	// os_log_exitCRITICAL();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -433,6 +500,7 @@ void RSSI_Task( void ) {
 				os_loc_updateNode_rssi(RxNode.address, RxNode);
 				/* Occupancy */
 				trackContact(nodeCheck);
+				base_sendUpdate(nodeCheck);
             }
         }
     }
@@ -450,7 +518,7 @@ void BaseSend_Task( void ) {
     for ( ;; ) {
 
 		if (xSemaphoreTake(SemaphoreSerialNode, (TickType_t) 10) == pdTRUE) {
-			base_sendNodes();
+			// base_sendNodes();
 			xSemaphoreGive(SemaphoreSerialNode);
 		}
 

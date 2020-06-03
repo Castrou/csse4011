@@ -182,7 +182,6 @@ BaseType_t nodeCommand(char * pcWriteBuffer, size_t xWriteBufferLen,
 			valBuff = strtok(NULL, " ");	// y position
 			bufferNode.y_pos = strtol(valBuff, NULL, 10); // string to val
 			/* Update Node */
-			os_log_print(LOG_DEBUG, "xy: %d %d", bufferNode.x_pos, bufferNode.y_pos);
 			os_loc_updateNode_xy(address, bufferNode);
 			break;
 

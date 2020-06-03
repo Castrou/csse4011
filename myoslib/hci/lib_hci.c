@@ -37,6 +37,7 @@
 
 #define		READ			'r'
 #define		IMU				1
+#define     MAGNO           2
 #define     TEMP            3
 #define     TOF             4
 
@@ -149,6 +150,28 @@ extern void lib_hci_request_data( uint8_t device, uint8_t specifier ) {
         if (xSemaphoreTake(SemaphoreUart, (TickType_t) 10) == pdTRUE) {
             os_hci_write(TxPacket);
         }
-    } 
+    } else if(device == LIS3MDL) {
+
+        buffField = hal_hci_build_datafield(READ, MAGNO, X_HREGADDR, 0);
+        hal_hci_addDatafield(&TxPacket, buffField);
+        buffField = hal_hci_build_datafield(READ, MAGNO, X_LREGADDR, 0);
+        hal_hci_addDatafield(&TxPacket, buffField);
+
+        /* Setup Y Packet */
+        buffField = hal_hci_build_datafield(READ, MAGNO, Y_HREGADDR, 0);
+        hal_hci_addDatafield(&TxPacket, buffField);
+        buffField = hal_hci_build_datafield(READ, MAGNO, Y_LREGADDR, 0);
+        hal_hci_addDatafield(&TxPacket, buffField);
+
+        /* Setup Z Packet */
+        buffField = hal_hci_build_datafield(READ, MAGNO, Z_HREGADDR, 0);
+        hal_hci_addDatafield(&TxPacket, buffField);
+        buffField = hal_hci_build_datafield(READ, MAGNO, Z_LREGADDR, 0);
+        hal_hci_addDatafield(&TxPacket, buffField);
+
+        if (xSemaphoreTake(SemaphoreUart, (TickType_t) 10) == pdTRUE) {
+            os_hci_write(TxPacket);
+        }
+    }
 }
 /*----------------------------------------------------------------------------*/

@@ -119,8 +119,8 @@ void vApplicationStartupCallback( void ) {
 		vWatchdogPrintRebootReason( LOG_APPLICATION, LOG_INFO, pxRebootData );
 		vWatchdogPopulateTdf( pxRebootData, &xWatchdogInfo );
 
-		eTdfAddMulti( SERIAL_LOG, TDF_WATCHDOG_INFO_SMALL, TDF_TIMESTAMP_NONE, NULL, &xWatchdogInfo );
-		eTdfFlushMulti( SERIAL_LOG );
+		// eTdfAddMulti( SERIAL_LOG, TDF_WATCHDOG_INFO_SMALL, TDF_TIMESTAMP_NONE, NULL, &xWatchdogInfo );
+		// eTdfFlushMulti( SERIAL_LOG );
 	}
 
 	/* Setup our receive handlers */
@@ -175,10 +175,6 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 		count++;
 	}
 
-	// os_flash_write("fuck");
-	// os_flash_read(&buffer, 4);
-	// os_log_print(LOG_DEBUG, "%s", buffer);
-
 	UNUSED(ulUptime);
 
 }
@@ -198,7 +194,7 @@ void vCustomSerialHandler(xCommsInterface_t *pxComms,
 	 * The %s format specifier does not respect provided lengths
 	 */
 	pvMemcpy(pcLocalString, pxMessage->pucPayload, pxMessage->usPayloadLen);
-	
+	vUnifiedCommsBasicRouter(pxComms, pxCurrentRoute, pxMessage);
 	cli_task_queue(pcLocalString);
 }
 

@@ -6,6 +6,7 @@ import math
 import kalman
 import localization as lx
 import baselisten
+import tdf3listen
 ## Baselisten stuff
 import argparse
 
@@ -31,20 +32,20 @@ import PacpMessage
 ADDRESS_LENGTH = 6
 
 class Node:
-	def __init__(self, address, mmDist):
-		self.address = address
+	def __init__(self, name, mmDist):
+		self.name = name
 		self.mmDist = mmDist
 
 class mobileNode(Node):
-	def __init__(self, address):
-		super().__init__(address, 0)
+	def __init__(self, name):
+		super().__init__(name, 0)
 		self.type = 0
-		self.statNodes = dict()
-		self.mobNodes = dict()
+		# self.statNodes = dict()
+		# self.mobNodes = dict()
 
 class staticNode(Node):
-	def __init__(self, address, x_pos, y_pos, mmDist):
-		super().__init__(address, mmDist)
+	def __init__(self, name, x_pos, y_pos, mmDist):
+		super().__init__(name, mmDist)
 		self.type = 1
 		self.xPos = x_pos
 		self.yPos = y_pos
@@ -54,16 +55,13 @@ class staticNode(Node):
 	def updateKalman(self):
 		arr = np.array([self.mmDist])
 		self.kalman.update(arr)
-		self.kDist = self.kalman.x_hat_est
+		self.kDist = self.kalman.x_hat
 
 	def updateInfo(self, x_pos, y_pos, mmDist):
 		self.x_pos = x_pos
 		self.y_pos = y_pos
 		self.mmDist = mmDist
 		self.updateKalman()
-
-	
-
 
 class usStaticNode(staticNode):
 	def __init__(self, address, x_pos, y_pos, mmDist, usDist):
@@ -73,45 +71,49 @@ class usStaticNode(staticNode):
 		self.yPos = y_pos
 		self.usDist = 0
 
-# Init basehost
+# Initialise
+## Init basehost
 basehost = None
+tdf3 = None
+## Kalman
 ndim = 2
 nsteps = 50
 k = dict()
-# Init Mobile Node dictionary
+## Init Mobile Node dictionary
 mobileList = dict()
-# Init x, y lists
+## Init x, y lists
 xMobile,yMobile = [],[]
 xStatic, yStatic = [],[]
 
 def update_xy():
 	# Init variables
-	global x, y, xMobile, yMobile, xStatic, yStatic
-	i, j = 0, 0
-	x = 0
-	y = 0
+	global x, y, xMobile, yMobile, xStatic, yStatic, tdf3
+	x, y = 0, 0
 	xStatic, yStatic = [],[]
 	xMobile, yMobile = [],[]
 	lxP = lx.Project(mode="2D",solver="LSE")
+	lxObj = None
 	# staticAP = []
 	# rssiVal = []
 	try:
-		for mobileAddr, mobile in mobileList.items():
-			lxObj, mobile.address = lxP.add_target()
-			# Update Statics:
-			for staticAddr, static in mobile.statNodes.items():
+		# Update Statics:
+		# print(tdf3.mobile)
+		for mobileAddr, mobile in tdf3.mobile.items():
+			lxObj, mobile.name = lxP.add_target()
+
+			for staticName, static in tdf3.static.items():
 				xStatic.append(static.xPos)
 				yStatic.append(static.yPos)
-				lxP.add_anchor(static.address, (static.xPos, static.yPos))
-				print(static.mmDist)
-				lxObj.add_measure(static.address, (static.kDist+0.0000000000000001))
-				j += 1
+				lxP.add_anchor(static.name, (static.xPos, static.yPos))
+				lxObj.add_measure(static.name, (static.kDist+0.00000000001))
+				
 			# Update Mobile
-			lxP.solve()
+			try:
+				lxP.solve()
+			except ZeroDivisionError:
+				pass
 			xMobile.append(lxObj.loc.x)
 			yMobile.append(lxObj.loc.y)
-			print(xMobile, yMobile)
-			i += 1
 
 	except AttributeError:
 		pass
@@ -122,8 +124,8 @@ fig, ax = plt.subplots()
 left,right = ax.get_xlim()
 low,high = ax.get_ylim()
 axes = plt.gca()
-axes.set_xlim([0, 3000])
-axes.set_ylim([0, 3000])
+axes.set_xlim([-1000, 4000])
+axes.set_ylim([-1000, 4000])
 plt.grid()
 
 def animate(i):
@@ -133,13 +135,18 @@ def animate(i):
 	return grid
 
 def run_animate_thread():
-	anim = animation.FuncAnimation(fig, animate,frames=30, interval=1000, blit=True)
+	anim = animation.FuncAnimation(fig, animate,frames=60, interval=500, blit=True)
 	plt.show()
 
 def run_baselisten_thread():
 	global basehost 
 	basehost = baselisten.Baselisten(**vars(args))
 	basehost.run()
+
+def run_tdf3listen_thread():
+	global tdf3
+	tdf3 = tdf3listen.tdf3listen(base_host="localhost", base_port=vars(args)['base_socket_port'], tdf_server=None)
+	tdf3.run()
 
 def run_data_thread():
 	# Init
@@ -264,10 +271,11 @@ if __name__ == '__main__':
 	delattr(args, "log_level")
 
 	baselisten_thread = threading.Thread(target=run_baselisten_thread)
+	tdf3listen_thread = threading.Thread(target=run_tdf3listen_thread)
 	animate_thread = threading.Thread(target=run_animate_thread)
 	data_thread = threading.Thread(target=run_data_thread)
 	
-
 	baselisten_thread.start()
+	tdf3listen_thread.start()
 	animate_thread.start()
 	data_thread.start()

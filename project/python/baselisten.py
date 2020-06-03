@@ -16,6 +16,11 @@ import copy
 import select
 import logging
 
+import tdf3
+import ListenClient
+
+from PacpMessage import PayloadType, DecryptionError
+from NodeFilter import NodeFilter
 from MessageTransport import PacpTransportSerial, PacpTransportSocket
 import PacpMessage
 
@@ -68,10 +73,10 @@ class ScreenOutput():
             body = packet.payload
         body_str = ' '.join(["{:02x}".format(b) for b in body])
         color = self.GREEN if mode == "rx" else self.BLUE
-        header = "RX:" if mode == "rx" else "TX:"
+        # header = "RX:" if mode == "rx" else "TX:"
 
-        time_str = datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]
-        print("{:s}{:s} {:s}{:s} {:s}".format(color, time_str, header, self.END, body_str))
+        # time_str = datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]
+        # print("{:s}{:s} {:s}{:s} {:s}".format(color, time_str, header, self.END, body_str))
 
 
 class SerialConnection():
