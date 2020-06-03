@@ -41,7 +41,7 @@
 #define     NEW_NODE		0xFF
 #define		MAX_NODES		10
 
-#define		ENV_FACTOR		40.0
+#define		ENV_FACTOR		30.0
 #define		MEAS_POWER		-55
 
 #define		BYTE_SIZE		8
@@ -500,7 +500,10 @@ void RSSI_Task( void ) {
 				os_loc_updateNode_rssi(RxNode.address, RxNode);
 				/* Occupancy */
 				trackContact(nodeCheck);
-				base_sendUpdate(nodeCheck);
+				if (xSemaphoreTake(SemaphoreSerialNode, (TickType_t) 10) == pdTRUE) {
+					base_sendUpdate(nodeCheck);
+					xSemaphoreGive(SemaphoreSerialNode);
+				}
             }
         }
     }
