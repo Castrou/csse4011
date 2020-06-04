@@ -177,7 +177,6 @@ void vApplicationTickCallback( uint32_t ulUptime ) {
 		} else if (heading < 0) {
 			heading += 36000.0;
 		}
-		// os_log_print(LOG_DEBUG, "HEADING: %d", (uint16_t)heading);
 		os_loc_setHead((uint16_t)heading);
 	}
 	
@@ -268,9 +267,13 @@ void vBluetoothTdfHandler( xCommsInterface_t *			 pxComms,
 	vTdfParseStart( &incomingTdf, payload, pxMessage->usPayloadLen );
 	if (eTdfParse(&incomingTdf, &xUltrasonic) == ERROR_NONE) {
 		/* Ultrasonic set */
-		usDist |= (xUltrasonic.pucData[0] & 0xFF);
-		usDist |= (xUltrasonic.pucData[1] << 8);
+		usDist = 0;
+		if ((xUltrasonic.usId & 0x0FFF) == 475) {
+			usDist |= (xUltrasonic.pucData[0] & 0xFF);
+			usDist |= (xUltrasonic.pucData[1] << 8);
+		}
 		node.ultrasonic = usDist;
+
 		/* Address set */
 		for(int i = 0; i < NODE_ADDR_SIZE; i++) {
 			address[i] = ((uint64_t)pxMessage->xSource >> 8*i) & 0xFF;

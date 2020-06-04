@@ -28,8 +28,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define     US_CONVERT  0.34 / 2 // Speed of sound / 2 (because it travels there and back)
-#define     TIMEOUT     1
+#define     US_CONVERT  0.17
+#define     TIMEOUT     50000
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -58,7 +58,7 @@ extern void hal_ultrasonic_init( void ) {
 */
 extern double hal_ultrasonic_ping( void ) {
 
-    int16_t pulseTime = 0;
+    uint16_t pulseTime = 0;
 
     vGpioClear(TRIG_PIN);
     nrf_delay_us(2);

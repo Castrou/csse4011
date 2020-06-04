@@ -106,16 +106,16 @@ void Ultrasonic_Task( void ) {
 
     for ( ;; ) {
 
-        if (connectedSonic) {
+
+        dist = hal_ultrasonic_ping();
+        if (!dist) {
             vLedsToggle(LEDS_RED);
-            dist = hal_ultrasonic_ping();
-            if (!dist) {
-                connectedSonic = DISCONNECTED;
-            }
         }
+
 
         /* Send ultrasonic value over bluetooth */
         xRange.range = (uint16_t)(dist);
+        os_log_print(LOG_DEBUG, "xRange: %d", xRange.range );
         eTdfAddMulti(BLE_LOG, TDF_RANGE_MM, TDF_TIMESTAMP_RELATIVE_OFFSET_MS, &xTime, &xRange);
         /** 
          * Force the BLE_LOG to send all data.

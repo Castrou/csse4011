@@ -27,7 +27,7 @@
 #define NODE_US             3
 
 #define NODE_TIMEOUT        3
-#define NODE_MM_THRESH      1330
+#define NODE_MM_THRESH      1130
 
 /* Global typedef ------------------------------------------------------------*/
 typedef enum {

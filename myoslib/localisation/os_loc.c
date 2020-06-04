@@ -42,7 +42,7 @@
 #define		MAX_NODES		10
 
 #define		ENV_FACTOR		30.0
-#define		MEAS_POWER		-55
+#define		MEAS_POWER		-50
 
 #define		BYTE_SIZE		8
 
@@ -278,13 +278,13 @@ extern void os_loc_printLog( void ) {
 
 	for (int i = 0; i < nodeArrPos; i++) {
 		/* Display Nodes */
-		// if (NodeArr[i].type == MOBILE_NODE) {
-		os_log_print(LOG_INFO, "| %02x:%02x:%02x:%02x:%02x:%02x\t| %d\t\t| %d\t\t| %d\t\t|",
-						NodeArr[i].address[0], NodeArr[i].address[1], NodeArr[i].address[2], 
-						NodeArr[i].address[3], NodeArr[i].address[4], NodeArr[i].address[5],
-						NodeArr[i].contact.contactTime, NodeArr[i].contact.prevTime, 
-						NodeArr[i].mmDist);
-		// }
+		if (NodeArr[i].type == MOBILE_NODE) {
+			os_log_print(LOG_INFO, "| %02x:%02x:%02x:%02x:%02x:%02x\t| %d\t\t| %d\t\t| %d\t\t|",
+							NodeArr[i].address[0], NodeArr[i].address[1], NodeArr[i].address[2], 
+							NodeArr[i].address[3], NodeArr[i].address[4], NodeArr[i].address[5],
+							NodeArr[i].contact.contactTime, NodeArr[i].contact.prevTime, 
+							NodeArr[i].mmDist);
+		}
 	}
 
 	os_log_print(LOG_INFO, "-------------------------------------------------------------------------");
@@ -479,16 +479,16 @@ void Occupancy_Task( void ) {
 		time = ulApplicationUptime();
 		for (int i = 0; i < nodeArrPos; i++) {
 			prevTime = NodeArr[i].contact.prevTime;
-			// if (NodeArr[i].type == MOBILE_NODE) {
-			if (time - prevTime > NODE_TIMEOUT) {
-				/* Connection Lost or >thresh for long enough */
-				NodeArr[i].contact.contactType = OUTOF_CONTACT;
-			} else {
-				/* Within Range */
-				NodeArr[i].contact.contactType = IN_CONTACT;
-				contactCount++;
-			}				
-			// }
+			if (NodeArr[i].type == MOBILE_NODE) {
+				if (time - prevTime > NODE_TIMEOUT) {
+					/* Connection Lost or >thresh for long enough */
+					NodeArr[i].contact.contactType = OUTOF_CONTACT;
+				} else {
+					/* Within Range */
+					NodeArr[i].contact.contactType = IN_CONTACT;
+					contactCount++;
+				}				
+			}
 		}
 
 		/* Update LED */

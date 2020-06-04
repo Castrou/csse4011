@@ -128,6 +128,12 @@ class tdf3listen:
                                     y_pos = (point['phenomena']['acc_y']['raw'] >> 8) * 100
                                     # Ultrasonic
                                     usVal = point['phenomena']['gyro_y']['raw']
+                                    if nodeName in self.static:
+                                        if(usVal and usVal < 3000):
+                                            print("Ultrasonic Reading:", usVal)
+                                        self.static[nodeName].updateInfo(x_pos, y_pos, mmDist)
+                                    else:
+                                        self.static[nodeName] = usStaticNode(nodeName, x_pos, y_pos, mmDist, usVal)
                             ##################################################################
                             for name, p in point['phenomena'].items():                                
                                 # if self.show_raw:

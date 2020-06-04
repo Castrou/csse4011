@@ -64,8 +64,8 @@ class staticNode(Node):
 		self.updateKalman()
 
 class usStaticNode(staticNode):
-	def __init__(self, address, x_pos, y_pos, mmDist, usDist):
-		super().__init__(address, mmDist)
+	def __init__(self, name, x_pos, y_pos, mmDist, usDist):
+		super().__init__(name, x_pos, y_pos, mmDist)
 		self.type = 2
 		self.xPos = x_pos
 		self.yPos = y_pos
